@@ -10,7 +10,7 @@ The examples of realboard 4088 support Keil MDK/GNU GCC/IAR compiler. You can us
 
 ### Basic Examples ###
 
-0. [basic kernel](tree/master/Software/examples/0_base_kernel), it's a basic example for RT-Thread kernel.
+0. [basic kernel](Software/examples/0_base_kernel), it's a basic example for RT-Thread kernel.
 
 ### UI Examples ###
 
