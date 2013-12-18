@@ -4,6 +4,7 @@
 #include <board.h>
 #include "drv_rtc.h"
 
+#ifdef RT_USING_RTC
 #define FIRST_DATA          0x32F2
 static struct rt_device rtc;
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
@@ -85,13 +86,10 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-
-
-
 void rt_hw_rtc_init(void)
 {
-    rtc.type	= RT_Device_Class_RTC;
-     RTC_Init(LPC_RTC);
+	rtc.type	= RT_Device_Class_RTC;
+	RTC_Init(LPC_RTC);
     if (RTC_ReadGPREG(LPC_RTC,0) != FIRST_DATA)
     {
         rt_kprintf("rtc is not configured\n");
@@ -99,7 +97,6 @@ void rt_hw_rtc_init(void)
     }
     else
     {
-         
     }
     RTC_Cmd(LPC_RTC,ENABLE);
     /* register rtc device */
@@ -124,3 +121,5 @@ void rt_hw_rtc_init(void)
 
     return;
 }
+
+#endif

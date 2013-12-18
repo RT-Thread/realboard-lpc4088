@@ -3,13 +3,13 @@
 #include "board.h"
 #include "drv_touch.h"
 
+#ifdef RT_USING_RTGUI
+
 /*
 TOUCH INT: P0_13
 */
 #define IS_TOUCH_UP()     (LPC_GPIO0->PIN&(0x01<<13))
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <rtgui/event.h>
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
@@ -231,6 +231,7 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     return RT_EOK;
 }
+
 extern void _set_mouse_position(uint32_t X, uint32_t Y);
 static void touch_thread_entry(void *parameter)
 {
@@ -429,4 +430,5 @@ void touch_t(rt_uint16_t x , rt_uint16_t y)
 }
 
 FINSH_FUNCTION_EXPORT(touch_t, x &y) ;
+#endif
 #endif

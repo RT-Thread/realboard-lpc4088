@@ -1,6 +1,7 @@
 #include <rtthread.h>
 #include <board.h>
 
+#ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
 
@@ -100,4 +101,4 @@ void rt_hw_key_init(void)
                                512, RTGUI_SVR_THREAD_PRIORITY-1, 5);
     if (key_tid != RT_NULL) rt_thread_startup(key_tid);
 }
-
+#endif

@@ -13,10 +13,14 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#include <shell.h>
+#endif
 
 void rt_init_thread_entry(void* parameter)
 {
-    rt_kprintf("Hello RT-Thread!\n");
+    finsh_system_init();
 }
 
 int rt_application_init()
