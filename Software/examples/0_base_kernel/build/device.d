@@ -1,9 +1,0 @@
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\src\device.c
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
-.\build\device.o: .\rtconfig.h
-.\build\device.o: d:\Keil\ARM\RV31\Inc\stdarg.h
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
-.\build\device.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h

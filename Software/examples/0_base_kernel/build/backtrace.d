@@ -1,9 +1,0 @@
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\libcpu\arm\common\backtrace.c
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
-.\build\backtrace.o: .\rtconfig.h
-.\build\backtrace.o: d:\Keil\ARM\RV31\Inc\stdarg.h
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
-.\build\backtrace.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h

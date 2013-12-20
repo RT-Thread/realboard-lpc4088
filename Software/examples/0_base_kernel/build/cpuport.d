@@ -1,9 +1,0 @@
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\libcpu\arm\cortex-m4\cpuport.c
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
-.\build\cpuport.o: .\rtconfig.h
-.\build\cpuport.o: d:\Keil\ARM\RV31\Inc\stdarg.h
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
-.\build\cpuport.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
