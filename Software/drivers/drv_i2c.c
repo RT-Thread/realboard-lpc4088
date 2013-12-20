@@ -12,12 +12,12 @@
 * 2013-06-10     xiaonong      The first version for LPC40xx
 */
 
-#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
 #include "lpc_i2c.h"
 
+#ifdef RT_USING_I2C
 
 struct lpc_i2c_bus
 {
@@ -308,6 +308,7 @@ rt_err_t lpc_i2c_register(LPC_I2C_TypeDef *I2Cx,
 
     return  rt_i2c_bus_device_register(&lpc_i2c->parent, spi_bus_name);
 }
+
 void rt_hw_i2c_init(void)
 {
     static struct lpc_i2c_bus lpc_i2c1;
@@ -324,3 +325,4 @@ void rt_hw_i2c_init(void)
     lpc_i2c1.parent.ops = &i2c_ops;
     lpc_i2c_register(LPC_I2C1, &lpc_i2c1, "i2c1");
 }
+#endif

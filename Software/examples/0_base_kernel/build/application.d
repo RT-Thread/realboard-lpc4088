@@ -1,0 +1,9 @@
+.\build\application.o: applications\application.c
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
+.\build\application.o: .\rtconfig.h
+.\build\application.o: d:\Keil\ARM\RV31\Inc\stdarg.h
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
+.\build\application.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h

@@ -1,0 +1,12 @@
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\src\dataqueue.c
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
+.\build\dataqueue.o: .\rtconfig.h
+.\build\dataqueue.o: d:\Keil\ARM\RV31\Inc\stdarg.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\include\rtdevice.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\include\drivers/serial.h
+.\build\dataqueue.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rthw.h

@@ -1,0 +1,10 @@
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\src\idle.c
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rthw.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
+.\build\idle.o: .\rtconfig.h
+.\build\idle.o: d:\Keil\ARM\RV31\Inc\stdarg.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
+.\build\idle.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h

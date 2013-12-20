@@ -1,0 +1,10 @@
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\src\clock.c
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rthw.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
+.\build\clock.o: .\rtconfig.h
+.\build\clock.o: d:\Keil\ARM\RV31\Inc\stdarg.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
+.\build\clock.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h

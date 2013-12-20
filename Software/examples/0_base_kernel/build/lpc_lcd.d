@@ -1,0 +1,14 @@
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\source\lpc_lcd.c
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_libcfg_default.h
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_types.h
+.\build\lpc_lcd.o: d:\Keil\ARM\RV31\Inc\stdint.h
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_clkpwr.h
+.\build\lpc_lcd.o: ..\..\libraries\Device\NXP\LPC407x_8x_177x_8x\Include\LPC407x_8x_177x_8x.h
+.\build\lpc_lcd.o: ..\..\libraries\CMSIS\Include\core_cm4.h
+.\build\lpc_lcd.o: ..\..\libraries\CMSIS\Include\core_cmInstr.h
+.\build\lpc_lcd.o: ..\..\libraries\CMSIS\Include\core_cmFunc.h
+.\build\lpc_lcd.o: ..\..\libraries\CMSIS\Include\core_cm4_simd.h
+.\build\lpc_lcd.o: ..\..\libraries\Device\NXP\LPC407x_8x_177x_8x\Include\system_LPC407x_8x_177x_8x.h
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_pinsel.h
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_gpio.h
+.\build\lpc_lcd.o: ..\..\libraries\Drivers\include\lpc_lcd.h

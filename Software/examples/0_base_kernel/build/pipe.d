@@ -1,0 +1,12 @@
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\src\pipe.c
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rthw.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdef.h
+.\build\pipe.o: .\rtconfig.h
+.\build\pipe.o: d:\Keil\ARM\RV31\Inc\stdarg.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtdebug.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtservice.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtm.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\include\rtthread.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\include\rtdevice.h
+.\build\pipe.o: ..\..\..\..\..\..\RTT_Git\rt-thread-2013-12-17\components\drivers\include\drivers/serial.h
