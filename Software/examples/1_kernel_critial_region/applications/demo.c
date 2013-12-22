@@ -1,6 +1,6 @@
- /*
-	这份demo用于演示系统临界区问题
- */
+/*
+  这份demo用于演示系统临界区问题
+*/
 
 #include <rtthread.h>
 #ifdef RT_USING_FINSH

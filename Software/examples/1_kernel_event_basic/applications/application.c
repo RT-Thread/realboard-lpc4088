@@ -21,9 +21,6 @@
 void rt_init_thread_entry(void* parameter)
 {
 	
-    /* initialization finsh shell Component */
-    finsh_system_init();
-	
 	{
 		extern int demo_init(void);
 		demo_init();

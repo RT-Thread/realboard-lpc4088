@@ -1,6 +1,6 @@
- /*
-	这份demo用于演示内核串口打印和线程调度
- */
+/*
+  这份demo用于演示内核串口打印和线程调度
+*/
 #include <rtthread.h>
 #ifdef RT_USING_FINSH
 #include <finsh.h>

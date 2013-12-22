@@ -40,3 +40,4 @@ int rt_application_init()
 	
     return 0;
 }
+
