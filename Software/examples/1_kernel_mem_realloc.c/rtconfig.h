@@ -7,7 +7,7 @@
 // <integer name="RT_NAME_MAX" description="Maximal size of kernel object name length" default="6" />
 #define RT_NAME_MAX	8
 // <integer name="RT_ALIGN_SIZE" description="Alignment size for CPU architecture data access" default="4" />
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 // <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="32">
 // <item description="8">8</item>
 // <item description="32">32</item>
@@ -77,9 +77,9 @@
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-// #define RT_USING_COMPONENTS_INIT
+//#define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
-#define RT_USING_FINSH
+//#define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
 #define FINSH_USING_SYMTAB
 // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
