@@ -1,5 +1,7 @@
 # RealBoard4088 #
 
+[![Build Status](https://travis-ci.org/RT-Thread/RealBoard4088.png?branch=master)](https://travis-ci.org/RT-Thread/RealBoard4088)
+
 The RealBoard 4088 is a Graphic LCD board with RT-Thread RTOS running inside. The RealBoard 4088 Board is equipped with NXP's Cortex-M4 based LPC4088 microcontroller suitable for a wide range of applications that requires advanced storage,  communication and high quality graphic displays.
 
 ## Getting started ##
