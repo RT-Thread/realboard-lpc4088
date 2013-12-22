@@ -1,14 +1,59 @@
+Import('RTT_ROOT')
+Import('rtconfig')
 from building import *
 
-cwd = GetCurrentDir()
-src = Glob('*.c')
+# get current directory
+cwd     = GetCurrentDir()
 
-# remove no need file.
-if GetDepend('RT_USING_LWIP') == False:
-	SrcRemove(src, 'drv_emac.c')
+src	= Split("""
+board.c
+drv_uart.c
+drv_sdram.c
+drv_led.c
+""")
+
+# add RTC driver.
+if GetDepend('RT_USING_RTC') == True:
+	src += ['drv_rtc.c']
+
+# add SD driver.
+if GetDepend('RT_USING_DFS') == True:
+	src += ['drv_sd.c']
+
+# add ethernet driver.
+if GetDepend('RT_USING_LWIP') == True:
+	src += ['drv_emac.c']
+
+# add spi driver.
+if GetDepend('RT_USING_SPI') == True:
+	src += ['drv_spi.c']
+
+# add nand driver.
+#if GetDepend('RT_USING_MTD_NAND') == True:
+#	src += ['k9f2g08u0b.c']
+
+# add i2c driver.
+if GetDepend('RT_USING_I2C') == True:
+	src += ['drv_i2c.c']
+
+
+# add LCD driver.
+if GetDepend('RT_USING_RTGUI') == True:
+	src += ['drv_lcd.c']
+	src += ['drv_key.c']
+	src += ['drv_touch.c']
+
+# add USB Host driver.
+# if GetDepend('RT_USING_USB_HOST') == True:
+
+	
+# add USB Device driver
+# if GetDepend('RT_USING_USB_DEVICE') == True:
+
 
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
+
