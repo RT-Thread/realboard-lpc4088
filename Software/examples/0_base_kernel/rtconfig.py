@@ -1,3 +1,5 @@
+import os
+
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
