@@ -3,6 +3,10 @@ ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='keil'
 
+# get setting from environment.
+if os.getenv('RTT_CC'):
+        CROSS_TOOL = os.getenv('RTT_CC')
+
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
@@ -14,6 +18,9 @@ elif CROSS_TOOL == 'keil':
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= r'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
+
+if os.getenv('RTT_EXEC_PATH'):
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #
 BUILD = 'debug'
