@@ -16,3 +16,13 @@ before_script:
 
 script:
   - scons -C Software/examples/0_base_kernel
+  - scons -C Software/examples/0_usart
+  - scons -C Software/examples/1_finsh
+  - scons -C Software/examples/1_kernel_critial_region
+  - scons -C Software/examples/1_kernel_event_basic
+  - scons -C Software/examples/1_kernel_mailbox_basic
+  - scons -C Software/examples/1_kernel_mem_malloc
+  - scons -C Software/examples/1_kernel_mem_pool
+  - scons -C Software/examples/1_kernel_mem_realloc.c
+  - scons -C Software/examples/1_kernel_mem_ringbuffer
+  - scons -C Software/examples/1_kernel_message_queue
