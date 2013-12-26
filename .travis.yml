@@ -15,4 +15,4 @@ before_script:
   - export RTT_EXEC_PATH=`pwd`"/arm-2012.09/bin"
 
 script:
-  - ./Software/examples/buildbot.py
+  - ./Software/scripts/buildbot.py
