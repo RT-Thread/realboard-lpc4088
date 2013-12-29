@@ -32,7 +32,7 @@
 #define SPI_NAND_ERASE_BLOCK_CMD            0xd8
 #define SPI_NAND_RESET_CMD                  0xff
 
-#define NAND_ID_GD5F1G				        0xF1C8
+#define NAND_ID_GD5F1G				        0x00C8
 
 /* nandflash confg */
 #define PAGES_PER_BLOCK         64

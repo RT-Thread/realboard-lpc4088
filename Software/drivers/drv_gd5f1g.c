@@ -13,15 +13,22 @@
  */
 
 #include "board.h"
+#include <rtdevice.h>
 
 #include "drv_gd5f1g.h"
 #include <string.h>
-#include <log_trace.h>
 
 #ifdef RT_USING_MTD_NAND
 
+#ifndef RT_USING_LOGTRACE
+#define log_trace(...)
+#define log_trace_register_session(...)
+#else
+#include <log_trace.h>
+
 #define NAND_MODULE	"[NAND]"
 static struct log_trace_session _nand_session = {{"NAND"}, LOG_TRACE_LEVEL_INFO};
+#endif
 
 #define NAND_SPI_ER_STATUS_P_FAIL		(1 << 3)
 #define NAND_SPI_ER_STATUS_E_FAIL		(1 << 2)
@@ -85,10 +92,12 @@ static rt_err_t nandflash_readid(struct rt_mtd_nand_device *device)
     rt_spi_send_then_recv(spi, txbuf, 2, _nand.id, 2);
     rt_mutex_release(lock);
 
-	log_trace(LOG_TRACE_INFO NAND_MODULE "NAND ID: %04X\n", _nand.id[0]);
-	if (*(rt_uint16_t*)&_nand.id[0] != NAND_ID_GD5F1G)
+	rt_kprintf("NAND ID: 0x%02X%02X\n", _nand.id[0], _nand.id[1]);
+	if (_nand.id[0] != 0xC8 && _nand.id[1] != 0xF1)
+	{
 		return -RT_MTD_EIO;
-
+	}
+	
 	return RT_MTD_EOK;
 }
 
@@ -531,7 +540,7 @@ int gd5f1g_init(void)
     if(spi == RT_NULL)
     {
         log_trace(LOG_TRACE_ERROR NAND_MODULE"spi device %s not found!\n", "spi00");
-        return ;
+        return -RT_ERROR;
     }
 
 	log_trace_register_session(&_nand_session);
@@ -554,7 +563,7 @@ int gd5f1g_init(void)
         _partition[0].oob_size        = PAGE_OOB_SIZE;
         _partition[0].oob_free        = PAGE_OOB_SIZE - 16;
         _partition[0].block_start     = 0;
-        _partition[0].block_end       = 1024/2;
+        _partition[0].block_end       = 1024;
 
         _partition[0].block_total     = _partition[0].block_end - _partition[0].block_start;
         _partition[0].ops             = &ops;
@@ -566,9 +575,7 @@ int gd5f1g_init(void)
         return RT_EOK;
     }
 
-    return RT_EIO;
+    return -RT_EIO;
 }
 
 #endif /* RT_USING_MTD_NAND */
-
-

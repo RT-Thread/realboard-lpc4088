@@ -5,7 +5,6 @@
 #include "lpc_pinsel.h"
 
 #include <rtdevice.h>
-#include <log_trace.h>
 #include <string.h>
 
 /* nandflash confg */
@@ -85,7 +84,7 @@ static rt_err_t nand_hy27uf_readid(struct rt_mtd_nand_device *device)
     a = NAND_DATA;
     b = NAND_DATA;
 
-	rt_kprintf("NAND ID: 0x%02x%02x\n", a, b);
+	rt_kprintf("NAND ID: 0x%02X%02X\n", a, b);
 
     return RT_EOK;
 }
@@ -104,7 +103,6 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
     page = page + device->block_start * device->pages_per_block;
     if (page/device->pages_per_block > device->block_end)
     {
-        log_trace("[NDRV] page error\n");
         return -RT_MTD_EIO;
     }
 
@@ -158,7 +156,6 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
     page = page + device->block_start * device->pages_per_block;
     if (page/device->pages_per_block > device->block_end)
     {
-        log_trace("[NDRV] page error\n");
         return -RT_MTD_EIO;
     }
 	if (data == RT_NULL) return -RT_MTD_EIO; /* we didn't support write data only */
@@ -188,7 +185,7 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
     if(read_status(NAND_CMD_SEQIN) == RT_FALSE)
     {
         nand_reset();
-		log_trace("program page failed!\n");
+
         return -RT_MTD_EIO;
     }
 
@@ -324,5 +321,5 @@ int nand_hy27uf_hw_init(void)
     rt_mtd_nand_register_device("nand0", &_partition[0]);
     nand_hy27uf_readid(&_partition[0]);
 
-    return 0;
+    return RT_EOK;
 }
