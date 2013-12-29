@@ -3,18 +3,18 @@
 #include "board.h"
 #include "drv_touch.h"
 
-#ifdef RT_USING_RTGUI
-
 /*
 TOUCH INT: P0_13
 */
 #define IS_TOUCH_UP()     (LPC_GPIO0->PIN&(0x01<<13))
 
+#include <rtthread.h>
+#include <rtdevice.h>
 #include <rtgui/event.h>
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-
+#include <rtgui/calibration.h>
 /*
 7  6 - 4  3      2     1-0
 s  A2-A0 MODE SER/DFR PD1-PD0
@@ -54,9 +54,10 @@ s  A2-A0 MODE SER/DFR PD1-PD0
 #define MAX_X_DEFAULT   0x20
 #define MIN_Y_DEFAULT   0x53
 #define MAX_Y_DEFAULT   0x79b
+
 #define SAMP_CNT 8                              //the adc array size
 #define SAMP_CNT_DIV2 4                         //the middle of the adc array
-#define SH   20                                 // Valve value
+#define SH   10                                 // Valve value
 struct rtgui_touch_device
 {
     struct rt_device parent;
@@ -65,7 +66,11 @@ struct rtgui_touch_device
 
     rt_bool_t calibrating;
     rt_touch_calibration_func_t calibration_func;
-    struct rt_spi_device *spi_device;
+
+    rt_uint16_t min_x, max_x;
+    rt_uint16_t min_y, max_y;
+
+    struct rt_spi_device * spi_device;
     struct rt_event event;
 };
 
@@ -79,7 +84,6 @@ rt_inline void touch_int_enable(rt_bool_t);
 
 static void rtgui_touch_calculate(void)
 {
-    rt_uint16_t x, y;
     if (touch != RT_NULL)
     {
         /* read touch */
@@ -115,50 +119,59 @@ static void rtgui_touch_calculate(void)
             rt_spi_send(touch->spi_device, send_buffer, 1);
 
             /* calculate average */
-            {
-                rt_uint32_t total_x = 0;
-                rt_uint32_t total_y = 0;
-
-                for (k = 0; k < 2; k++)
-                {
-                    // sorting the ADC value
-                    for (i = 0; i < SAMP_CNT - 1; i++)
-                    {
-                        min = i;
-                        for (j = i + 1; j < SAMP_CNT; j++)
-                        {
-                            if (tmpxy[k][min] > tmpxy[k][j])
-                                min = j;
-                        }
-                        temp = tmpxy[k][i];
-                        tmpxy[k][i] = tmpxy[k][min];
-                        tmpxy[k][min] = temp;
-                    }
-                    //check value for Valve value
-                    if ((tmpxy[k][SAMP_CNT_DIV2 + 1] - tmpxy[k][SAMP_CNT_DIV2 - 2]) > SH)
-                    {
-                        return;
-                    }
-                }
-                total_x = tmpxy[0][SAMP_CNT_DIV2 - 2] + tmpxy[0][SAMP_CNT_DIV2 - 1] + tmpxy[0][SAMP_CNT_DIV2] + tmpxy[0][SAMP_CNT_DIV2 + 1];
-                total_y = tmpxy[1][SAMP_CNT_DIV2 - 2] + tmpxy[1][SAMP_CNT_DIV2 - 1] + tmpxy[1][SAMP_CNT_DIV2] + tmpxy[1][SAMP_CNT_DIV2 + 1];
-                //calculate average value
-                x = (total_x >> 2);
-                y = (total_y >> 2);
-                rt_kprintf("touch->x:%d touch->y:%d\r\n", x, y);
-            } /* calculate average */
+						{
+							rt_uint32_t total_x = 0;
+							rt_uint32_t total_y = 0;
+							for(k=0; k<2; k++)
+							{ 
+								// sorting the ADC value
+								for(i=0; i<SAMP_CNT-1; i++)
+								{
+									min=i;
+									for (j=i+1; j<SAMP_CNT; j++)
+									{
+										if (tmpxy[k][min] > tmpxy[k][j]) 
+											min=j;
+										}
+										temp = tmpxy[k][i];
+										tmpxy[k][i] = tmpxy[k][min];
+										tmpxy[k][min] = temp;
+								}
+							 //check value for Valve value
+								if((tmpxy[k][SAMP_CNT_DIV2+1]-tmpxy[k][SAMP_CNT_DIV2-2]) > SH)
+									{
+										return;
+									}
+							}
+							  total_x=tmpxy[0][SAMP_CNT_DIV2-2]+tmpxy[0][SAMP_CNT_DIV2-1]+tmpxy[0][SAMP_CNT_DIV2]+tmpxy[0][SAMP_CNT_DIV2+1];
+							 total_y=tmpxy[1][SAMP_CNT_DIV2-2]+tmpxy[1][SAMP_CNT_DIV2-1]+tmpxy[1][SAMP_CNT_DIV2]+tmpxy[1][SAMP_CNT_DIV2+1];
+								//calculate average value
+								touch->x=total_x>>2;
+								touch->y=total_y>>2;
+                rt_kprintf("touch->x:%d touch->y:%d\r\n", touch->x, touch->y);
+           } /* calculate average */
         } /* read touch */
 
         /* if it's not in calibration status  */
         if (touch->calibrating != RT_TRUE)
         {
-            touch->x = Calibrate_X(x, y);
-            touch->y = Calibrate_Y(x, y);
-        }
-        else
-        {
-            touch->x = x;
-            touch->y = y;
+            if (touch->max_x > touch->min_x)
+            {
+                touch->x = (touch->x - touch->min_x) * X_WIDTH/(touch->max_x - touch->min_x);
+            }
+            else
+            {
+                touch->x = (touch->min_x - touch->x) * X_WIDTH/(touch->min_x - touch->max_x);
+            }
+
+            if (touch->max_y > touch->min_y)
+            {
+                touch->y = (touch->y - touch->min_y) * Y_WIDTH /(touch->max_y - touch->min_y);
+            }
+            else
+            {
+                touch->y = (touch->min_y - touch->y) * Y_WIDTH /(touch->min_y - touch->max_y);
+            }
         }
     }
 }
@@ -220,10 +233,14 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     case RT_TOUCH_CALIBRATION_DATA:
     {
-        calibration_typedef *data;
-        data = (calibration_typedef *) args;
+        struct calibration_data* data;
+        data = (struct calibration_data*) args;
 
-        //update
+         //update
+        touch->min_x = data->min_x;
+        touch->max_x = data->max_x;
+        touch->min_y = data->min_y;
+        touch->max_y = data->max_y;
 
     }
     break;
@@ -231,7 +248,6 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     return RT_EOK;
 }
-
 extern void _set_mouse_position(uint32_t X, uint32_t Y);
 static void touch_thread_entry(void *parameter)
 {
@@ -430,5 +446,4 @@ void touch_t(rt_uint16_t x , rt_uint16_t y)
 }
 
 FINSH_FUNCTION_EXPORT(touch_t, x &y) ;
-#endif
 #endif

@@ -8,6 +8,7 @@ cwd     = GetCurrentDir()
 src	= Split("""
 board.c
 drv_uart.c
+drv_sram.c
 drv_sdram.c
 drv_led.c
 """)
