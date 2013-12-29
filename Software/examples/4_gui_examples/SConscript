@@ -6,8 +6,11 @@ cwd = str(Dir('#'))
 objs = []
 list = os.listdir(cwd)
 
-objs += SConscript(cwd + "/../../Libraries/SConscript")
+# Add CMSIS and NXP chip level drivers
+objs += SConscript(cwd + "/../../libraries/SConscript")
+# Add RT-Thread lowlevel drivers
 objs += SConscript(cwd + "/../../drivers/SConscript")
+
 RTT_RTGUI = os.getenv('RTT_RTGUI')
 if RTT_RTGUI:
     objs += SConscript(os.path.join(RTT_RTGUI, '..', '..', 'demo', 'examples', 'SConscript'))
