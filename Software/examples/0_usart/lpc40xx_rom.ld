@@ -27,7 +27,13 @@ SECTIONS
         *(.glue_7t)
         *(.gnu.linkonce.t*)
 
-        /* section information for finsh shell */
+        /* section information for module symbol */
+        . = ALIGN(4);
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
+
+	/* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
