@@ -1,7 +1,7 @@
 import os
 import sys
 
-examples_dir = os.path.join('Software', 'examples')
+examples_dir = os.path.join('Software', 'rtthread_examples', 'examples')
 
 projects = os.listdir(examples_dir)
 for item in projects:
