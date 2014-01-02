@@ -11,8 +11,21 @@
 *.so
 *.so.*
 *.dylib
+*.pyc
 
 # Executables
 *.exe
 *.out
 *.app
+*.elf
+*.axf
+*.bin
+
+# Intermediate file
+*.bak
+*.map
+*.dblite
+*.dep
+JLinkLog.txt
+JLinkSettings.ini
+build
