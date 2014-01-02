@@ -1,0 +1,81 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       I2S\I2S_Audio\abstract.txt 
+* @brief      Description of the I2S Audio example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use I2S to transfer audio data through I2S port
+        to play a short music sound.
+    Process:
+        I2S setup:
+            - wordwidth: 16 bits
+            - mono mode
+            - master mode for TX
+            - frequency = 44.1Khz (maximum is 96kHz)
+      - enable transmit interrupt mode
+      - Irq TXFIFO depth = 4
+    Using I2S DAC IC: UDA1380 to display audio sound via headphone.    
+    Disable/Enable SYSCLK of UDA1380 by update macro UDA1380_SYSCLK_USED.
+    Audio data will be copy in tx_buffer to send to TXFIFO register, after half of 
+    buffer have been sent already, call I2S_Callback() function to re-fill data.
+
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    
+      audiodata.c: store audio data
+    I2s_Audio.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+            
+        I2S connection:
+                + JP 25~27: 2-3
+                + If SYSCLK is used for UDA1380: set JP28 ON. 
+            
+    Running mode:
+        This example can run only on ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware and serial display as above instruction 
+        - Step 4: Run example and hear short music via headphone (from J30 of EA board)

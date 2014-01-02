@@ -1,0 +1,129 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       PWR\Pwr_PowerDown\abstract.txt 
+* @brief      Description of the PowerDown example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to enter system in PowerDown mode and wake-up it 
+        by using NMI (Non-Maskable Interrupt)
+    Process:
+        NMI(Non-Maskable Interrupt) is the highest priority interrupt, it takes effect 
+        as soon as it registers. When connect, a logic 1 on the pin will cause the NMI 
+        to be processed.
+        Select P2.10 as NMI pin
+        At the first time, sure that NMI pin has logic 1 because if it connects with
+        ground -> ISP is pulled low, system will enter in ISP mode.  
+        After that, call CLKPWR_PowerDown() to enter system in PowerDown mode 
+        (Note: In this time, NMI pin must be connected with ground to disable NMI 
+        interrupt). 
+        When system is PowerDowning..., pulls up NMI to logic 1, NMI occurs 
+        and wake-up system.
+                                                                                  
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Pwr_DeepSleep.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                Use SW6 as NMI pin (P2.10)
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                        
+    Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control  
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure har1dware and serial display as above instruction 
+        - Step 5: Run example and observe on serial display
+                    + Press "RESET" button to run example
+                    + Press SW6 to disable NMI interrupt
+                (with LPC1788 IAR Start Kit Rev.B, you can use ISP_E[2] as P2.10 pin)
+                    + Press '1' and press SW6 again to enter system in DeepSleep mode
+                    + After sleeping..., press SW6 to generate NMI interrupt 
+                    to wake-up system

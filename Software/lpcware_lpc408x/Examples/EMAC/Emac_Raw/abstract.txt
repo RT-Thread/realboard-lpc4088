@@ -1,0 +1,150 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       EMAC\Emac_Raw\abstract.txt 
+* @brief      Description of the EMAC EmacRaw example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to test EMAC driver with raw packet frame format
+        that is not related with any upper-layer (i.e. TCP/IP...).
+    Process:
+        There are two ways to test:
+        - TX_ONLY and BOUNCE_RX flags can be set one at a time, not both.
+        When TX_ONLY is set to 1, it's a TX_ONLY packet from the MCB1700
+        board to the LAN. Use the traffic analyzer such as ethereal, once
+        the program is running, the packets can be monitored on the traffic
+        analyzer.
+        - When BOUNCE_RX is set to 1 (TX_ONLY needs to reset to 0), it's a
+        test to test both TX and RX, use the traffic generator/analyzer,
+        you can creat a packet with the destination address as that on the
+        MCB1700 board, use the traffic generator to send packets, as long
+        as the destination address matches, MCB1700 will reverse the source
+        and destination address and send the packets back on the network.
+        ENABLE_WOL flag is used to test power down and WOL functionality.
+        BOUNCE_RX flag needs to be set to 1 when WOL is being tested.
+            
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files
+     
+    crc32c.h/.c: Ethernet CRC module
+    Emac_Raw.c: main program
+    libnosys_gnu.c: Definitions for OS interface, stub function required by newlibc
+                     used by Codesourcery GNU compiler.
+    
+@How to run:
+    Hardware configuration:    
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            – 115200bps 
+            – 8 data bit 
+            – No parity 
+            – 1 stop bit 
+            – No flow control 
+    
+    Running mode:
+        This example can run only on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: setting flag (in Emac_Raw.c):
+                     - TX_ONLY = 1
+                    - BOUNCE_RX = 0 
+                  Build example and burn into first board.
+        - Step 2: setting flag:
+                    - TX_ONLY = 0
+                    - BOUNCE_RX = 1
+                  Build example and burn into second board.
+        - Step 3: Use CrossOver cable to connect two boards.
+        - Step 4: Connect UART0 on two boards to COM ports on your computer.
+        - Step 5: Configure hardware and serial display as above instruction. 
+        - Step 6: Hit reset button on two boards.
+        - Step 7: Wait for EMAC initilization completes on two board.
+        - Step 8: If ENABLE_WOL is enabled on board 'BOUNCE_RX' side, after initializing EMAC,
+                  it will enter sleep mode to be waked-up on LAN (WoL).
+        - Step 9: On 'TX_ONLY' side, hit INT0 button to send a frame.
+        - Step 10: After receiving frame, 'BOUNCE_RX' side will be waked-up and operates
+                   properly.
+    
+            

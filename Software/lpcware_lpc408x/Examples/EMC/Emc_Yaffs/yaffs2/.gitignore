@@ -1,0 +1,8 @@
+*~
+*.o
+*o.cmd
+*.ko
+*.pyc
+DEADJOE
+*.mod.c
+

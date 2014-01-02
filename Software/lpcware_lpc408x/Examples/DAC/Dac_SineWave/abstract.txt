@@ -1,0 +1,143 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       DAC\Dac_SineWave\abstract.txt 
+* @brief      Description of the example to generate a sinewave signal by DAC.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use DMA to generate a sinewave signal
+    Process:
+        DAC will be initialized with maximum current is 700uA. This allows a maximum update rate of 1Mhz
+        Formula for ouput voltage on AOUT is: 
+            AOUT = VALUE x ((Vrefp - Vrefn)/1024)+Vrefn
+        in which:
+        - Vrefp: tied to VDD(3.3V)
+        - Vrefn: tied to Vss
+        
+        DAC will generate a sinewave with peak to peak is within Vrefp and Vrefn. We need to prepare a
+        look up table with 60 items, each item is the value to update AOUT voltage, and it's correspondent
+        to a sample point of 1 circle sinewave signal. The formula is below:
+            for(i=0;i<NUM_SINE_SAMPLE;i++) //NUM_SINE_SAMPLE = 60
+            {
+                dac_sine_lut[i] = 512 + 512*sin(i);
+                dac_sine_lut[i] = (dac_sine_lut[i]<<6);
+            }
+          
+        GPDMA channel 0 is configured in this example and used to transfer dac_sine_lut[i] to DAC peripheral.
+        When the last item of dac_sine_lut is transfered, GPDMA will roll back to transfer the first item.
+            
+        DAC is configured to use time out for each DAC value update and trigger GPDMA to fill DAC value register.
+        This time out value can also be used to calculate the sinewave frequency:
+            time out = (PCLK_DAC_IN_MHZ*1000000)/(SINE_FREQ_IN_HZ*NUM_SINE_SAMPLE);
+            Where:    - SINE_FREQ_IN_HZ = 60
+                    - NUM_SINE_SAMPLE = 60
+        
+        Observe AOUT(P0.26) signal by oscilloscope.
+                    
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Dac_SineWave.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                
+        DAC_OUT (AOUT-P0.26) pin:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A
+                    + J3.28
+            2. LPC1788 IAR Start Kit Rev.B
+                    + EXT-11
+                    
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware as above instruction 
+        - Step 4: Run example and observe AOUT(P0.26) signal by oscilloscope
+        
+        

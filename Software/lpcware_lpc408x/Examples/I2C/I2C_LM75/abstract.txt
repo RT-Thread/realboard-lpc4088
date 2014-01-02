@@ -1,0 +1,104 @@
+ /***********************************************************************
+* $Id$		abstract.txt		2011-01-18		
+* @file		I2C\I2C_LM75\abstract.txt 
+* @brief	Description of the I2C LM75A example.
+* @version	1.0
+* @date		13. September. 2012
+* @author	NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+	Purpose:
+		This example describes how to use I2C to drive Digital Temperature sensor LM75A.
+	Process:
+		I2C is configured as master using polling mode to send/receive data.
+		I2C Clock Rate is set at 100K.
+		Sensor Slave address is 0x48 (8-bit format)
+		After initialize and enable I2C, I2C configures the sensor, continuously get
+        temperature value from the sensor and then print out terminal.
+		 
+		 				
+@Directory contents:
+	\Keil:	includes RVMDK (Keil)project and configuration files
+	\EWARM: includes EWARM (IAR) project and configuration files
+	 
+	lm75_test.c: Main program
+
+@How to run:
+	Hardware configuration:		
+		This example was tested on:
+			LPC1788 OEM Board rev A and OEM Base Board rev A
+			Jumpers: Default
+
+		This example does not work on the IAR board from Olimex because the Sensor LM75
+		is not mounted on.
+	
+	Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+				- UART0: USB serial port
+					+ All jumpers: Default
+				- UART1: 
+					+ P0.15 (@ J5.19) - JP12.2
+					+ P0.16 (@ J3.24) - JP13.2
+				- UART2:
+					+ JP6: 	1-2: OFF
+							3-4: OFF
+							5-6: ON
+					+ JP12: 1-2
+					+ JP13: 1-2
+					+ Other jumpers: Default
+				- UART3:
+					+ P0.2 (@J5.13) - JP12.2
+					+ P0.3 (@J5.14) - JP13.2
+				- UART4:
+					+ P0.22 (@J3.25) - JP12.2
+					+ P2.9  (@J3.15) - JP13.2
+	    	2. LPC1788 IAR Start Kit Rev.B
+				- UART0: 
+					All jumpers: optional
+			Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+			
+			Setting:
+				+ 115200bps 
+				+ 8 data bit 
+				+ No parity 
+				+ 1 stop bit 
+				+ No flow control
+	
+	Running mode:
+		This example can run on RAM/ROM mode.
+					
+		Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+			to be connected:
+			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+				- JP20: 1-2: ON
+					3-4: ON
+			(Using UART0 on USB serial port
+			Sure that you choose correct COM port number - Pls reference at:
+			"Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+		    
+		    2. LPC1788 IAR Start Kit Rev.B
+				- RST_E: ON
+				- ISP_E: ON
+	
+	Step to run:
+		- Step 1: Build example.
+		- Step 2: Burn hex file into board (if run on ROM mode)
+		- Step 3: Connect desired UART on boards to COM ports on your computer.
+		- Step 4: Configure hardware and serial display as above instruction. 
+		- Step 5: Run example. Observe output on terminal.

@@ -1,0 +1,105 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       PWM\PWM_SingleEdge\abstract.txt 
+* @brief      Description of the PWM Single Edge example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to use PWM signal on 6 Channels in single edge mode
+    Process:
+        This program illustrates the PWM signal on 6 Channels in single edge mode
+         Peripheral clock for PWM: PWM_PCLK = CCLK / 4 = 72MHz/4 = 18MHz and there is no
+         prescale for PWM. The PWM timer/counter clock is at 18MHz. The base rate is set to 256
+         The base PWM frequency is at 18MHz/256 = 70.312 KHz (Period = ~14.22 microsecond)
+         Each PWM channel (1 to 6) will be configured as following:
+             + PWMx.1 = (10/256) (period = 0.21 microsecond)
+             + PWMx.2 = (40/256) (period = 0.83 microsecond)
+             + PWMx.3 = (70/256) (period = 1.45 microsecond)
+             + PWMx.4 = (100/256) (period = 2.07 microsecond)
+             + PWMx.5 = (130/256) (period = 2.69 microsecond)
+             + PWMx.6 = (160/256) (period = 3.31 microsecond)
+         Using Oscilloscope to observe the PWM signals
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Pwm_SingleEdge.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+            
+            PWM Pin selected: Observe PWM wave signal on these pins
+
+                                                            PA brd        
+                    +PWM0:
+                        - PWM0.1 (channel 1): P1.2            J5.27        
+                        - PWM0.2 (channel 2): P1.3            J3.29
+                        - PWM0.3 (channel 3): P1.5            J5.28
+                        - PWM0.4 (channel 4): P1.6            J3.30
+                        - PWM0.5 (channel 5): P1.7            J5.29
+                        - PWM0.6 (channel 6): P1.11           J3.31
+
+                    +PWM1:
+                        - PWM1.1 (channel 1): P2.0            J4.5
+                        - PWM1.2 (channel 2): P2.1            J4.7
+                        - PWM1.3 (channel 3): P2.2            J4.6
+                        - PWM1.4 (channel 4): P2.3            J4.8
+                        - PWM1.5 (channel 5): P2.4            J3.16
+                        - PWM1.6 (channel 6): P2.5            J3.14
+                    
+                    With IAR board: get pinout from SDCARD connector (ref from LPC178x_SK_Rev_B.pdf schematic)    
+                                        
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware as above instruction 
+        - Step 4: Run example     
+                  Use oscilloscope to monitor the wave form on pin P2.0, P2.1, P2.2, P2.3, P2.4, P2.5
+

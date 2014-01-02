@@ -1,0 +1,86 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       UART\Uart_FullModem\abstract.txt 
+* @brief      Description of the UART FullModem example.
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This is a simple UART example using UART Full modem mode.
+    Process:
+         Configure UART using the following settings:
+             - Baudrate = 115200 bps
+             - 8 data bit
+             - 1 Stop bit
+             - None parity
+
+        After reset UART will send the welcome massage then start to receive the 
+        character from PC and send back that character to PC.
+        
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    
+    Uart_FullModem.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                Jumpers: Optional
+                            
+        UART FullModem connection
+                Because eval board does not wire all pins of UART1 to the COM1 port,
+                the signal on CTS, RTS might be in incorrect state for UART1 running.
+                In this case, CTS pin P0.17 must be pulled-low    
+
+                ** Using UART1 with Full Modem
+                LPC1788 OEM Board rev A			
+                    - P0.15 (@ J5.19) - JP12.2
+                    - P0.16 (@ J3.24) - JP13.2
+                    - P0.17 (@ J5.20 ) - GND		    
+                LPC4088 OEM Board rev A			
+                    - P2.0 (@ J4.5) - JP12.2
+                    - P2.1 (@ J4.7) - JP13.2
+                    - P2.2 (@ J4.6) - GND
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                            
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect COM Port (J17) on this board to COM port on your computer
+        - Step 4: Run example and using Serial display to see the result.

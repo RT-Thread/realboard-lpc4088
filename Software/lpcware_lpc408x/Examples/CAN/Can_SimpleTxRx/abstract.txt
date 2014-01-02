@@ -1,0 +1,129 @@
+/**********************************************************************
+* $Id$        abstract.txt        2012-09-17
+*//**
+* @file       abstract.txt
+* @brief      Example description file
+* @version    1.0
+* @date       17. September. 2012
+* @author     NXP MCU SW Application Team
+*
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+* Permission to use, copy, modify, and distribute this software and its
+* documentation is hereby granted, under NXP Semiconductors'
+* relevant copyright in the software, without fee, provided that it
+* is used in conjunction with NXP Semiconductors microcontrollers.  This
+* copyright, permission, and disclaimer notice must appear in all copies of
+* this code.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to test CAN peripheral of LPC407x_8x & LPC177x_8x.
+    Process:
+        This demo need a CAN analyser or, another CAN device on bus.
+        After initializing, the LPC407x_8x/LPC177x_8x will transmit first message with ID 0x200 on bus.
+        If success, it will wait for any trigger on wake up source 0 and then start transmit again.
+        The device always listen message on the bus with ID 0x100. Whenever it receive, 
+        it will reply back the message to bus with ID 0x200.
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files 
+    Can_SimpleTxRx.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            
+        CAN Connection:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+	       
+                JP14: 3-4 ON
+                J16-7 (CAN1-L) is connected to CAN-L (Pin 2) of CAN Analyser.
+                J16-8 (CAN1-H) is connected to CAN-H (Pin 7) of CAN Analyser.
+                GND pin is connected to GND (pin 3) of CAN Analyser.
+            
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+        
+        Setting:
+            + 115200bps 
+            + 8 data bit 
+            + No parity 
+            + 1 stop bit 
+            + No flow control  
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Use a CAN analyser and set bitrate to 500kb/ss Start capture the bus
+        - Step 5: Create new transmit Message by Go to Transmit->New Message
+                    Type in ID = 0x100, DLC = 8 and dont check anything
+                    Type whatever data you want to transmit, device will feedback it
+        - Step 6: Run example and observe result on serial display
+                  Press SW6 button to send message to PCAN.
+        

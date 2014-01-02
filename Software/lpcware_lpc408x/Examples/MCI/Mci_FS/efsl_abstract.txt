@@ -1,0 +1,124 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2012-02-23        
+* @file       MCI\Mci_FS\abstract.txt 
+* @brief      Description of the MCI FS example.
+* @version    1.0
+* @date       23. February. 2012
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to operate on an SD card with an file system.
+        
+    Process:
+        Plug the card to the slot, LPC1788 will do:
+        - Initialize card.
+        - Read its configuration.
+        - List out the structure of root directory.
+        - Open a file with filename is "file_r.txt" in the root directory.
+        - Create a new file with name is "file_w.txt" and then copy the content
+        of file "file_r.txt" to the new file.
+
+        This example passed with:
+            -  PNY SD-MO2G.
+            -  Canon SD Memory Card SDC-32M
+            -  KINGMAX MMC Mobile 1GB.
+            -  Micro SDHC (Class 6) 4GB.
+            -  Transcend SD card 2GB.
+            -  Transcend Micro SDHC (Class 4) 16GB.
+                         
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    
+    fs_mci.c/.h: Create common API using MCI driver.
+    monitor.c/.h: control UART0 to output on screen.
+    if_lpc177x_8x.c/.h: interface for EFSL (only used in EFSL).
+    efsl_main.c: Main program.
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+    
+                
+    Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control  
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Connect the serial connection as above for results displaying.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 4: Run example.
+

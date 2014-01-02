@@ -1,0 +1,76 @@
+/***********************************************************************
+* $Id$       abstract.txt        2011-06-02        
+* @file      UART\Uart_Rs485Master\abstract.txt 
+* @brief       Description of the RS485_Master example.
+* @date      02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to use RS485 functionality on UART of LPC1788
+        in master mode.
+    Process:    
+        RS485 function on UART acts as Master mode on RS485 bus.
+        Master device will send a specified slave device address value
+        first, then master device will send data frames. After sending
+        completed, master device wait for response from slave device (example RS485_slave).
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+
+    Uart_Rs485Master.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                
+        RS485 Connection:
+            J16-4 of Rs485 Master Board connects to J16-4 of Rs485 Slave Board.
+            J16-5 of Rs485 Master Board connects to J16-5 of Rs485 Slave Board.
+            JP6:     1-2: ON
+                    3-4: OFF
+                    5-6: ON
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Connect RS485 as above instruction (using ADM485)
+        - Step 5: Run example and using Serial display to monitor the communication between master and slave.
+

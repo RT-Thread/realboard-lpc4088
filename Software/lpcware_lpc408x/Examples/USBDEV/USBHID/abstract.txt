@@ -1,0 +1,86 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       USBDEV\Usb_Audio\abstract.txt 
+* @brief      Description of the USBDEV Mass Storage example.
+* @date       10. October. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to implement an USB HID on LPC177x_8x/LPC407x_8x.
+    Process:
+        The USB HID is recognized by the host PC running Windows
+            which will load a generic HID driver. The board LEDs
+            and Push Buttons can then be accessed from the PC
+            through a custom HID Client Program.
+
+
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    usb.h:            USB Definitions
+    usbcfg.h:         USB Configurate Definition
+    usbcore.h/.c:     USB Core Module
+    usbdesc.h/.c:     USB Descriptors
+    usbhw.h/.c:       USB Hardware Layer
+    usbreg.h:         USB Hardware Layer Definitions for NXP Semiconductors LPC 
+    usbuser.h/.c:     USB Custom Module
+    hiduser.h/.c:     HID Custom Module
+    demo.c/.h:        Demo program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                Jumpers: default
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+    
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware as above instruction 
+        - Step 4: Hit reset button to run example.
+        - Step 5: Connect to PC using USB Port U1.
+        - Step 6: After see UGL(USB Good Link). Run HIDClient.exe.
+                          - Run HIDClient.exe.
+                          - Push Joystick switch and compare with the status of  "Inputs (Buttons)" group in the GUI of HIDClient.
+                          - Check on "Outputs (LEDs)" group in the GUI of HIDClient.exe and compare with the status of LED1 ~ LED8 
+
+
+
+
+

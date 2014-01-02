@@ -1,0 +1,138 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       USBDEV\Usb_VirtualCom\abstract.txt 
+* @brief      Description of the USBDEV Virtual COM example.
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use USBDEV on LPC177x_8x/LPC407x_8x to demo the virtual COM port.
+    Process:
+        The PC will install a virtual COM port on the PC (see Driver Installation).
+        After installation an additional port "LPC177x_8x USB VCom Port(COMx)"
+        can be found under System/Hardware/Device Manager/Ports(COM&LPT).
+        Number "x" is not fixed as different PC configuration may have different 
+        "x" displayed on the device manager. The USB host driver assigns "x" 
+        dynamically based on the existing COM port configuration of the system.
+        
+        Testing the USB Virtual COM port:
+          Connect the physical UART on the target board to PC.
+              On IAR Board, connect through RS232_0 Port (PORT_NUM must be set to 0).
+              On EA Board, connect through USB-mini port (J25) (if PORT_NUM is set to 0) or COM Port (J17) (if PORT_NUM is set to 1).
+          Open two Hyperterminal windows. 
+              One with "LPC177x_8x USB VCom Port(COMx)" 
+              One with the COM Port which is connecting to the physical UART on the target board.
+          Any data received from the physical COM will be forwarded to the virtual COM port 
+          and vice versa. So, this is bi-directional communication between the physical COM
+          port 0 or 1 on the board and the virtual COM port COMx on host PC. 
+          By default, COM PORT1 on the board is used for VirtualCOM port test.
+          In order to use COM PORT0 on the board, modify the definition PORT_NUM
+          from 1 to 0 in serial.h, recompile and reprogram the flash. RST jumper
+          needs to removed to start the Virtual COM port test.
+ 
+@Driver Installation:
+     "Welcome to the Found New Hardware Wizard" appears
+     - select 'No, not this time'
+     - press  'Next'
+
+     - select 'Install from a list or specific location (Advanced)'
+     - press  'Next'
+
+     - select 'Search for the best driver in these locations'
+     - check  'include this location in the serach'
+     - set to <project folder>
+     - press 'Next'
+
+     "Hardware Installation" appears
+     "has not passed Windows Logo testing..."
+     - press 'Continue Anyway'
+
+     "Completing the Found New Hardware Wizard" appears
+     - press 'Finish'
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files 
+    
+    cdc.h: USB CDC (Communication Device) Definitions
+    cdcuser.h/.c: USB Communication Device Class User module
+    serial.h/.c: serial port handling for LPC177x_8x/LPC407x_8x
+    usb.h:  USB Definitions
+    usbcfg.h: USB Custom Configuration
+    usbcore.h/.c: USB Core Module
+    usbdesc.h/.c: USB Descriptors
+    usbhw.h/.c: SB Hardware Layer Module
+    usbreg.h: USB Hardware Layer Definitions for NXP Semiconductors LPC 
+    usbuser.h/.c: USB Custom User Module
+    vcomdemo.h/.c: main program    
+    makefile: Example's makefile (to build with GNU toolchain)
+    lpc17xx-vom.inf: driver info for VCOM LPC177x_8x (used when Windows requires install driver)
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                Use USB mini port J19
+                - JP15: ON (near J19)
+                - JP16: ON (near J19)
+                - Other jumpers: Default
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+            
+
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware as above instruction 
+        - Step 4: Hit reset button to run example. (install driver if required)
+        - Step 5: After USB connect finished, open Device Manager > Ports (COM & LPT)
+                  see if "LPC177x_8x USB Vcom Port (COMx)" appears or not. 
+        - Step 6: Connect the physical COM on the board with PC.
+        - Step 6: Open one HyperTerminal for the physical COM and other for COMx with below configuration:
+                    - 9600 bps
+                    - 8 data bits
+                    - none parity
+                    - 1 stop bit
+                    - None flow control
+        - Step 7: Type any character on one HyperTerminal screen and see this character will be echoed in other screen 
+                    and vice versa 

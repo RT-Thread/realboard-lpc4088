@@ -1,0 +1,103 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       UART\Uart_IrDATransmit\abstract.txt 
+* @brief      Description of the UART Irda example.
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example, together with receive example, describes how to use UART in IrDA mode
+        
+    Process:
+        UART0/UART1 configuration:
+            – 115200 bps 
+            – 8 data bit 
+            – No parity 
+            – 1 stop bit 
+            – No flow control 
+            - Receive and transmit enable
+            
+        UART4 configuration:
+            – 115200 bps 
+            – 8 data bit 
+            – No parity 
+            – 1 stop bit 
+            – No flow control 
+            - Enable IrDA mode
+            - Transmit enable
+        
+        UART will print welcome screen first, then:
+            - Press ESC to exit.
+            - Press 'r' to print welcome screen menu again.
+            - Press two hex digits (each digit is from 0..F/f, ex: 1f means 0x1F) to form a byte value for UART4 TXD to transmit.
+            - Press other keys will take no effect.
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+
+    Uart_IrdaTransmit.c: Main program
+    LPC_Uart_IrDA_Schema.JPG: schematic for UART IrDA
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+
+            Note: this example code does not implement to use the on-board Infra component
+
+        UART IrDA connection:
+            Add in hardware: 1 Infrared Transmit LED, 1 C1815 transistor, 1 
+            resisotr 33R, 1 resistor 150R with connection as below
+
+                + Base of the transitor C1815 - Resistor - P0.22 (who will transmit the UART data)
+                + Collector of the C1815 - Resistor - Cathod of Infra LED
+                + Emitter of C1815 - GND
+                + Anode of LED - 3.3V Pole
+                
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+                  Also burn the receive example hex file to other board.
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Run both examples.
+                  Point the transmit infrared led to the receive infrared led.
+                  From PC's terminal application, type 2 hex digits to form a byte to transmit.
+                  Observe the 8 leds bank of the receive board to compare with the transmit value.
+

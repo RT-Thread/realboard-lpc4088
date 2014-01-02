@@ -1,0 +1,113 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       UART\Uart_Dma\abstract.txt 
+* @brief      Description of the UART DMA example.
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use UART in DMA mode
+    Process:
+        UART is configured as the following:
+             + Baudrate = 115200 bps
+             + 8 data bit
+             + 1 Stop bit
+             + None parity
+         GPDMA channel 0 using to transmit the welcome message (the destination source is UART transmit pin)
+         GPDMA channel 1 using to receive the character (the destination source is the UART receive pin)
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files
+     
+    Uart_Dma.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                        
+        UART configuration:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                        3-4: OFF
+                        5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9 (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            
+            Setting:
+                + 115200 bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control  
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+            
+    
+    Step to run:
+        - Step 1: Defined UART_TEST_NUM to choose what UART that will be tested
+        - Step 2: Build example.
+        - Step 3: Burn hex file into board (if run on ROM mode)
+        - Step 4: Connect selected UART on this board to your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Run example, using Serial display to monitor the message and to send a charater to UART

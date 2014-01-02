@@ -1,0 +1,5 @@
+RELEASE LPC407s_8s_177x_8x_120510
+
+***** Initial Release****
+1. Combined PDL for LPC407x_8x and LPC177x_8x
+2. Two sample projects: Blinky and RTC_Ev

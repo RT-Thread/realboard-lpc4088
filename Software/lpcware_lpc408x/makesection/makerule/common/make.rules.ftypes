@@ -1,0 +1,61 @@
+######################################################################## 
+# $Id:: make.rules.ftypes 1007 2008-08-06 18:14:48Z wellsk             $
+# 
+# Project: Standard compile makefile
+# 
+# Description: 
+#  default file types used by all compiler chains
+# 
+######################################################################## 
+# Software that is described herein is for illustrative purposes only  
+# which provides customers with programming information regarding the  
+# products. This software is supplied "AS IS" without any warranties.  
+# NXP Semiconductors assumes no responsibility or liability for the 
+# use of the software, conveys no license or title under any patent, 
+# copyright, or mask work right to the product. NXP Semiconductors 
+# reserves the right to make changes in the software without 
+# notification. NXP Semiconductors also make no representation or 
+# warranty that such application will be suitable for the specified 
+# use without further testing or modification. 
+########################################################################
+
+########################################################################
+#
+# define assembler extension for various tools  
+#
+########################################################################
+ASM_EXT  =
+
+ifeq ($(TOOL), gnu)
+ASM_EXT	=asm
+endif
+
+ifeq ($(TOOL), ads)
+ASM_EXT	=s
+endif
+
+ifeq ($(TOOL), rvw)
+ASM_EXT	=s
+endif
+
+ifeq ($(TOOL), ghs)
+ASM_EXT	=as
+endif
+
+ifeq ($(TOOL), iar)
+ASM_EXT	=s79
+endif
+
+ifeq ($(TOOL), keil)
+ASM_EXT	=s
+endif
+
+########################################################################
+#
+# Pick up the assembler, C and CPP source files in the directory  
+#
+########################################################################
+SRC   	 =$(wildcard *.c)
+SRCC  	 =$(wildcard *.cpp)
+ASM	 =$(wildcard *.$(ASM_EXT))
+OBJS  =$(SRC:%.c=%.o) $(SRCC:%.c=%.o) $(ASM:%.$(ASM_EXT)=%.o)

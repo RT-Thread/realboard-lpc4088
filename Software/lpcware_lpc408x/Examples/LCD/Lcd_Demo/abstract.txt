@@ -1,0 +1,93 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       LCD\Lcd_Demo\abstract.txt 
+* @brief      Description of the LCD example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+
+@Example description:
+    Purpose:
+          This example project describes how to test LCD module on LPC1788.          
+    Process:
+          There are some functions which this example supported. Update below macros to enable/disable the relevant 
+          functions. These macros are defined in lcd_config.h file.
+          - LOGO_DISPLAYED    : display an image at the center of the LCD. 
+          - TCS_USED          : use touch screen controller.
+          - ACCEL_SENSOR_USED    : use acceleration sensor to detect the board moves.
+          - PAINT_ON_SCREEN    : paint on screen when user touches on the LCD. This function only runs if TCS_USED is set.
+          Other configurations:
+          - LOGO_BPP        : Defined in logo.h file. It determines the BPP used. This example tested with 2bpp, 16bpp and 24bpp.  
+                          In case "7 inch TFT (800x480) rev PB1" is used, please don't set it as 24.
+          Steps in the example:
+          - Display the LOGO on screen.
+          - Display the cursor at the center of the LCD.
+          - Get the next cursor position using touch sensor or acceleration sensor.
+          - Move the cursor to the above position.
+                                
+          Besides, the backlight of LCD can be adjust by turn left/right potentiometer.
+
+
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files    
+     
+    \app: Include main file, logo & cursor image
+    \board: board config file
+    \modules: include supported drivers for this example 
+    
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               Connect OEM Base Board with "QVGA TFT LCD (320x240)" or "EA LCD board, 7 inch TFT (800x480) rev PB1."
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                        
+    
+    Running mode:
+        This example can run on ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+                
+Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Configure hardware and serial display as above instruction 
+        - Step 4: Run example, observe LCD display
+        - Step 5: In case QVGA is used, touch on screen and observe the cursor moves.
+        
+        @Warning: Maybe J-LINK power source cannot supply enough power for LCD

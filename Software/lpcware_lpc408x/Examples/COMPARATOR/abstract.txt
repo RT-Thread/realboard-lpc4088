@@ -1,0 +1,66 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2012-08-15        
+* @file       COMPARATOR\abstract.txt 
+* @brief      Description of the COMPARATOR example.
+* @version    1.0
+* @date       15. Aug. 2012
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2012, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This simple program is used to test COMPARATOR functionality        
+    Process: 
+        The test will show which voltage is higher comparing P1_5 and P1_7
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    cmptest.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC4088 OEM Board rev A and OEM Base Board rev A
+            
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                        
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+        
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC4088 and OEM Base Board rev A
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Reset the board 
+        
+
+
+
+ 

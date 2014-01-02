@@ -1,0 +1,89 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       USBHostLite\UsbHost_MassStorage\abstract.txt 
+* @brief      Description of the USBHost Mass Storage example.
+* @date       08. September. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to write a simple USB Host Controller on LPC177x_8x/LPC407x_8x.
+    Process:
+        This sample demonstrates how to access the files on "USB Flash drive" connected to 
+        USB Host port on evaluation board using NXP Semiconductors LPC177x_8x/LPC407x_8x MCU.
+
+        When a USB Mass Storage device is connected, it enumerates the device, mounts the file
+        system on "USB Flash drive", lists out files/folder in root directory and then executes a
+        copy of the first file in root directory.
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    usbhost_main.c/.h       main program.
+    usbhost_ms.c/.h           Implement Mass Storage class.
+    usbhost_uart.c/.h         Debug module.
+    usbhost_fat.c/.h       Read/Write FAT system
+    usbhost_err.h          Error codes.
+    usbhost_inc.h           Include files.
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+
+                Use USB Host port J20
+                - JP15: opened
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - 3.3V_IO_E    :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+    
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Change the file name for reading/writting as below information.
+                    File: usbhost_main.h
+                    Macros: FILENAME_R and FILENAME_W
+        - Step 2: Build example.
+        - Step 3: Burn hex file into board (if run on ROM mode)
+        - Step 4: Configure hardware as above instruction. 
+        - Step 5: Hit reset button to run example.
+        - Step 6: Plug a USB Flash Drive to USB Host Port (J20).
+        - Step 7: Check the log information and then plug the USB Drive to PC and check the written file.
+

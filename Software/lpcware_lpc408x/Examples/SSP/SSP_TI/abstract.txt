@@ -1,0 +1,135 @@
+/**********************************************************************
+* $Id$      abstract.txt             
+*//**
+* @file     abstract.txt 
+* @brief      Example description file
+* @version  1.0
+* @date       
+* @author   NXP MCU SW Application Team
+*
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use SSP peripheral with TI frame format.
+    Process:
+        This example uses two SSP peripherals in TI frame format, one is set 
+        as master mode and the other is set as slave mode.
+        SSP master/slave configuration:
+            - CPHA = 0: data is sampled on the first clock edge of SCK.
+            - CPOL = 0: SCK is active high
+            - Clock rate = 1MHz
+            - DSS = 8: 8 bits per transfer
+            - MSTR = 0/1: SSP operates in Slave/Master mode
+            - FRF= 1: TI Frame format
+        After initialize buffer, SSP master will transfer/receive data to/from SSP slave
+        in INTERRUPT mode.
+        After transmittion completed, receive and transmit buffer will be compared, if they 
+        are not similar, the program will enter infinite loop and a error notice will
+        be displayed. 
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files
+     
+    ti_test.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        TThis example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+        
+        SSP Connection:            
+            Pin Map:
+                                         EA Board
+            - SSP_MASTER_SCK             J5.19     
+            - SSP_MASTER_SSEL            J3.24     
+            - SSP_MASTER_MISO            J5.20     
+            - SSP_MASTER_MOSI            J3.23     
+
+            - SSP_SLAVE_SCK              J5.17        
+            - SSP_SLAVE_SSEL             J3.18        
+            - SSP_SLAVE_MISO             J3.19        
+            - SSP_SLAVE_MOSI             J5.18 
+    
+
+            SCK, SSEL, MISO and MOSI pin of SSP0 are connected to the coressponding pins of SSP1.
+            Define location number by using SSP0_LOCALTION_NUM and SSP1_LOCALTION_NUM  macro.    
+            Remove jumpers JP24~JP27 when Location_0 of SSP1 is used.
+                    
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Run example, observe SSP transfer result on serial display
+        
+        

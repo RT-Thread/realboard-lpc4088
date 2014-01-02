@@ -1,0 +1,56 @@
+[Version] 
+Signature="$Windows NT$" 
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318} 
+Provider=%NXP% 
+;LayoutFile=layout.inf
+DriverVer=29/08/2011,1.0.0.0
+
+[Manufacturer] 
+%NXP%=DeviceList, NTx86, NTamd64
+
+[DeviceList.NTx86] 
+%DESCRIPTION%=LPC177x_8xUSB, USB\VID_1FC9&PID_2002
+
+[DeviceList.NTamd64] 
+%DESCRIPTION%=LPC177x_8xUSB, USB\VID_1FC9&PID_2002
+
+;------------------------------------------------------------------------------
+;  Windows 2000/XP Sections
+;------------------------------------------------------------------------------
+
+[LPC177x_8xUSB.nt] 
+include=mdmcpq.inf
+CopyFiles=DriverCopyFiles
+AddReg=LPC177x_8xUSB.nt.AddReg 
+
+[DriverCopyFiles]
+usbser.sys,,,0x20
+
+[LPC177x_8xUSB.nt.AddReg] 
+HKR,,DevLoader,,*ntkern 
+HKR,,NTMPDriver,,usbser.sys 
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider" 
+
+[LPC177x_8xUSB.nt.Services] 
+include=mdmcpq.inf
+AddService=usbser, 0x00000002, DriverService
+
+
+[LPC177x_8xUSB.nt.HW]
+include=mdmcpq.inf
+
+[DriverService] 
+DisplayName=%DESCRIPTION% 
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\usbser.sys 
+
+;------------------------------------------------------------------------------
+;  String Definitions
+;------------------------------------------------------------------------------
+
+[Strings] 
+NXP="NXP - Founded by Philips"
+DESCRIPTION="LPC177x_8x USB VCom Port" 

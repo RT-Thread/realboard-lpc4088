@@ -1,0 +1,173 @@
+######################################################################## 
+# $Id:: make.rules.environment 745 2008-05-13 19:59:29Z pdurgesh       $
+# 
+# Project: Common makefile definitions
+# 
+# Description: 
+# 	root level makefile that is used by all the 
+# 	lowlevel makefiles to resolve architecture specific and path 
+# 	dependencies. 
+# 
+######################################################################## 
+# Software that is described herein is for illustrative purposes only  
+# which provides customers with programming information regarding the  
+# products. This software is supplied "AS IS" without any warranties.  
+# NXP Semiconductors assumes no responsibility or liability for the 
+# use of the software, conveys no license or title under any patent, 
+# copyright, or mask work right to the product. NXP Semiconductors 
+# reserves the right to make changes in the software without 
+# notification. NXP Semiconductors also make no representation or 
+# warranty that such application will be suitable for the specified 
+# use without further testing or modification. 
+########################################################################
+
+BUILD_ROOT =$(PROJ_ROOT)
+
+FWLIB	   =Drivers
+LPC_SILENT =0
+
+ECHO		= $(TOOLS_PATH)echo
+ifeq ($(LPC_SILENT), 1)
+	MAKE    = $(TOOLS_PATH)make -s
+else	
+	MAKE    = $(TOOLS_PATH)make
+endif
+MKDEPS		= $(TOOLS_PATH)makedepend
+RANLIB		= ranlib
+MV			= $(TOOLS_PATH)mv -f
+CP			= $(TOOLS_PATH)cp
+CD			= $(TOOLS_PATH)cd
+LS			= dir
+MKDIR		= $(TOOLS_PATH)mkdir -p
+RM			= $(TOOLS_PATH)rm -f
+RMREC		= $(TOOLS_PATH)rm -f -r
+RMDIR		= $(TOOLS_PATH)rm -f -r
+
+ASTYLE		= astyle --options=$(BUILD_ROOT)/makesection/tools/astyle.cfg 
+
+########################################################################
+#
+# ELF to another format type file
+#
+########################################################################
+
+ifeq ($(DEBUG_MODE),1)
+
+# In order to generate the application code with DEBUG function
+# All debug information will be remained (Un-strip)
+
+ELFSTRIP 	= $(OBJCOPY) -O elf32-littlearm
+ELFTOBIN	= $(OBJCOPY) -I elf32-little -O binary 
+ELFTOREC 	= $(OBJCOPY) -O srec 
+ELFTOHEX	= $(OBJCOPY) -O ihex 
+BINTOELF	= $(OBJCOPY) -I binary -O elf32-little 
+
+else
+
+# In order to generate the final application code without DEBUG
+# All debug information will be remove (strip)
+
+ELFSTRIP 	=arm-none-eabi-objcopy -O elf32-littlearm --strip-all 
+ELFTOBIN	= $(OBJCOPY) -I elf32-little -O binary --strip-debug --strip-unneeded 
+ELFTOREC 	= $(OBJCOPY) -O srec --strip-debug 
+ELFTOHEX	= $(OBJCOPY) -O ihex --strip-debug 
+BINTOELF	= $(OBJCOPY) -I elf32-little -O elf32-little --strip-all 
+
+endif
+
+ELFTOBIN	+= --verbose 
+
+
+
+########################################################################
+#
+# ROOT LOCATION FOR (FWLIB) LIBRARIES
+#
+########################################################################
+
+FWLIB_LIB_DIR =$(BUILD_ROOT)/$(FWLIB)/library
+
+
+########################################################################
+# 
+# (FWLIB) SOURCE AND HEADERS LOCATIONS
+# 
+########################################################################
+
+FWLIB_DIR     =$(BUILD_ROOT)/$(FWLIB)
+FWLIB_SRC_DIR =$(FWLIB_DIR)/source
+FWLIB_INC_DIR =$(FWLIB_DIR)/include
+
+
+########################################################################
+# 
+# (CMCORE) SOURCE AND HEADERS LOCATIONS
+# 
+########################################################################
+
+CMCORE_DIR     =$(BUILD_ROOT)/Core/CMSIS/Include
+CMCORE_INC_DIR =$(CMCORE_DIR)
+
+########################################################################
+# 
+# (DEVICE) HEADERS LOCATIONS
+# 
+########################################################################
+
+DEVICE_DIR     =$(BUILD_ROOT)/Core/Device/$(MANUFACTURE)/$(DEVICE)/Source/Templates
+DEVICE_INC_DIR =$(BUILD_ROOT)/Core/Device/$(MANUFACTURE)/$(DEVICE)/Include
+
+########################################################################
+# 
+# (BOARD SUPPORTS) HEADERS LOCATIONS
+# 
+########################################################################
+
+BOARD_SUPPORT_DIR     =$(BUILD_ROOT)/BoardSupport
+BOARD_SUPPORT_INC_DIR =$(BUILD_ROOT)/BoardSupport
+BOARD_SUPPORT_SRC_DIR =$(BUILD_ROOT)/BoardSupport
+
+########################################################################
+#
+# TOOL SPECIFIC PREFIX AND POSTFIX
+# 
+########################################################################
+
+ifeq ($(TOOL), arm)
+  PREFIX =
+else
+  ifeq ($(LIB), true)
+    PREFIX =
+  else
+    ifeq ($(TOOL), gnu)
+      PREFIX =
+    else
+      PREFIX =
+    endif 
+  endif
+endif
+
+POSTFIX  =$(TOOL)
+
+########################################################################
+#
+# LIBRARY NAMES
+# 
+########################################################################
+
+FWLIB_ARCHIVE_NAME  =$(PREFIX)$(FWLIB)$(DEVICE)$(POSTFIX)
+
+ifeq ($(TOOL), ghs)
+FWLIB_ARCHIVE  	  =lib$(FWLIB_ARCHIVE_NAME).a
+else
+FWLIB_ARCHIVE  	  =$(FWLIB_ARCHIVE_NAME).a
+endif
+
+
+########################################################################
+#
+# LIBRARIES WITH COMPLETE LOCATION PATH
+# 
+########################################################################
+
+TARGET_FWLIB_LIB =$(FWLIB_LIB_DIR)/$(FWLIB_ARCHIVE)

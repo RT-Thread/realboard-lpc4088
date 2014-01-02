@@ -1,0 +1,194 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       EMAC\Emac_uIP\abstract.txt 
+* @brief      Description of the EMAC uIP example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to handle a  single network interface and 
+        contains the IP, ICMP, UDP and TCP protocols. 
+    Process:
+        The uIP TCP/IP stack is an extremely small implementation of the TCP/IP 
+        protocol suite intended for embedded systems running low-end 8 or 16-bit 
+        microcontrollers. The code size and RAM requirements of uIP is an order of 
+        magnitude smaller than other generic TCP/IP stacks today. 
+        
+        IP Adddress configuration
+            If fixed IP is used, update below macros in uipopt.h file:
+                #define UIP_IPADDR0      192
+                #define UIP_IPADDR1      168
+                #define UIP_IPADDR2      1
+                #define UIP_IPADDR3      99
+                #define UIP_DRIPADDR0    192
+                #define UIP_DRIPADDR1    168
+                #define UIP_DRIPADDR2    1
+                #define UIP_DRIPADDR3    1
+                #define UIP_NETMASK0     255
+                #define UIP_NETMASK1     255
+                #define UIP_NETMASK2     255
+                #define UIP_NETMASK3     0
+                #define UIP_FIXEDADDR    1
+                The default IP address is:
+                    192.168.1.99
+                The default router's IP address is:
+                    192.168.1.1
+                The subnet mask is:
+                    255.255.255.0
+            If DHCP is used, add definition of DHCP_ENABLE.
+            
+        For web server application:
+            The Flash_WebServer target implements WEB server.
+            To connect this web server, IP address on your PC should be in the same network 
+            to the web server.
+            
+        For web client application:
+            When start up, the Web Client will connect to the web server using dns server.
+            Web server address is (defined in Emac_uIP.c):
+                www.sics.se/~adam/uip.
+            DNS server is (defined in Emac_uIP.c):
+                8.8.8.8
+            The content of the web page will be printed on terminal.
+            
+        For SMTP client application:  
+            Enable ESMTP by ESMTP_ENABLE macro in smtp.h file.
+            Update below information before compiling example (Emac_uIP.c file).
+                SMTP Server: address, name, username and password. Username & password are only
+                            used in case ESMTP_ENABLE is enabled.
+                Email information.
+        
+        For Telnet application:
+            This is a simple demo for telnet application. It receives commands from client and
+            sends back response data. 
+            If the received command is quit command, do disconnect.
+            If the received command is valid, sends help string to client.
+            If the received command is invalid, sends error message to client.
+                
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files    
+    \apps: contains a few example applications
+        + \dhcpc: Implementation of DHCPC protocol
+        + \hello-world: A small example showing how to write applications with protosockets.
+        + \resolv: DNS resolver
+        + \smtp: SMTP E-mail sender
+        + \telnetd: Implementation of TELNET network protocol
+        + \webclient: Implementation of the HTTP client.
+        + \webserver: Implementation of an HTTP server
+    \common: implement some supported standard functions (printf, serial..) 
+     \uip: contains files that implement uIP stack
+    \lpc_port: include main program
+
+@How to run:
+    Hardware configuration:    
+        This example is tested on:    
+        1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+           LPC4088 OEM Board rev A and OEM Base Board rev PB1
+        
+        2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+
+                - Jumper PD/CTRL at 2-3 position
+
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control  
+    
+    Running mode:
+        This example can run only on ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board 
+        - Step 3: Use normal (straight) cable to connect from your PC to ETH port on eval board
+        - Step 4: Connect selected UART on this board to your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Re-config IP address on PC so that it is in the same domain with the target board.
+        - Step 7: Reset board, monitor the status via serial display until EMAC initialized
+        For Web Server application
+        - Step 8: Open command prompt window, execute 'ping 192.168.0.100' command
+        - Step 9: Open web browser, access to address "http://192.168.0.100" to display the content
+                   of the webpage.
+        For Web Client application
+        - Step 8: Observe the serial output for the web page content.
+        
+        For SMTP application
+        - Step 8: Check if the email is sent.        
+        
+        For Telnet application
+        - Step 8: Turn on telnet client on your PC.
+        - Step 9: Open command prompt window, type in below command to connect to the board.
+                telnet <Server IP Address>
+        - Step 10: Type ? to know the avaiable commands.
+        - Step 11: Type telnet command and check results.
+                

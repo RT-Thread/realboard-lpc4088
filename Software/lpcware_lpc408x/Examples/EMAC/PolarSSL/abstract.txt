@@ -1,0 +1,162 @@
+ /***********************************************************************
+* $Id$      abstract.txt        2012-11-01      
+* @file     EMAC\Emac_PolarSSL\abstract.txt 
+* @brief    Description of the EMAC Internet Radio example.
+* @version  1.0
+* @date     01. November. 2012
+* @author   NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to port PolarSSL library on uIP.
+    Process:
+        The uIP TCP/IP stack is an extremely small implementation of the TCP/IP 
+        protocol suite intended for embedded systems running low-end 8 or 16-bit 
+        microcontrollers. The code size and RAM requirements of uIP is an order of 
+        magnitude smaller than other generic TCP/IP stacks today. This example use
+        this stack to connecting to radio stations.
+        
+        PolarSSL is an SSL library written in ANSI C. PolarSSL makes it easy for developers 
+        to include cryptographic and SSL/TLS capabilities in their (embedded) products with 
+        as little hassle as possible. It is designed to be readable, documented, tested, 
+        loosely coupled and portable. Go to http://polarssl.org/ to get more information.
+        
+        Changes in PolarSSL to work on uIP:
+        - Update config.h file in \polarssl\include file to disable/enable PolarSSL features.
+        - Don't use net.c file. Functions in this file will be re-implemented.
+        - Rewrite functions in debug.c file: use a global string buffer.
+        SSL output buffer.
+        - Update ssl_cli file:
+          + Update ssl_handshake_client so that it just read data from uIP receive buffer, not wait for 
+          data from server.
+          
+        To use PolarSSL:
+        - Implement following functions to pass to PolarSSL library:
+          + net_send and net_recv function
+          + random function and debug function.
+        - Implement time function. It is used in PolarSSL to get the current time. 
+          
+        IP Adddress configuration
+            If fixed IP is used, update below macros in uipopt.h file:
+                #define UIP_IPADDR0      192
+                #define UIP_IPADDR1      168
+                #define UIP_IPADDR2      1
+                #define UIP_IPADDR3      99
+                #define UIP_DRIPADDR0    192
+                #define UIP_DRIPADDR1    168
+                #define UIP_DRIPADDR2    1
+                #define UIP_DRIPADDR3    1
+                #define UIP_NETMASK0     255
+                #define UIP_NETMASK1     255
+                #define UIP_NETMASK2     255
+                #define UIP_NETMASK3     0
+                #define UIP_FIXEDADDR    1
+                The default IP address is:
+                    192.168.1.99
+                The default router's IP address is:
+                    192.168.1.1
+                The subnet mask is:
+                    255.255.255.0
+            If DHCP is used, add definition of DHCP_ENABLE.
+            
+        When start up, the LPC1788 will connect to the given radio station using dns server.
+            Server address:
+                https://tools.ietf.org/html/rfc5246
+            DNS server is (defined in Emac_uIP.c):
+                192.168.1.1  
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files    
+    \apps: contains a few example applications
+        + \dhcpc: Implementation of DHCPC protocol
+        + \resolv: DNS resolver
+        + \webclient: Implementation of the HTTP client.
+        + \webbrowser: Implementation a simple html parser.
+    \common: implement some supported standard functions (printf, serial..) 
+    \lib: implements some utitlities.
+     \uip: contains files that implement uIP stack
+    \polarssl: contain polarssl library
+    \lpc_port: include main program
+
+@How to run:
+    Hardware configuration:    
+        This example is tested on:    
+            LPC1788 OEM board connects with QVGA base board v1.2
+            These jumper should be configured as follows:
+                - ETH_PHY_PD: OFF
+                - JP 25~27: 2-3
+                - JP28: ON
+            Note: Sure that all resistors from R44-R53 on OEM board were been filled.
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A
+                - UART0: USB serial port
+                    + All jumpers: Default
+                - UART1: 
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                - UART2:
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 1-2
+                    + JP13: 1-2
+                    + Other jumpers: Default
+                - UART3:
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4:
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control  
+    
+    Running mode:
+        This example can run only on ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board 
+        - Step 3: Use normal (straight) cable to connect the board to the router.
+        - Step 4: Connect UART0 on this board to COM port on your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Reset board, monitor serial output on terminal.
+                

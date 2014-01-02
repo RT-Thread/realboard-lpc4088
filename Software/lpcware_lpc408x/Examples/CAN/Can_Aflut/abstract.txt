@@ -1,0 +1,145 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       CAN\Can_Aflut\abstract.txt 
+* @brief      Description of the CAN test AFLUT example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to use CAN driver functions for setup and change AFLUT table dynamically.
+    Process:
+        Using 2 CAN peripheral CAN1 and CAN2 to test CAN operation.
+        This example supports all kind of identifier: FullCAN, explicit or group format.
+        Both CAN1 and CAN2 are set baudrate at 125KHz.
+        First, settup AF look-up table with 5 sections:
+            - 6 entries for FullCAN section
+            - 6 entries for Standard Frame Format (SFF) section
+            - 6 entries for Group Standard Frame Format (SFF_GRP) section
+            - 6 entries for Extended Frame Format (EFF) section
+            - 6 entries for Group Extended Frame Format (EFF_GRP) section
+        Initialize 10 messages:
+            - 1st message with 11-bit ID which exit in AF Look-up Table in FullCAN Section
+            - 2nd message with 11-bit ID which not exit in AF Look-up Table 
+            - 3th message with 11-bit ID which exit in AF Look-up Table in SFF Section
+            - 4th message with 11-bit ID which not exit in AF Look-up Table
+            - 5th message with 11-bit ID which exit in AF Look-up Table in Group SFF Section
+            - 6th message with 11-bit ID which not exit in AF Look-up Table
+            - 7th message with 29-bit ID which exit in AF Look-up Table in EFF Section
+            - 8th message with 29-bit ID which not exit in AF Look-up Table
+            - 9th message with 29-bit ID which exit in AF Look-up Table in Group of EFF Section
+            - 10th message with 29-bit ID which not exit in AF Look-up Table
+        Then, send 10 messages from CAN1 to CAN2, whenever CAN2 receive message that has ID exit in its AFLUT, CAN
+        receive interrupt occurs, CAN interrupt service routine "CAN_IRQHandler" will be invoked to receive message 
+        and save it in array "AFRxMsg[]".
+        In this case, message 1,3,5,7,9 will be received.
+        After that, "CAN_ChangeAFTable" function will be called to load and remove entries in AFLUT in such a way as 
+        to receive messages 2,4,6,9,10 instead of 1,3,5,7,9.
+        Re-send 10 messages and re-received messages to check if AFLUT operation correct or not.
+        
+        Open serial display window to observe CAN transfer processing. 
+            
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Can_Aflut: main program 
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            CAN setting:
+                + Connect: TP6 - P0.4-RD2 (J5.16)
+                + Connect: TP8 - P0.5-TD2 (J5.15)
+                + JP14: 1-3: ON
+                        2-4: ON
+            (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+            
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+        
+        Setting:
+            + 115200bps 
+            + 8 data bit 
+            + No parity 
+            + 1 stop bit 
+            + No flow control  
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Run example:
+            - Press "1" to initialize message and AFLUT 
+            - Press "2" to start CAN operation
+            - Press "3" to display received messages
+            - Press "4" to change AFLUT
+            - Press "5" to re-send message
+            - Press "6" to display received messages

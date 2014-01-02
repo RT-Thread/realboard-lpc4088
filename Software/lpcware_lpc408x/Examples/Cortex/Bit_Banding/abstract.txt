@@ -1,0 +1,145 @@
+/**********************************************************************
+* $Id$        abstract.txt             
+*//**
+* @file       abstract.txt 
+* @brief      Example description file
+* @version    1.0
+* @date       
+* @author     NXP MCU SW Application Team
+*
+* Copyright(C) 2012, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to test Bit-banding feature of Cortex-M3 processor
+    Process:
+        The processor memory map includes two bit-band regions. These occupy the lowest
+        1MB of the SRAM and peripheral memory regions respectively.
+        + SRAM:     Bit-band region:     0x20000000 - 0x200FFFFF
+                    Bit-band alias:        0x22000000 - 0x23FFFFFF
+        + PERI:        Bit-band region:    0x40000000 - 0x400FFFFF
+                    Bit-band alias:        0x42000000 - 0x43FFFFFF
+        The mapping formula:
+                bit_word_offset = (byte_offset * 32) + (bit_number * 4)
+                bit_word_address = bit_band_base + bit_word_offset
+        where:
+        + bit_word_offset: the position of the target bit in the bit-band memory region
+        + bit_word_addr: the address of the word in the alias memory region that maps to the target bit
+        + bit_band_base: the starting address of the alias region
+        + byte_offset: the number of byte in the bit-band region that contains the targeted bit
+        + bit_number: is the bit position (0-7) of the targeted bit
+        
+        Note: In fact, the SRAM on LPC1788 just available in two ranges:
+                    + 0x20000000 - 0x20007FFF: for on-chip SRAM
+                    + 0x20098000 – 0x200980BF for GPIO registers
+              So, just can set 'VAR_ADDR' with value that exits in two ranges SRAM above.
+        
+        
+        First, the program test SRAM bit-banding:
+            + read the value at VAR_ADDRESS
+            Using bit-band access to:
+            + read the value at 'VAR_BIT'.
+            + clear the value at 'VAR_BIT' and print new value at VAR_ADDRESS 
+            + re-set the value at 'VAR_BIT' and print new value at VAR_ADDRESS
+        Then, the program test PERIPHERAL bit-banding:
+            + Assigned value for PERI_ADDRESS
+            Use bit-band access to:
+            + read the value at 'PERI_BIT'
+            + clear the value at 'PERI_BIT' and print new value at PERI_ADDRESS 
+            + re-set the value at 'PERI_BIT' and print new value at PERI_ADDRESS
+                    
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    
+    lpc_libcfg.h: Library configuration file - include needed driver library for this example 
+    makefile: Example's makefile (to build with GNU toolchain)
+    bitband.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                        
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                        3-4: OFF
+                        5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9 (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+        - Step 3: Connect selected UART on this board to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Run example and observe result on serial display
+            
+        

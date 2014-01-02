@@ -1,0 +1,157 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       MCPPWM\Mcpwm_Simple\abstract.txt
+* @brief      Description for the MCPWM Simple example run on LPC177x_8x/LPC407x_8x.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/  
+
+@Example description:
+    Purpose:
+        This example describes how to test Motor Control PWM module in LPC177x_8x/LPC407x_8x.
+    Process:
+        Tested function on MCPWM could be: 
+            - 3-phase AC mode: inverted output is enable, A0 and A1 output pin is internally routed to A0 signal
+            - 3-phase DC mode: inverted output is enable
+            - capture on Motor Control: in this case is used to detect the falling edge on MCO0B output pin.
+                  The MCFB0 input pin therefore must be connected to MCO0B.
+                    + Capture Channel 0.
+                    + Capture falling edge on MCFB0 input pin.
+                    + Interrupt enabled on capture event.
+        
+        Channel 0,1,2 will be configured as follows:
+            - edge aligned operation 
+            - polarity pin: Passive state is LOW, active state is HIGH
+            - disable dead time
+            - enable update value
+            - period time = 300
+            - pulse width value:
+                + channel 0 = 0
+                + channel 1 = 100
+                + channel 2 = 200
+        The program will update the value for pulse width for 3 channel continuously from 0 to 300, increase 20 
+        each update time. After each update, the serial will write "Update!" into screen.
+        After that, 'CapFlag' will be checked if detect falling edge on MCO0B or not.
+        If yes, the program will print the current capture value into screen.
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Mcpwm_Simple.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)    
+                
+        MCPWM connection:
+            - For the capture function, pin MCFB/MCI0 (P1.20) must be connected with 
+            pin MC0B (P1.22) to capture the pulse-width of signal output of MC0B from 
+            the beginning to the falling edge.            
+
+            - The output signal can be observed by oscilloscope on these pins below:
+                                        PA brd
+                + P1.19 - MC0A            J3.33
+                + P1.22 - MC0B            J5.33
+                + P1.25 - MC1A            J3.36
+                + P1.26 - MC1B            J5.35
+                + P1.28 - MC2A            J5.36
+                + P1.29 - MC2B            J3.38
+
+
+                + P1.20                   J5.32
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control         
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Chose MCPWM mode that want to test
+            + If want to test 3-phase DC mode, setting: 
+                    #define MCPWM_WORKING_MODE    DC_MODE_TEST
+                    
+            + If want to test 3-phase AC mode, setting:
+                    #define MCPWM_WORKING_MODE    AC_MODE_TEST
+                    
+            + If want to test Capture MCPWM mode, setting:
+                    #define CAPTURE_MODE_TEST    1
+                    
+        - Step 2: Build example.
+        - Step 3: Burn hex file into board (if run on ROM mode)
+        - Step 4: Connect selected UART on this board to your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Run example. See capture result on serial display (if use Capture mode)
+                  And use oscilloscope to monitor the wave form.
+

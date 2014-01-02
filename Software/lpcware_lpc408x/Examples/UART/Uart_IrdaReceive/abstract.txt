@@ -1,0 +1,97 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       UART\Uart_IrdaReceive\abstract.txt 
+* @brief      Description of the UART IrDA example.
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example, together with the transmit example, describes how to use UART in IrDA mode
+        
+    Process:
+        UART0/ UART1 configuration for communication with PC:
+            – 115200 bps 
+            – 8 data bit 
+            – No parity 
+            – 1 stop bit 
+            – No flow control 
+            - Receive and transmit enable
+            
+        UART4 configuration for communication with transmitting IrDA:
+            – 115200 bps 
+            – 8 data bit 
+            – No parity 
+            – 1 stop bit 
+            – No flow control 
+            - Enable IrDA mode
+        
+        The data recieved via PC COM port will be displayed by the LEDs that connected to PCA9532
+        (controlled by I2C from LPC1788)
+        
+        UART will print welcome screen first, then UART4 keep reading the income irda signal and
+        output to 8 leds bank the received value.
+        
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    \EWARM: includes EWARM (IAR) project and configuration files
+    
+    Uart_IrdaReceive.c: Main program
+    LPC_Uart_IrDA_Schema.JPG: schematic for UART IrDA
+
+@How to run:
+    Hardware configuration:        
+        This example was tested only on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                        
+            UART IrDA connection:
+                Add in a simple hardware: 1 Infrared receive LED, 1 resistor 150R
+
+                + Anode of Infra Reciever LED - 3.3V Pole
+                + Cathod of the Infra LED - Resistor 150R - GND
+                + Cathod of the Infra LED - P2.9 (U4_RX) 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run on ROM mode)
+                  Also burn the transmit example hex file to the other board.
+        - Step 3: Connect the board which is used as a transmitter to your computer
+        - Step 4: Configure hardware and serial display as above instruction 
+        - Step 5: Run both examples
+                  Point the infrared transmit led to the infrared received led66
+                  Observe the 8 leds bank and compare with the value send out by the transmit example.
+

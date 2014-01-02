@@ -1,0 +1,159 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       ADC\Adc_Burst\abstract.txt 
+* @brief      Description of the ADC burst (single or multiple input) example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+    Purpose:
+        This example describes how to use ADC conversion in burst mode with single or multiple input.
+        This example also describes how to inject an ADC conversion channel while the others are running.
+    Process:
+        The ADC conversion rate is 400KHz. A fully accurate conversion requires 31 of these clocks. 
+        So ADC clock = 400KHz * 31 = 12.4MHz.
+        Note that maximum ADC clock input is 12.4MHz.  
+        
+        Burst ADC will repeatedly sample-convert the voltage on ADC0.x pin(s) then update the channel data register(s).
+        So we just need to read the ADC channel data register(s) and display the value via UART0. 
+        
+        Turn potentiometer to change ADC signal input.
+        
+        Only in burst mode, ADC can sample multiple channels, then we can inject by configuring this mode.
+        In this example, other ADC channel is used is ADC channel 3.
+        This example uses external interrupt EXTINT0 on P2.10 to trigger the injection, and uses LED P0.13 
+        (LED USB Host) to toggle the LED indicating that an ADC channel has just been injected or removed.
+            - LED on: ADC channel 3 is activated.
+            - LED off: ADC channel 3 is inactivated.
+
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+    
+    Adc_Burst.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                                
+        ADC configure:
+            *For multiple inputs:
+                - The ADCx sample pin must not left floating, otherwise,
+                the readout value of these pins will same as the value 
+                of the pin which connected to a real voltage.
+                - This example uses an addition ADCx pin: AD0.3 (P0.26).
+                Make sure the SPK jumper is OFF.
+                - Try to make an external 10K, 3 pins vari-resistor,
+                1 terminal connects to 3.3V or Vrefp, the other connects to GND,
+                and the rest (middle pin) connects to P0.26 
+            *For injection test:
+                - LED jumper need to be ON to blinking LED P0.13.                    
+    
+    
+    Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            - UART0: USB serial port (J25)
+                + All jumpers: Default
+            - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+            - UART2: Connects UART pins to COM Port (J17)
+                + JP6:     1-2: OFF
+                        3-4: OFF
+                        5-6: ON
+                + JP12: 2-3
+                + JP13: 2-3
+                + Other jumpers: Default
+            - UART3: Connects UART pins to COM Port (J17)
+                + P0.2 (@J5.13) - JP12.2
+                + P0.3 (@J5.14) - JP13.2
+            - UART4: Connects UART pins to COM Port (J17)
+                + P0.22 (@J3.25) - JP12.2
+                + P2.9  (@J3.15) - JP13.2
+        2. LPC1788 IAR Start Kit Rev.B
+            - UART0: 
+                All jumpers: optional
+        Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+        
+        Setting:
+            + 115200bps 
+            + 8 data bit 
+            + No parity 
+            + 1 stop bit 
+            + No flow control              
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:        
+        - Step 1: Choose correct working mode:
+            + If test multiple input, then uncomment "#define LPC_ADC_BURST_MULTI"
+            + If test injection, then uncomment:
+                    + "#define LPC_ADC_BURST_MULTI"
+                    + "#define LPC_ADC_INJECT_TEST"
+        - Step 2: Build example.
+        - Step 3: Burn hex file into board (if run on ROM mode)
+        - Step 4: Connect selected UART on this board to your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Run example, turn potetiometer and observe data on serial display
+                  *For injection test:
+                      - Generate external interrupt EINT0 to see the state of LED P0.13 (LED UST Host):
+                          + ON: ADC channel 3 has just been inserted.
+                          + OFF: ADC channel 3 has just been removed.
+                      - Look at the PC's terminal application screen, associate with the state of LED P0.13(LED UST Host):
+                          + ON: the ADC channel 3 value is continuosly updated.
+                          + OFF: the ADC channel 3 value is unchanged, keep its last updated value.
+    
+        @Note: Generate external interrupt EINT0:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A  or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1:
+                - Press SW6 button
+            2. On LPC1788 IAR Start Kit Rev.B:
+                - Connect ISP_E[2] with GND

@@ -1,0 +1,141 @@
+/***********************************************************************
+* $Id$        abstract.txt        2011-06-02        
+* @file       SSP\Ssp_Dma\abstract.txt 
+* @brief      Description of the SSP DMA example.
+* @version    1.0
+* @date       02. June. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use SSP peripheral with DMA support.
+    Process:
+        SSP configuration:
+            - CPHA = 0: data is sampled on the first clock edge of SCK.
+            - CPOL = 0: SCK is active high
+            - Clock rate = 1MHz
+            - DSS = 8: 8 bits per transfer
+            - MSTR = 1: SSP operates in Master mode
+            - FRF= 0: SPI Frame format
+        This example uses SSP function in MASTER mode with Loop-back mode (MOSI <-> MISO).
+        Transfer a number of data byte (in DMA mode for both Tx and Rx channel).
+        GPDMA channel 0 and 1 are used in this example.
+        GPDMA channel 0 is used to transfer data from source buffer to SSP peripheral.
+        Channel 1 is used to transfer data from SSP peripheral to destination buffer.
+        After transmittion completed, two buffers will be compared, if they are not similar,
+        the program will enter infinite loop and print error notice to serial display.
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files
+     
+    Ssp_Dma.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        TThis example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+        
+        SSP Connection:
+            SSP0: SSP0_MISO(P0.17) connects with SSP0_MOSI(P0.18)
+            SSP1: SSP1_MISO(P0.8) connects with SSP1_MOSI(P0.9)
+            
+            Pin Map:
+                                        EA brd          EA board 
+                                        with LPC1788    with LPC4088            IAR brd
+            - P0.17: SSP0_MISO          J5.20           x
+            - P0.18: SSP0_MOSI          J3.23           x
+
+            - P0.8: SSP1_MISO           J3.19           J3.19                   EXT-8
+            - P0.9: SSP1_MOSI           J5.18           J5.18                   EXT-9
+
+            - P5.1: SSP2_MISO           x               J5.20                 
+            - P5.0: SSP2_MOSI           x               J5.23
+                        
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25)
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17)
+                    + JP6:     1-2: OFF
+                            3-4: OFF
+                            5-6: ON
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17)
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17)
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2
+            2. LPC1788 IAR Start Kit Rev.B
+                - UART0: 
+                    All jumpers: optional
+            Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
+            
+            Setting:
+                + 115200bps 
+                + 8 data bit 
+                + No parity 
+                + 1 stop bit 
+                + No flow control 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Choose the SSP component by #define _SSP_NO_USING
+        - Step 2: Build example.
+        - Step 3: Burn hex file into board (if run on ROM mode)
+        - Step 4: Connect selected UART on this board to your computer
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Run example, observe SSP transfer result on serial display

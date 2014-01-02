@@ -1,0 +1,124 @@
+/**********************************************************************
+* $Id$        abstract.txt                2011-01-09
+*//**
+* @file       I2C\I2C_Master\abstract.txt 
+* @brief      Example description file
+* @version    1.0
+* @date       09.Jan.2011
+* @author     NXP MCU SW Application Team
+*
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use I2S as master device to communicate with I2S slave device
+        in polling mode
+        Note that: this example will run combine with slave example.
+        (Pls see "Step to run" part in this file for more information)
+    Process:
+        This example uses I2C as master device to transfer data from/to I2C slave device
+        - First, the master transmit to slave a number of data bytes
+        - Then, the master receive a number of data bytes from slave.
+        - Finally, the master send two bytes to slave, send repeat start immediately 
+        and receive from slave a number of data byte.
+        - Using in polling mode.    
+        I2C Clock Rate is set at 100K.
+        Macro I2CDEV_TRANSFER_POLLING determines which mode is used to send/receive data. If it is
+        defined as 1, polling mode is used. Otherwise, interrupt mode is used. 
+        
+@Directory contents:
+    \EWARM: includes EWARM (IAR) project and configuration files
+    \Keil:    includes RVMDK (Keil)project and configuration files 
+     
+    lpc_libcfg.h: Library configuration file - include needed driver library for this example 
+    makefile: Example's makefile (to build with GNU toolchain)
+    master.c: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+    
+            I2C connection:
+                If using I2C0: 
+                    - SDA -> P5.2  (J3.43)
+                    - SCL -> P5.3  (J5.41)
+                If using I2C1: 
+                    - SDA -> P0.19 (J5.21)
+                    - SCL -> P0.20 (J3.26)
+                If using I2C2 (LPC1788 OEM Board)
+                    - SDA -> P0.10 (J3.20)
+                    - SCL -> P0.11 (J3.11)
+                
+                SDA pin on master connects with SDA pin on slave.
+                SCL pin on master connects with SCL pin on slave.
+                Common ground should be connected between two boards.
+                Note: The I2C pins should be configured as: no pull-up, no pull-down and open drain mode. 
+                And, there are must a pull-up resistor for SDA line and for SCL line.
+                
+        Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+               
+                - UART0: USB serial port (J25) 
+                    + All jumpers: Default
+                - UART1: Connects UART pins to COM Port (J17) 
+                LPC1788 OEM Board rev A			
+                    + P0.15 (@ J5.19) - JP12.2
+                    + P0.16 (@ J3.24) - JP13.2
+                LPC4088 OEM Board rev A			
+                    + P2.0 (@J4.5) - JP12.2
+                    + P2.1 (@J4.7) - JP13.2               
+                - UART2: Connects UART pins to COM Port (J17) 
+                    + JP6:     1-2: OFF 3-4: OFF 5-6: ON 
+                    + JP12: 2-3
+                    + JP13: 2-3
+                    + Other jumpers: Default
+                - UART3: Connects UART pins to COM Port (J17) 
+                    + P0.2 (@J5.13) - JP12.2
+                    + P0.3 (@J5.14) - JP13.2
+                - UART4: Connects UART pins to COM Port (J17) 
+                    + P0.22 (@J3.25) - JP12.2
+                    + P2.9  (@J3.15) - JP13.2 
+    
+    Running mode:
+        This example can run on RAM/ROM mode.
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON 
+                        3-4: ON (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+    
+    Step to run:
+        - Step 1: Choose what I2C peripheral use in this case by setting "USEDI2CDEV_M"
+        - Step 2: Build example.
+        - Step 3: Burn hex file into master board (if run on ROM mode)
+        - Step 4: Connect desired UART on master boards to COM ports on your computer.
+        - Step 5: Configure hardware and serial display as above instruction 
+        - Step 6: Run example
+                    + Hit reset button on slave board
+                    + Hit reset button on master board
+                    + At master side: 
+                        - Press '1' to transmit
+                        - Press '2' to receive
+                        - Press '3' to transmit, then repeat start and receive
+                            
+    

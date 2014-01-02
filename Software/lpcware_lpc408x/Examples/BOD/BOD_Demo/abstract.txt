@@ -1,0 +1,81 @@
+ /***********************************************************************
+* $Id$        abstract.txt        2011-12-12        
+* @file       BOD\BOD_Demo\abstract.txt 
+* @brief      Description of the BOD example.
+* @version    1.0
+* @date       12. December. 2011
+* @author     NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/
+  
+@Example description:
+    Purpose:
+        This example describes how to use BOD.
+    Process:  
+        The Brown-Out Detector (BOD) is used to monitor the voltage on VDD (REG) 3V3pins. If this voltage falls 
+    below the BOD interrupt trip level (typically 2.2 V), the BOD asserts an interrupt signal to the NVIC. When the 
+    voltage falls below the BOD reset trip level (typically 1.85 V), it asserts Reset to inactivate the LPC178x/177x.
+
+    This example uses 2 LEDS which connected to P0.13 & P1.18 on EA board (or P1.13 & P1.18 on IAR board) to notify 
+    the time that an interrupt is generated or the board is reset by BOD. 
+
+    If the board is reset by BOD, the LED at P0.13 (or P1.13 on IAR board) blinks. If not, 2 LED are ON.
+    When the interrupt occurs, the LED at P1.18 blinks 5 times.
+
+@Directory contents:
+    \Keil:    includes RVMDK (Keil)project and configuration files
+    \EWARM: includes EWARM (IAR) project and configuration files
+     
+    BODTest: Main program
+
+@How to run:
+    Hardware configuration:        
+        This example was tested on:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+        (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
+                                                    
+    Running mode:
+        This example can run on RAM/ROM mode.
+                    
+        Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+            to be connected:
+            1. LPC1788 OEM Board rev A and OEM Base Board rev A or
+               LPC4088 OEM Board rev A and OEM Base Board rev PB1
+                - JP20: 1-2: ON
+                        3-4: ON
+            (Using UART0 on USB serial port
+            Sure that you choose correct COM port number - Pls reference at:
+            "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+            
+            2. LPC1788 IAR Start Kit Rev.B
+                - RST_E: ON
+                - ISP_E: ON
+    
+    Step to run:
+        - Step 1: Build example.
+        - Step 2: Burn hex file into board (if run in ROM mode)
+        - Step 3: Reset the board. 
+        - Step 4: Adjust the power supplied to the board. When the voltage is under 1.85V, 
+                    the board resets and then the LED at P0.13 blinks. When the voltage is in 1.85V~2.2V, 
+                    the LED at P1.18(P1.13) is blinked 5 times.
+                                                                                       

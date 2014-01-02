@@ -1,0 +1,30 @@
+The Blinky project is a simple demo program for the NXP 'LPC4088' 
+microcontroller using Embedded Artists 'LPC4088-32 Developer's Kit',
+compliant to Cortex Microcontroller Software Interface Standard (CMSIS v2.0).
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL              =  12 MHz
+   - PLL0              = 120 MHz
+   - PLL1              =  48 MHz
+   - CCLK   = PLL0 / 1 = 120 MHz
+   - PCLK   = PLL0 / 2 =  60 MHz
+
+ - SysTick Timer is used in interrupt mode
+ - 2 LEDs blink with speed depending on potentiometer position
+ - AD conversion is done in interrupt mode
+ - AD settings: 12 bit resolution
+ - AD value is output onto serial port UART2 
+ - UART2 settings: 115200 baud, 8 data bits, no parity, 1 stop bit
+
+
+The Blinky program is available in different targets:
+
+  LPC4088 RAM:   runs from Internal RAM located on chip
+                 (used for target debugging)
+
+  LPC4088 Flash: runs from Internal Flash located on chip
+                 (used for production or target debugging)
+
+  LPC4088 SPIFI: runs from Internal Flash / SPIFI Flash
+                 (module LED.c is located in SPI Flash)
