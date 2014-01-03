@@ -58,14 +58,12 @@ void rt_hw_board_init()
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND - 1);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+
     /*init uart device*/
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-   // rt_led_hw_init();
+
 #if LPC_EXT_SDRAM == 1
-    rt_kprintf("Initialize SDRAM ...");
     lpc_sdram_hw_init();
-    rt_kprintf("done!\n");
 #endif
-   
 }
