@@ -17,4 +17,4 @@ before_script:
   - export RTT_EXEC_PATH=`pwd`"/arm-2012.09/bin"
 
 script:
-  - python ./Software/rtthread_examples/scripts/buildbot.py
+  - python ./software/rtthread_examples/scripts/buildbot.py
