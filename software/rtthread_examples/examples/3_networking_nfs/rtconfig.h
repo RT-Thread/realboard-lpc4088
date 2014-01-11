@@ -107,7 +107,7 @@
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
 // #define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-#define RT_USING_PTHREADS
+//#define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -122,7 +122,7 @@
 #define RT_USING_DFS_ELMFAT
 
 #define RT_USING_DFS_NFS
-#define RT_NFS_HOST_EXPORT	"192.168.2.4:/" //（这个需要跟主机的IP保持一致）
+#define RT_NFS_HOST_EXPORT	"192.168.1.20:/" //（这个需要跟主机的IP保持一致）
 
 // <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
 #define RT_DFS_ELM_DRIVES    2
@@ -178,7 +178,7 @@
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
-#define RT_LWIP_DHCP
+//#define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
 #define RT_LWIP_TCP_SEG_NUM	4
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />

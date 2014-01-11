@@ -25,26 +25,21 @@ void rt_init_thread_entry(void* parameter)
 	/* initialization RT-Thread Components */
 	rt_components_init();
 #endif
-	
+
+	rt_kprintf(" link beginning \r\n");
 	while( !(netif_list->flags & NETIF_FLAG_UP)) 
 	{	/*等待网络准备好*/
 		rt_thread_delay( RT_TICK_PER_SECOND);
-				
-	}	
+	}
+
 	rt_kprintf(" link ok \r\n");
     list_if();
-    /* do some thing here. */
-#if defined(RT_USING_DFS) && defined(RT_USING_LWIP) && defined(RT_USING_DFS_NFS)
+
 	{
-		/* NFSv3 Initialization */
-		rt_kprintf("begin init NFSv3 File System ...\n");
-		if (dfs_mount(RT_NULL, "/", "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
-			rt_kprintf("NFSv3 File System initialized!\n");
-		else
-			rt_kprintf("NFSv3 File System initialzation failed!\n");
+		extern rt_err_t mci_hw_init(const char *device_name);
+		mci_hw_init("sd0");
 	}
-#endif
-  
+    /* do some thing here. */
 }
 
 int rt_application_init()
@@ -60,3 +55,47 @@ int rt_application_init()
 	
     return 0;
 }
+
+#include <finsh.h>
+int mountsd(const char * path)
+{
+	const char * mountpath = "/sd";
+	if (path != NULL)
+		mountpath = path;
+    /* Filesystem Initialization */
+#ifdef RT_USING_DFS
+#ifdef RT_USING_DFS_ELMFAT
+	/* mount sd card fat partition 1 as root directory */
+	if (dfs_mount("sd0", mountpath, "elm", 0, 0) == 0)
+	{
+		rt_kprintf("[ok]\n");
+		return 0;
+	}
+	else
+	{
+		rt_kprintf("[failed!]\n");
+		return -1;
+	}
+#endif
+#endif
+}
+FINSH_FUNCTION_EXPORT(mountsd, mount sdcard)
+
+int mountnfs(const char * path)
+{
+	const char * mountpath = "/";
+	if (path != NULL)
+		mountpath = path;
+	rt_kprintf("mount nfs to %s...", mountpath);
+	if (dfs_mount(RT_NULL, mountpath, "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
+	{
+		rt_kprintf("[ok]\n");
+		return 0;
+	}
+	else
+	{
+		rt_kprintf("[failed!]\n");
+		return -1;
+	}
+}
+FINSH_FUNCTION_EXPORT(mountnfs, mount nfs)
