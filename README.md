@@ -12,11 +12,20 @@ The examples of realboard 4088 support Keil MDK/GNU GCC/IAR compiler. You can us
 
 ### Basic Examples ###
 
-0. [basic kernel](Software/examples/0_base_kernel), it's a basic example for RT-Thread kernel.
+0. [basic kernel](software/rtthread_examples/examples/0_base_kernel), it's a basic example for RT-Thread kernel.
 
 ### UI Examples ###
 
+0. [GUI demo](software/rtthread_examples/examples/4_gui_examples), the GUI example demo
+1. [GUI photo](software/rtthread_examples/examples/4_gui_photo_frame), GUI appliation to dispaly photo. 
+
 ### USB Examples ###
+
+0. [USB Device](software/rtthread_examples/examples/6_usbdevice_vcom), the USB VCOM example.
+
+### SQLite Examples ###
+
+0. [SQLite Demo](software/rtthread_examples/examples/5_sqlite_examples), SQLite on ARM Cortex-M4.
 
 ## Contributing ##
 
