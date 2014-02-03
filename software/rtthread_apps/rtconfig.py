@@ -1,10 +1,11 @@
 import os
 
-# bsp name
-BSP = 'lpc408x'
+# RT-Thread root directory
+RTT_ROOT = r'Z:\github\rt-thread'
 
 # toolchains
 EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\4.6 2012q2\bin'
+
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 

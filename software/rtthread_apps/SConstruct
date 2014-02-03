@@ -7,11 +7,13 @@ sconstruct = File('SConstruct')
 fn = sconstruct.rfile()
 name = fn.name
 building_dir = os.path.dirname(fn.abspath)
+program_dir  = r'..\bin'
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.join(building_dir, '.', 'rt-thread')
+    # we use setting on rtconfig.py
+    RTT_ROOT = rtconfig.RTT_ROOT
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
@@ -48,7 +50,12 @@ env = Environment(tools = ['mingw'],
                 RTT_ROOT + '/include',
                 RTT_ROOT + '/components/finsh',
                 RTT_ROOT + '/components/dfs', 
-                RTT_ROOT + '/components/dfs/include'
+                RTT_ROOT + '/components/dfs/include',
+                RTT_ROOT + '/components/net/lwip-1.4.1/src', 
+                RTT_ROOT + '/components/net/lwip-1.4.1/src/include', 
+                RTT_ROOT + '/components/net/lwip-1.4.1/src/include/ipv4', 
+                RTT_ROOT + '/components/net/lwip-1.4.1/src/arch/include', 
+                building_dir + '/rtgui/include',
                 ])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
@@ -60,4 +67,5 @@ if app:
     TARGET = os.path.join(app , app + '.' + rtconfig.TARGET_EXT)
 
     # build program 
-    env.Program(TARGET, objs)
+    target = env.Program(TARGET, objs)
+    env.Command("$TARGET", target, action = Copy(program_dir, TARGET))
