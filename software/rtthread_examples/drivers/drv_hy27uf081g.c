@@ -1,6 +1,9 @@
 #include "drv_hy27uf081g.h"
 
+#ifdef RT_USING_NFTL
 #include <nftl.h>
+#endif
+
 #include "lpc_emc.h"
 #include "lpc_clkpwr.h"
 #include "lpc_pinsel.h"
@@ -123,12 +126,14 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
 			oob_buffer[i] = NAND_DATA;
 
 		/* verify ECC */
+#ifdef RT_USING_NFTL
 		if (nftl_ecc_verify256(data, PAGE_DATA_SIZE, oob_buffer) != RT_MTD_EOK)
 		{
 			rt_kprintf("ECC error, block: %d, page: %d!\n", page/device->pages_per_block,
 				page%device->pages_per_block);
 			result = RT_MTD_EECC;
 		}
+#endif
 
 		if (spare != RT_NULL && spare_len > 0)
 		{
@@ -174,7 +179,9 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
 	}
 
 	/* generate ECC */
+#ifdef RT_USING_NFTL
 	nftl_ecc_compute256(data, PAGE_DATA_SIZE, oob_buffer);
+#endif
 
     NAND_COMMAND = NAND_CMD_SEQIN;
 
