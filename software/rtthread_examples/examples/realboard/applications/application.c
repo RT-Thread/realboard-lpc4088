@@ -23,7 +23,6 @@
 #include "drv_lcd.h"
 #endif
 #ifdef RT_USING_I2C
-//#include "drv_i2c.h"
 #include "drivers/i2c.h"
 #endif
 #ifdef RT_USING_SPI
@@ -34,27 +33,6 @@
 //#include <log_trace.h>
 //#include "nftl.h"
 //#include "drv_nand.h"
-
-//void nftl_init(void)
-//{
-//	nftl_attach("nand0");
-//}
-//FINSH_FUNCTION_EXPORT(nftl_init, prepare NFTL device);
-
-//void nftl_mount(void)
-//{
-//#ifdef RT_USING_NFTL
-//	if (dfs_mount("nand0", "/", "elm", 0, 0) == 0)
-//	{
-//		rt_kprintf("Mount FatFs file system to root, Done!\n");
-//	}
-//	else
-//	{
-//		rt_kprintf("Mount FatFs file system failed.\n");
-//	}
-//#endif
-//}
-//FINSH_FUNCTION_EXPORT(nftl_mount, mount FAT on NFTL);
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
@@ -77,22 +55,11 @@ void rt_init_thread_entry(void *parameter)
 
         /* init the elm FAT filesystam*/
         elm_init();
-#ifdef RT_USING_NFTL
-        {
-            extern	void rt_hw_mtd_nand_init(void);
-            rt_hw_mtd_nand_init();
-            nftl_init();
-            nftl_mount();
-
-            // list_mem();
-        }
-#else
         /* mount sd card fat partition 1 as root directory */
         if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
-#endif
     }
 #endif
     /* LwIP Initialization */
@@ -145,7 +112,6 @@ void rt_init_thread_entry(void *parameter)
 #ifdef RT_USING_FINSH
     /* initialize finsh */
     finsh_system_init();
-    finsh_set_device(FINSH_DEVICE_NAME);
 #endif
 }
 ALIGN(RT_ALIGN_SIZE)

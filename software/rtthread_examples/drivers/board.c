@@ -65,5 +65,16 @@ void rt_hw_board_init()
 
 #if LPC_EXT_SDRAM == 1
     lpc_sdram_hw_init();
+	mpu_init();
 #endif
 }
+
+void MemManage_Handler(void)
+{
+	rt_kprintf("Memory Fault!\n");
+#ifdef RT_USING_FINSH
+	list_thread();
+#endif
+	while (1);
+}
+

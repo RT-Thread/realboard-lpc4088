@@ -11,6 +11,7 @@ drv_uart.c
 drv_sram.c
 drv_sdram.c
 drv_led.c
+drv_mpu.c
 """)
 
 # add RTC driver.

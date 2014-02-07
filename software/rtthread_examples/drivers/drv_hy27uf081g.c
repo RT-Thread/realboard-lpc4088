@@ -1,5 +1,6 @@
 #include "drv_hy27uf081g.h"
 
+#include <nftl.h>
 #include "lpc_emc.h"
 #include "lpc_clkpwr.h"
 #include "lpc_pinsel.h"
@@ -121,6 +122,14 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
 		for (i = 0; i < PAGE_OOB_SIZE; i ++)
 			oob_buffer[i] = NAND_DATA;
 
+		/* verify ECC */
+		if (nftl_ecc_verify256(data, PAGE_DATA_SIZE, oob_buffer) != RT_MTD_EOK)
+		{
+			rt_kprintf("ECC error, block: %d, page: %d!\n", page/device->pages_per_block,
+				page%device->pages_per_block);
+			result = RT_MTD_EECC;
+		}
+
 		if (spare != RT_NULL && spare_len > 0)
 		{
 			memcpy(spare, oob_buffer, spare_len);
@@ -165,6 +174,7 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
 	}
 
 	/* generate ECC */
+	nftl_ecc_compute256(data, PAGE_DATA_SIZE, oob_buffer);
 
     NAND_COMMAND = NAND_CMD_SEQIN;
 
@@ -313,7 +323,7 @@ int nand_hy27uf_hw_init(void)
     _partition[0].oob_size        = PAGE_OOB_SIZE;
     _partition[0].oob_free        = PAGE_OOB_SIZE - ((PAGE_DATA_SIZE) * 3 / 256);
     _partition[0].block_start     = 0;
-    _partition[0].block_end       = 1024;
+    _partition[0].block_end       = 512;
 
     _partition[0].block_total     = _partition[0].block_end - _partition[0].block_start;
     _partition[0].ops             = &ops;
