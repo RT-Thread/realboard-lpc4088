@@ -9,9 +9,10 @@ if len(sys.argv) == 2:
 elif len(sys.argv) == 1:
     # build some common libraries
     path = os.path.join('software', 'rtthread_examples', 'examples', 'realboard')
-    os.system('scons --buildlib=finsh --directory=path')
-    os.system('scons --buildlib=RTGUI --directory=path')
-    os.system('scons --buildlib=LwIP --director=path')
+    os.system('scons --buildlib=Libraries --directory=' + path)
+    os.system('scons --buildlib=RTGUI --directory=' + path)
+    os.system('scons --buildlib=LwIP --director=' + path)
+    os.system('scons --buildlib=pthreads --director=' + path)
 
 projects = os.listdir(examples_dir)
 for item in projects:
