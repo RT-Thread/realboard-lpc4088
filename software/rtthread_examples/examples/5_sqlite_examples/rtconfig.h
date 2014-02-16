@@ -242,8 +242,12 @@
 
 // </section>
 
+// </RDTConfigurator>
+
+/* enable SQLite */
 #define RT_USING_SQLITE
 
-// </RDTConfigurator>
+/* enable EXT SDRAM for LCD */
+#define LPC_EXT_SDRAM	1
 
 #endif
