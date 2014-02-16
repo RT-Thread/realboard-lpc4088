@@ -146,6 +146,8 @@
 #define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
 //#define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_NFS
+#define RT_NFS_HOST_EXPORT  "192.168.1.20:/"
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
