@@ -9,7 +9,8 @@ list = os.listdir(cwd)
 # Add CMSIS and NXP chip level drivers
 objs += SConscript(cwd + "/../../libraries/SConscript")
 # Add RT-Thread lowlevel drivers
-objs += SConscript(cwd + "/../../drivers/SConscript")
+objs += SConscript(cwd + "/../../drivers/SConscript", variant_dir='drivers',
+                       duplicate=0)
 
 for d in list:
     path = os.path.join(cwd, d)
