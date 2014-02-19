@@ -16,7 +16,7 @@
 
 RT-Thread的应用开发环境类似的也分成两类：
 
-** 固件 **
+**固件**
 
 固件的开发环境和传统的RT-Thread RTOS开发环境类似，没有太多的不同，但是需要注意的是以下几点：
 
@@ -37,7 +37,7 @@ rtconfig.h中的配置如下：
 
 其中`RT_NFS_HOST_EXPORT`指示出NFS Server的位置。建议使用github中的[realboard][1]工程来作为RealBoard 4088的固件平台，因为它的配置全面，支持的组件也最多。
 
-** 应用 **
+**应用**
 
 在RealBoard 4088的[github仓库][2]里，已经准备了一些应用的例子，同时也包括基本的应用开发环境。当前开发RT-Thread应用，还必须使用GNU GCC编译器，Windows/Linux上可以安装[GNU Tools for ARM Embedded Processors][3]的工具链。当然这里也假设默认已安装了RT-Thread用到的[scons][4]构建系统。
 
