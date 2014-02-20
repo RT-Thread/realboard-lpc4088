@@ -74,7 +74,12 @@
 #define RT_USING_SERIAL
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE    64
-// </section>
+// <bool name="RT_USING_MTD_NAND" description="Using MTD NAND Framework" default="true" />
+#define RT_USING_MTD_NAND
+// <bool name="RT_MTD_NAND_DEBUG" description="Enable MTD NAND Framework Debug" default="true" />
+#define RT_MTD_NAND_DEBUG
+// <bool name="RT_USING_NFTL" description="Using NFTL layer" default="true" />
+#define RT_USING_NFTL
 // <bool name="RT_USING_SPI" description="Using SPI Device Driver Framework" default="true" />
 #define RT_USING_SPI
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
@@ -101,6 +106,8 @@
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
 #define FINSH_THREAD_STACK_SIZE	4096
+// <bool name="FINSH_USING_MSH" description="Using module shell in finsh" default="true" />
+#define FINSH_USING_MSH
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
@@ -114,14 +121,16 @@
 #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 #define DFS_USING_WORKDIR
+// <integer name="DFS_FILESYSTEM_TYPES_MAX" description="The maximal number of the supported file system type" default="4" />
+#define DFS_FILESYSTEM_TYPES_MAX  4
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
-#define DFS_FILESYSTEMS_MAX	2
+#define DFS_FILESYSTEMS_MAX	4
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX	16
+#define DFS_FD_MAX	         16
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
-#define RT_DFS_ELM_DRIVES    2
+#define RT_DFS_ELM_DRIVES    4
 // <bool name="RT_DFS_ELM_REENTRANT" description="Support reentrant" default="true" />
 #define RT_DFS_ELM_REENTRANT
 // <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
@@ -138,6 +147,8 @@
 #define RT_DFS_ELM_MAX_LFN	256
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
+// <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
+#define RT_DFS_ELM_USE_ERASE
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
@@ -146,7 +157,9 @@
 #define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
 //#define RT_USING_DFS_ROMFS
+// <bool name="RT_USING_DFS_NFS" description="Using NFS" default="false" />
 #define RT_USING_DFS_NFS
+// <string name="RT_NFS_HOST_EXPORT" description="The exported NFS host path" default="192.168.1.10:/" />
 #define RT_NFS_HOST_EXPORT  "192.168.1.20:/"
 // </section>
 
@@ -177,7 +190,7 @@
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM	4
+#define RT_LWIP_TCP_SEG_NUM	8
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY	12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
@@ -233,6 +246,7 @@
 #define RTGUI_IMAGE_XPM
 #define RTGUI_IMAGE_BMP
 /* #define RTGUI_IMAGE_JPEG */
+#define RTGUI_IMAGE_TJPGD
 /* #define RTGUI_IMAGE_PNG */
 #define RTGUI_USING_NOTEBOOK_IMAGE
 // </section>

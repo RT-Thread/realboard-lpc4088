@@ -30,33 +30,74 @@
 #include "drivers/spi.h"
 #endif
 
-//#include <log_trace.h>
-//#include "nftl.h"
-//#include "drv_nand.h"
+#ifdef RT_USING_NFTL
+#include "nftl.h"
+#endif
+
+int mountnfs(const char * path)
+{
+    const char * mountpath = "/";
+    if (path != NULL) mountpath = path;
+
+    rt_kprintf("mount nfs to %s...", mountpath);
+    if (dfs_mount(RT_NULL, mountpath, "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
+    {
+        rt_kprintf("[ok]\n");
+        return 0;
+    }
+    else
+    {
+        rt_kprintf("[failed!]\n");
+        return -1;
+    }
+}
+FINSH_FUNCTION_EXPORT(mountnfs, mount nfs);
+
+int cmd_mountnfs(int argc, char** argv)
+{
+    if (argc == 1)
+    {
+        rt_kprintf("%s path\n", argv[0]);
+        return 0;
+    }
+
+    return mountnfs(argv[1]);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_mountnfs, __cmd_mountnfs, mount NFS file system.);
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-// #ifdef RT_USING_I2C
-//     rt_i2c_core_init();
-//     rt_hw_i2c_init();
-// #endif
-
     rt_hw_spi_init();
     rt_system_module_init();
+
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
     {
         extern rt_err_t mci_hw_init(const char *device_name);
-        /* initilize sd card */
-        mci_hw_init("sd0");
+
         /* init the device filesystem */
         dfs_init();
 
         /* init the elm FAT filesystam*/
         elm_init();
+#ifdef RT_USING_NFTL
+		nand_hy27uf_hw_init();
+		nftl_attach("nand0");
+		if (dfs_mount("nand0", "/", "elm", 0, 0) == 0)
+		{
+			rt_kprintf("Mount FatFs file system to root, Done!\n");
+		}
+		else
+		{
+			rt_kprintf("Mount FatFs file system failed.\n");
+		}
+#endif
+
+        /* initilize sd card */
+        mci_hw_init("sd0");
         /* mount sd card fat partition 1 as root directory */
-        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+        if (dfs_mount("sd0", "/SD", "elm", 0, 0) == 0)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
@@ -87,8 +128,6 @@ void rt_init_thread_entry(void *parameter)
         rt_device_t lcd;
         /* init lcd */
         rt_hw_lcd_init();
-        /* re-init device driver */
-        rt_device_init_all();
 
         /* find lcd device */
         lcd = rt_device_find("lcd");
@@ -104,7 +143,6 @@ void rt_init_thread_entry(void *parameter)
             rtgui_touch_hw_init("spi10");
             /* startup rtgui realtouch ui */
             realtouch_ui_init();
-
         }
     }
 #endif
@@ -114,67 +152,14 @@ void rt_init_thread_entry(void *parameter)
     finsh_system_init();
 #endif
 }
-ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t led_stack[ 512 ];
-static struct rt_thread led_thread;
-static void led_thread_entry(void* parameter)
-{
-    unsigned int count=0;
-    rt_device_t led_dev=rt_device_find("led");
-    rt_uint8_t led_value=0;
-    while (1)
-    {
-        /* led1 on */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led on, count : %d\r\n",count);
-#endif
-        count++;
-        led_value=1;
-        led_dev->write(led_dev,count%4,&led_value,1);
-        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
 
-        /* led1 off */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led off\r\n");
-#endif
-        led_value=0;
-        led_dev->write(led_dev,count%4,&led_value,1);
-        rt_thread_delay( RT_TICK_PER_SECOND/2 );
-    }
-}
 int rt_application_init(void)
 {
     rt_thread_t tid;
-    rt_err_t  result;
     tid = rt_thread_create("init",
                            rt_init_thread_entry, RT_NULL,
                            2048, RT_THREAD_PRIORITY_MAX / 3, 20);
     if (tid != RT_NULL) rt_thread_startup(tid);
 
-    /* init led thread */
-//    result = rt_thread_init(&led_thread,
-//                            "led",
-//                            led_thread_entry,
-//                            RT_NULL,
-//                            (rt_uint8_t*)&led_stack[0],
-//                            sizeof(led_stack),
-//                            20,
-//                            5);
-//    if (result == RT_EOK)
-//    {
-//        rt_thread_startup(&led_thread);
-//    }
     return 0;
 }
-
-typedef int (*func_t)(void);
-int mtest(void)
-{
-    func_t ptr;
-
-    ptr = (func_t)0xA0000000;
-    ptr();
-
-    return 0;
-}
-FINSH_FUNCTION_EXPORT(mtest, mpu test);
