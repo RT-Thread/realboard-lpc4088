@@ -21,6 +21,9 @@ void rt_init_thread_entry(void* parameter)
         rt_uint8_t *ramdisk;
         #define RAMDISK_SZ      (1024 * 1024 * 1)
 
+		extern rt_err_t mci_hw_init(const char *device_name);
+		mci_hw_init("sd0");
+
         /* mount sd card fat partition 1 as root directory */
         if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
         {
@@ -38,7 +41,7 @@ void rt_init_thread_entry(void* parameter)
             if (ramfs != RT_NULL)
             {
                 /* mount ram file system */
-                if (dfs_mount(RT_NULL, "/ramdisk", "ramfs", 0, ramfs) == 0)
+                if (dfs_mount(RT_NULL, "/ramdisk", "ram", 0, ramfs) == 0)
                 {
                     rt_kprintf("RAM file system initialized!\n");
                 }
