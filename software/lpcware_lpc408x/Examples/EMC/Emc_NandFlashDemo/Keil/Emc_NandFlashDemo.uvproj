@@ -506,6 +506,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\nandflash_k9f1g08u0a.c</FilePath>
             </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1085,6 +1090,11 @@
               <FileName>nandflash_k9f1g08u0a.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\nandflash_k9f1g08u0a.c</FilePath>
+            </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1666,6 +1676,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\nandflash_k9f1g08u0a.c</FilePath>
             </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2245,6 +2260,11 @@
               <FileName>nandflash_k9f1g08u0a.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\nandflash_k9f1g08u0a.c</FilePath>
+            </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,50 +1,36 @@
-/**********************************************************************
-* $Id$      nandflash_k9f1g08u0a.c          2011-06-02
-*//**
-* @file     nandflash_k9f1g08u0a.c
-* @brief    This c file contains all functions support for Nand Flash 
-*           SamSung K9F1G08U0A
-* @version  1.0
-* @date     02. June. 2011
-* @author   NXP MCU SW Application Team
-* 
-* Copyright(C) 2011, NXP Semiconductor
-* All rights reserved.
-*
-***********************************************************************
-* Software that is described herein is for illustrative purposes only
-* which provides customers with programming information regarding the
-* products. This software is supplied "AS IS" without any warranties.
-* NXP Semiconductors assumes no responsibility or liability for the
-* use of the software, conveys no license or title under any patent,
-* copyright, or mask work right to the product. NXP Semiconductors
-* reserves the right to make changes in the software without
-* notification. NXP Semiconductors also make no representation or
-* warranty that such application will be suitable for the specified
-* use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
-**********************************************************************/
 #ifdef __BUILD_WITH_EXAMPLE__
 #include "lpc_libcfg.h"
 #else
 #include "lpc_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 #include "bsp.h"
-#if (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0A) || (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0C)
+#if (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_HY27UF081G2A)
 #ifdef _EMC
 
-#include "nandflash_k9f1g08u0a.h"
+#include "nandflash_hy27uf081g.h"
+
 #include "lpc_emc.h"
 #include "lpc_clkpwr.h"
 #include "lpc_pinsel.h"
-#include "lpc_timer.h"
+
+//#include <string.h>
+
+/* nandflash confg */
+#define PAGES_PER_BLOCK         64
+#define PAGE_DATA_SIZE          2048
+#define PAGE_OOB_SIZE           64
+
+#define NAND_COMMAND            *((volatile unsigned char *) 0x81000000)
+#define NAND_ADDRESS            *((volatile unsigned char *) 0x82000000)
+#define NAND_DATA               *((volatile unsigned char *) 0x80000000)
 
 uint8_t InvalidBlockTable[NANDFLASH_NUMOF_BLOCK];
+
+static void system_delay(unsigned int cnt)
+{
+	cnt = cnt * 100;
+    while(cnt--);
+}
 
 /*********************************************************************//**
  * @brief       Ready/Busy check, no timeout, basically, R/B bit should
@@ -54,11 +40,15 @@ uint8_t InvalidBlockTable[NANDFLASH_NUMOF_BLOCK];
  **********************************************************************/
 void NandFlash_WaitForReady( void )
 {
+    unsigned int i;
+    for (i = 0; i < 256; i++)
+    {
+        if (!(LPC_GPIO4->PIN & (1UL << 31)))
+            break;  /* from high to low once */
+    }
 
-    while( FIO2PIN & (1 << 21) );       /* from high to low once */
-
-    while( !(FIO2PIN & (1 << 21)) );    /* from low to high once */
-
+    while (!(LPC_GPIO4->PIN & (1UL << 31)))
+        ;  /* from low to high once */
     return;
 }
 
@@ -69,43 +59,37 @@ void NandFlash_WaitForReady( void )
  **********************************************************************/
 void NandFlash_Init( void )
 {
-    uint32_t i;
-    TIM_TIMERCFG_Type TIM_ConfigStruct;
+    LPC_EMC_TypeDef *pEMC = LPC_EMC;
     EMC_STATIC_MEM_Config_Type config;
 
     /**************************************************************************
     * Initialize EMC for NAND FLASH
     **************************************************************************/
-    config.CSn = 1;
+    EMC_Init();
+    pEMC->Control = EMC_Control_E;
+
+    /**************************************************************************
+    * Initialize EMC for NAND FLASH
+    **************************************************************************/
+    config.CSn = 0;
     config.AddressMirror = 0;
     config.ByteLane = 1;
     config.DataWidth = 8;
-    config.ExtendedWait = 0;
+    config.ExtendedWait = 2;
     config.PageMode = 0;
-    config.WaitWEn = 2;
-    config.WaitOEn = 2;
-    config.WaitWr = 0x1f;
-    config.WaitPage = 0x1f;
-    config.WaitRd = 0x1f;
-    config.WaitTurn = 0x1f; 
+    config.WaitWEn = EMC_StaticWaitWen_WAITWEN(0x1f/*2*/);
+    config.WaitOEn = EMC_StaticWaitOen_WAITOEN(0/*2*/);
+    config.WaitWr =EMC_StaticWaitwr_WAITWR(6);
+    config.WaitPage = EMC_StaticwaitPage_WAITPAGE(0x1f);
+    config.WaitRd = EMC_StaticWaitwr_WAITWR(0x1f);
+    config.WaitTurn = EMC_StaticWaitTurn_WAITTURN(0x1f);
     StaticMem_Init(&config);
-     // init timer
-    TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
-    TIM_ConfigStruct.PrescaleValue  = 1;
 
-    // Set configuration for Tim_config and Tim_MatchConfig
-    TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
-
-    // wait 2ms
-    TIM_Waitms(2);
-
-    /* assume all blocks are valid to begin with */
-    for ( i = 0; i < NANDFLASH_NUMOF_BLOCK; i++ )
-    {
-        InvalidBlockTable[i] = FALSE;
-    }
-
-    return;
+    // Init GPIO pin
+    // PINSEL_ConfigPin(2, 21, 0);
+    // FIO2DIR &= ~(1 << 21);
+    LPC_IOCON->P4_31&=~0x07;
+    LPC_GPIO4->DIR&=~(0x01UL<<31);
 }
 
 /*********************************************************************//**
@@ -115,65 +99,51 @@ void NandFlash_Init( void )
  **********************************************************************/
 void NandFlash_Reset( void )
 {
-    volatile uint8_t *pCLE;
-
-    /* Reset NAND FLASH  through NAND FLASH command */
-    pCLE = K9F1G_CLE;
-    *pCLE = K9FXX_RESET;
-
-    TIM_Waitms(2);
-    return;
+    NAND_COMMAND = NAND_CMD_RESET;
+    system_delay(10000);
 }
 
 /*********************************************************************//**
  * @brief       Read status from NAND FLASH memory
  * @param[in]   Cmd command for read operation, should be:
- *                  -  K9FXX_BLOCK_PROGRAM_1
- *                  -  K9FXX_BLOCK_ERASE_1
- *                  -  K9FXX_READ_1
+ *                  -  NAND_CMD_SEQIN
+ *                  -  NAND_CMD_ERASE1
+ *                  -  NAND_CMD_READ3
  * @return      Status, could be:
  *              - TRUE: pass
  *              - FALSE: Failure
  **********************************************************************/
 Bool NandFlash_ReadStatus(uint32_t Cmd)
 {
-    volatile uint8_t *pCLE;
-    volatile uint8_t *pDATA;
-    uint8_t StatusData;
+    unsigned char value;
 
-    pCLE  = K9F1G_CLE;
-    pDATA = K9F1G_DATA;
+    NAND_COMMAND = NAND_CMD_STATUS;
 
-    *pCLE = K9FXX_READ_STATUS;
-
-#if (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0C)
-    while ( (*pDATA & 0xC0) != 0xC0 );
-#else
     /* Wait until bit 5 and 6 are 1, READY, bit 7 should be 1 too, not protected */
     /* if ready bit not set, it gets stuck here */
-    while ( (*pDATA & 0xE0) != 0xE0 );
-#endif
+    while ((NAND_DATA & 0xE0) != 0xE0);
 
-    StatusData = *pDATA;
+	value = NAND_DATA;
 
     switch (Cmd)
     {
-        case K9FXX_BLOCK_PROGRAM_1:
-        case K9FXX_BLOCK_ERASE_1:
-            if (StatusData & 0x01)  /* Erase/Program failure(1) or pass(0) */
-                return(FALSE);
-            else
-                return(TRUE);
+    case NAND_CMD_SEQIN:
+    case NAND_CMD_ERASE1:
+        if (value & 0x01)			/* Erase/Program failure(1) or pass(0) */
+            return (FALSE);
+        else
+            return (TRUE);
 
-        case K9FXX_READ_1:              /* bit 5 and 6, Read busy(0) or ready(1) */
-            return(TRUE);
+    case NAND_CMD_READ3:            /* bit 5 and 6, Read busy(0) or ready(1) */
+        return (TRUE);
 
-        default:
-            break;
+    default:
+        break;
     }
 
-    return(FALSE);
+    return (FALSE);
 }
+
 /*********************************************************************//**
  * @brief       Read ID from external NAND FLASH memory
  * @param[in]   None
@@ -181,24 +151,20 @@ Bool NandFlash_ReadStatus(uint32_t Cmd)
  **********************************************************************/
 uint32_t NandFlash_ReadId( void )
 {
-    uint8_t a, b, c, d;
-    volatile uint8_t *pCLE;
-    volatile uint8_t *pALE;
-    volatile uint8_t *pDATA;
+    uint32_t id = 0;
 
-    pCLE  = K9F1G_CLE;
-    pALE  = K9F1G_ALE;
-    pDATA = K9F1G_DATA;
+    NAND_COMMAND = NAND_CMD_READID;
+    NAND_ADDRESS = 0;
 
-    *pCLE = K9FXX_READ_ID;
-    *pALE = 0;
+    id |= NAND_DATA; // 0xAD
+    id <<= 8;
+    id |= NAND_DATA; // 0xF1
+    id <<= 8;
+    id |= NAND_DATA; // 0x80
+    id <<= 8;
+    id |= NAND_DATA; // 0x1D
 
-    a = *pDATA;
-    b = *pDATA;
-    d = *pDATA;
-    c = *pDATA;
-
-    return ((a << 24) | (b << 16) | (c << 8) | d);
+    return id;
 }
 
 /*********************************************************************//**
@@ -212,26 +178,23 @@ uint32_t NandFlash_ReadId( void )
  **********************************************************************/
 Bool NandFlash_BlockErase( uint32_t blockNum )
 {
-    volatile uint8_t *pCLE;
-    volatile uint8_t *pALE;
-    uint32_t rowAddr;
+    unsigned int blockPage;
 
-    pCLE  = K9F1G_CLE;
-    pALE  = K9F1G_ALE;
+    blockPage = blockNum*NANDFLASH_PAGE_PER_BLOCK;
 
-    rowAddr = blockNum*NANDFLASH_PAGE_PER_BLOCK;
-
-    *pCLE = K9FXX_BLOCK_ERASE_1;
-
-    *pALE = (uint8_t)(rowAddr & 0x00FF);            /* column address low */
-
-    *pALE = (uint8_t)((rowAddr & 0xFF00) >> 8); /* column address high */
-
-    *pCLE = K9FXX_BLOCK_ERASE_2;
+    NAND_COMMAND = NAND_CMD_ERASE1;                        /* send erase command */
+    NAND_ADDRESS = blockPage & 0xff;
+    NAND_ADDRESS = (blockPage>>8)&0xff;
+    NAND_COMMAND = NAND_CMD_ERASE2;                        /* start erase */
 
     NandFlash_WaitForReady();
+    if (NandFlash_ReadStatus(NAND_CMD_ERASE1) == FALSE)
+    {
+        NandFlash_Reset();
+        return FALSE;
+    }
 
-    return(NandFlash_ReadStatus(K9FXX_BLOCK_ERASE_1));
+    return TRUE;
 }
 
 /*********************************************************************//**
@@ -243,26 +206,25 @@ Bool NandFlash_BlockErase( uint32_t blockNum )
  *                  - FALSE: invalid block is found, an initial invalid
  *                           table will be created
  **********************************************************************/
-Bool NandFlash_ValidBlockCheck( void )
+Bool NandFlash_ValidBlockCheck(void)
 {
     uint32_t block, page;
     Bool retValue = TRUE;
 
-    uint8_t data = 0;
+    uint8_t data[16];
 
-    for ( block = 0; block < NANDFLASH_NUMOF_BLOCK; block++ )
+    for (block = 0; block < NANDFLASH_NUMOF_BLOCK; block++)
     {
-        InvalidBlockTable[block] = FALSE;
-        for ( page = 0; page < 2; page++ )
+        for (page = 0; page < 2; page++)
         {
             /* Check column address 2048 at first page and second page */
-            NandFlash_PageReadFromAddr(block, page, NANDFLASH_INVALIDBLOCK_CHECK_COLUMM, &data, 1);
+            NandFlash_PageReadFromAddr(block, page, NANDFLASH_RW_PAGE_SIZE, data, 16);
 
-            if(data != 0xFF)
+            if (data[0] != 0xFF)
             {
                 // found invalid block number, mark block number in the invalid
                 // block table
-                InvalidBlockTable[block] = TRUE;
+                InvalidBlockTable[block] = 1;
 
                 //At least one block is invalid
                 retValue = FALSE;
@@ -289,42 +251,36 @@ Bool NandFlash_ValidBlockCheck( void )
  **********************************************************************/
 Bool NandFlash_PageProgram( uint32_t blockNum, uint32_t pageNum, uint8_t *bufPtr, Bool bSpareProgram  )
 {
-    volatile uint8_t *pCLE;
-    volatile uint8_t *pALE;
-    volatile uint8_t *pDATA;
-    uint32_t i, curRow, curColumm;
+	unsigned int i;
+    uint32_t curRow;
     uint16_t programSize = NANDFLASH_RW_PAGE_SIZE;
 
-    pCLE  = K9F1G_CLE;
-    pALE  = K9F1G_ALE;
-    pDATA = K9F1G_DATA;
-
-    curColumm = 0;
     curRow = blockNum*NANDFLASH_PAGE_PER_BLOCK + pageNum;
-    
     if(bSpareProgram)
         programSize = NANDFLASH_PAGE_FSIZE;
-    
-    *pCLE = K9FXX_BLOCK_PROGRAM_1;
 
-    *pALE =  (uint8_t)(curColumm & 0x000000FF);     /* column address low */
+    NAND_COMMAND = NAND_CMD_SEQIN;
 
-    *pALE = (uint8_t)((curColumm & 0x00000F00) >> 8);   /* column address high */
+    NAND_ADDRESS = 0 & 0xFF;
+    NAND_ADDRESS = 0 >> 8;
+    NAND_ADDRESS = curRow & 0xFF;
+    NAND_ADDRESS = curRow >> 8;
 
-    *pALE = (uint8_t)((curRow & 0x00FF));    /* row address low */
+	for (i = 0; i < programSize; i ++)
+		NAND_DATA = bufPtr[i];
 
-    *pALE = (uint8_t)((curRow & 0xFF00) >> 8);    /* row address high */
-
-    for ( i = 0; i < programSize; i++ )
-    {
-        *pDATA = *bufPtr++;
-    }
-
-    *pCLE = K9FXX_BLOCK_PROGRAM_2;
+    NAND_COMMAND = NAND_CMD_PAGEPROG;
 
     NandFlash_WaitForReady();
 
-    return( NandFlash_ReadStatus( K9FXX_BLOCK_PROGRAM_1 ) );
+    if(NandFlash_ReadStatus(NAND_CMD_SEQIN) == FALSE)
+    {
+        NandFlash_Reset();
+
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 /*********************************************************************//**
@@ -381,38 +337,29 @@ int NandFlash_PageReadFromBeginning(uint32_t blockNum, uint32_t pageNum, uint8_t
 int NandFlash_PageReadFromAddr(uint32_t blockNum, uint32_t pageNum,
                                             uint32_t addrInPage, uint8_t* bufPtr, uint32_t size)
 {
-    volatile uint8_t *pCLE;
-    volatile uint8_t *pALE;
-    volatile uint8_t *pDATA;
-    uint32_t i, curColumm, curRow;    
+    uint32_t i, curColumm, curRow;
 
     i = 0;
-
-    pCLE  = K9F1G_CLE;
-    pALE  = K9F1G_ALE;
-    pDATA = K9F1G_DATA;
 
     curColumm = addrInPage;
     curRow = blockNum*NANDFLASH_PAGE_PER_BLOCK + pageNum;
 
-    *pCLE = K9FXX_READ_1;
+    NAND_COMMAND = NAND_CMD_READ0;
 
-    *pALE =  (uint8_t)(curColumm & 0x000000FF);     /* column address low */
+    NAND_ADDRESS = curColumm & 0xFF;
+    NAND_ADDRESS = curColumm >> 8;
 
-    *pALE = (uint8_t)((curColumm & 0x00000F00) >> 8);   /* column address high */
+    NAND_ADDRESS = curRow & 0xFF;
+    NAND_ADDRESS = curRow >> 8;
 
-    *pALE = (uint8_t)((curRow & 0x00FF));    /* row address low */
-
-    *pALE = (uint8_t)((curRow & 0xFF00) >> 8);    /* row address high */
-
-    *pCLE = K9FXX_READ_2;
+    NAND_COMMAND = NAND_CMD_READ3;
 
     NandFlash_WaitForReady();
 
     //Get data from the current address in the page til the end of the page
     for ( i = 0; i < (NANDFLASH_PAGE_FSIZE - curColumm); i++ )
     {
-        *bufPtr = *pDATA;
+        *bufPtr = NAND_DATA;
 
         bufPtr++;
 
@@ -425,4 +372,4 @@ int NandFlash_PageReadFromAddr(uint32_t blockNum, uint32_t pageNum,
 }
 
 #endif /*_EMC*/
-#endif /* (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0A) || (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0C) */
+#endif /* (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_HY27UF081G2A) */

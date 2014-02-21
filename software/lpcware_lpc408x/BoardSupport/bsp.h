@@ -78,6 +78,7 @@
 #define _RUNNING_NANDFLASH_NONE         (0)
 #define _RUNNING_NANDFLASH_K9F1G08U0C   (1)
 #define _RUNNING_NANDFLASH_K9F1G08U0A   (2)
+#define _RUNNING_NANDFLASH_HY27UF081G2A (3)
 
 // List the LCD that have been supported
 #define _RUNNING_LCD_NONE               (0)
@@ -129,6 +130,7 @@
 
 // NandFlash preset
 #define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_K9F1G08U0A)
+#include "nandflash_k9f1g08u0a.h"
 
 // LCD
 #define _CUR_USING_LCD                  (_RUNNING_LCD_G240320LTSW)
@@ -181,6 +183,7 @@
 
 // NandFlash preset
 #define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_K9F1G08U0C)
+#include "nandflash_k9f1g08u0a.h"
 
 // LCD
 #define _CUR_USING_LCD                  (_RUNNING_LCD_QVGA_TFT)
@@ -322,6 +325,10 @@
 // P0[4] is the Pin 17 in CN1
 #define BRD_TIM_CAP_LINKED_PORT     (0)
 #define BRD_TIM_CAP_LINKED_PIN      (4)
+
+// NandFlash preset
+#define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_HY27UF081G2A)
+#include "nandflash_hy27uf081g.h"
 
 #endif // (_CURR_USING_BRD == _RB4088_BOARD)
 
