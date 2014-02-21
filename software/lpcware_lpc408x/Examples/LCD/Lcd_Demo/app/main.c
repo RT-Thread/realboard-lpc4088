@@ -49,6 +49,8 @@
 #include "sdram_mt48lc8m32lfb5.h"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
+#elif (_CURR_USING_BRD == _RB4088_BOARD)
+#include "sdram_h57v2562gtr.h"
 #endif
 
 /** @defgroup LCD_Demo  LCD Demo
@@ -116,6 +118,18 @@ void SetBackLight(uint32_t level)
 
   /* Start PWM now */
   PWM_Cmd(_PWM_NO_USED, ENABLE);
+#elif((_CURR_USING_BRD == _RB4088_BOARD)&&(_CUR_USING_LCD == _RUNNING_LCD_MDM4301))
+{
+  if(level)
+		{
+			/* turn on lcd backlight */
+			LPC_GPIO2->SET=1<<4;     
+    }else
+		{
+      /* turn off lcd backlight */
+			LPC_GPIO2->CLR=1<<4;     
+    }
+}
 #else
 {
   SetPWM(level*100/0x1000);
@@ -307,7 +321,7 @@ void lcd_colorbars(void)
   lcd_config.polarity.cpl = LCD_H_SIZE;
   lcd_config.polarity.invert_hsync = 1;
   lcd_config.polarity.invert_vsync = 1;
-  #if (_CUR_USING_LCD ==_RUNNING_LCD_EA_REV_PB1)
+  #if (_CUR_USING_LCD ==_RUNNING_LCD_EA_REV_PB1||_CUR_USING_LCD==_RUNNING_LCD_MDM4301)
   lcd_config.polarity.invert_panel_clock = 0;
   #else
   lcd_config.polarity.invert_panel_clock = 1;
@@ -372,10 +386,20 @@ void lcd_colorbars(void)
   PWM_ConfigMatch(_PWM_NO_USED, &PWMMatchCfgDat);
 #endif
 
+#if((_CURR_USING_BRD == _RB4088_BOARD)&&(_CUR_USING_LCD == _RUNNING_LCD_MDM4301))
+{
+	/*config to gpio*/
+  LPC_IOCON->P2_4	= 0x00;	  
+	/* config to output */
+	LPC_GPIO2->DIR|=1<<4;     
+	/* turn on lcd backlight */
+  LPC_GPIO2->SET=1<<4;     
+}
+#else
   // Set backlight
   backlight = GetBacklightVal();
   SetBackLight(backlight);
-
+#endif
   // Enable LCD
   LCD_Enable (TRUE);
   
