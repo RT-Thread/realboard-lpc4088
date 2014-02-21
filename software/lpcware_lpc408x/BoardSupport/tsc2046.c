@@ -35,7 +35,7 @@
 #include "lpc_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 
-#if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT) ||(_CUR_USING_LCD == _RUNNING_LCD_EA_REV_PB1))
+#if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT) ||(_CUR_USING_LCD == _RUNNING_LCD_EA_REV_PB1)||(_CUR_USING_LCD == _RUNNING_LCD_MDM4301))
 #ifdef _SSP
 #include "LPC407x_8x_177x_8x.h"
 #include "lpc_ssp.h"
@@ -114,11 +114,18 @@ void InitTSC2046(TSC2046_Init_Type *pConfig)
     
   // PIN config SSP
 #ifdef CORE_M4
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+  PINSEL_ConfigPin(4, 20, 3);
+  //PINSEL_ConfigPin(4, 21, 3);
+  PINSEL_ConfigPin(4, 22, 3);
+  PINSEL_ConfigPin(4, 23, 3);
+#else
   //PINSEL_ConfigPin(TSC2046_CS_PORT_NUM, TSC2046_CS_PIN_NUM, 0);
   PINSEL_ConfigPin(5, 2, 2);
   //PINSEL_ConfigPin(5, 3, 2);
   PINSEL_ConfigPin(5, 1, 2);
   PINSEL_ConfigPin(5, 0, 2);
+#endif
 #else
   PINSEL_ConfigPin(0, 15, 2);
   //PINSEL_ConfigPin(0, 16, 2);   // Use another pin for CS
