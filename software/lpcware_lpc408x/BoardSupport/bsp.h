@@ -59,6 +59,9 @@
 
 #define _RDB4078_BOARD          (4)
 
+/** RealBoard4088 */
+#define _RB4088_BOARD               (5)
+
 /** Current using board definition */
 #define _CURR_USING_BRD             _EA_PA_BOARD
 
