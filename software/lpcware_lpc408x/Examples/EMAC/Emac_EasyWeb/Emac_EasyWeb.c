@@ -19,12 +19,12 @@
 
 #include "stdio.h"
 #include "string.h"
-#include "bsp.h"
 #include "LPC407x_8x_177x_8x.h"
 #include "lpc_adc.h"
 #include "lpc_timer.h"
 #include "lpc_uart.h"
 #include "lpc_pinsel.h"
+#include "bsp.h"
 
 #define extern            // Keil: Line added for modular project management
 #include "easyweb.h"
