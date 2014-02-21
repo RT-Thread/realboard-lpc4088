@@ -63,7 +63,7 @@
 #define _RB4088_BOARD               (5)
 
 /** Current using board definition */
-#define _CURR_USING_BRD             _EA_PA_BOARD
+#define _CURR_USING_BRD             _RB4088_BOARD
 
 /** Current using OEM Board definition */
 #if (_CURR_USING_BRD == _EA_PA_BOARD)
@@ -284,6 +284,46 @@
 
 #endif
 
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+//Driver for PHY of LAN LAN8720 IC
+#include "phylan_lan8720.h"
+
+//ADC input preset on this board
+#define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_2)
+#define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN2)
+
+#define BRD_ADC_PREPARED_CH_PORT        (0)
+#define BRD_ADC_PREPARED_CH_PIN         (25)
+#define BRD_ADC_PREPARED_CH_FUNC_NO     (1)
+
+//LED indicators preset
+#define BRD_LED_1_CONNECTED_PORT        (4)
+#define BRD_LED_1_CONNECTED_PIN         (15)
+#define BRD_LED_1_CONNECTED_MASK  (1 <<   BRD_LED_1_CONNECTED_PIN)
+
+#define BRD_LED_2_CONNECTED_PORT        (4)
+#define BRD_LED_2_CONNECTED_PIN         (16)
+#define BRD_LED_2_CONNECTED_MASK  (1 <<  BRD_LED_2_CONNECTED_PIN)
+
+//PIO interrupt preset
+#define BRD_PIO_USED_INTR_PORT          (0)
+#define BRD_PIO_USED_INTR_PIN           (25)
+#define BRD_PIO_USED_INTR_MASK    (1 << BRD_PIO_USED_INTR_PIN)
+
+
+//MCI power active levell
+#define BRD_MCI_POWERED_ACTIVE_LEVEL    (0)
+
+
+//Timer preset
+#define BRD_TIMER_USED              (LPC_TIM2)
+#define BRD_TIM_INTR_USED           (TIMER2_IRQn)
+
+// P0[4] is the Pin 17 in CN1
+#define BRD_TIM_CAP_LINKED_PORT     (0)
+#define BRD_TIM_CAP_LINKED_PIN      (4)
+
+#endif // (_CURR_USING_BRD == _RB4088_BOARD)
 
 
 #ifndef _CUR_USING_NANDFLASH
