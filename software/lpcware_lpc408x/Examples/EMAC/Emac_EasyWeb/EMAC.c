@@ -57,7 +57,11 @@ void Init_EMAC(void)
     PINSEL_ConfigPin(1,14,1);
     PINSEL_ConfigPin(1,15,1);
     PINSEL_ConfigPin(1,16,1);
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    PINSEL_ConfigPin(2,9,4);
+#else
     PINSEL_ConfigPin(1,17,1);
+#endif
 
     Emac_Config.PhyCfg.Mode= EMAC_MODE_AUTO;
     Emac_Config.pbEMAC_Addr = EMACAddr;
