@@ -2,6 +2,9 @@
 *.o
 *.ko
 *.mo
+*.d
+*.crf
+*.lst
 
 # Libraries
 *.lib
@@ -21,12 +24,17 @@
 *.elf
 *.axf
 *.bin
+*.hex
 
 # Intermediate file
 *.bak
+*.swp
 *.map
 *.dblite
 *.dep
+*.lnp
+*.uvgui.*
+*.build_log.*
 JLinkLog.txt
 JLinkSettings.ini
 build
