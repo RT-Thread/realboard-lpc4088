@@ -32,7 +32,7 @@
 
 #include "lpc_types.h"
 #include "lpc_uart.h"
-#include "nandflash_k9f1g08u0a.h"
+#include "bsp.h"
 #include "lpc_pinsel.h"
 #include "debug_frmwrk.h"
 
@@ -48,10 +48,14 @@
 const unsigned char menu[] =
 "********************************************************************************\n\r"
 " Hello NXP Semiconductors \n\r"
-#ifdef _RUNNING_NANDFLASH_K9F1G08U0C
+#if ( _CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0C )
 " # NANDFLASH K9F1G08U0C testing \n\r"
-#else
+#elif ( _CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0A )
 " # NANDFLASH K9F1G08U0A testing \n\r"
+#elif ( _CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_HY27UF081G2A )
+" # NANDFLASH HY27UF081G2A testing \n\r"
+#else
+#error No Nand type set
 #endif
 #ifdef CORE_M4
 "\t - MCU: LPC407x_8x \n\r"
@@ -110,11 +114,21 @@ void c_entry(void)
 
     _DBG("Read NAND Flash ID:  ");
     FlashID = NandFlash_ReadId();
+#if (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0C) || (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_K9F1G08U0A)
     if ( (FlashID & 0xFFFF0000) != K9FXX_ID )
     {
         _DBG_("Error in reading NAND Flash ID, testing terminated!");
         while( 1 ); /* Fatal error */
     }
+#elif (_CUR_USING_NANDFLASH == _RUNNING_NANDFLASH_HY27UF081G2A)
+		if ( (FlashID & 0xFFFF0000) != HY271G_ID )
+    {
+        _DBG_("Error in reading NAND Flash ID, testing terminated!");
+        while( 1 ); /* Fatal error */
+    }
+#else
+#error No Nand type set
+#endif
 
     _DBH32_(FlashID);_DBG_("");
 
