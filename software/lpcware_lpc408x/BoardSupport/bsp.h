@@ -63,7 +63,7 @@
 #define _RB4088_BOARD               (5)
 
 /** Current using board definition */
-#define _CURR_USING_BRD             _EA_PA_BOARD
+#define _CURR_USING_BRD             _RB4088_BOARD
 
 /** Current using OEM Board definition */
 #if (_CURR_USING_BRD == _EA_PA_BOARD)
@@ -284,6 +284,18 @@
 
 #endif
 
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+
+//ADC input preset on this board
+#define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_2)
+#define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN2)
+
+#define BRD_ADC_PREPARED_CH_PORT        (0)
+#define BRD_ADC_PREPARED_CH_PIN         (25)
+#define BRD_ADC_PREPARED_CH_FUNC_NO     (1)
+
+
+#endif
 
 
 #ifndef _CUR_USING_NANDFLASH
