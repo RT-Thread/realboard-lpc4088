@@ -98,6 +98,41 @@
 #define TOUCH_AD_TOP     184
 #define TOUCH_AD_BOTTOM  3842
 #endif
+#elif (_CUR_USING_LCD ==_RUNNING_LCD_MDM4301)
+#define   LOGO_DISPLAYED                (0)
+#define   TCS_USED						(1)
+#define   ACCEL_SENSOR_USED             (0)
+#if TCS_USED
+#define   PAINT_ON_SCREEN                (1)
+#endif
+
+/* LCD Config */
+#define LCD_H_SIZE           480
+#define LCD_H_PULSE          2
+#define LCD_H_FRONT_PORCH    5
+#define LCD_H_BACK_PORCH     34
+#define LCD_V_SIZE           272
+#define LCD_V_PULSE          2
+#define LCD_V_FRONT_PORCH    8
+#define LCD_V_BACK_PORCH     10
+#define LCD_PIX_CLK          (4*1000000l)
+
+/* BackLight */
+#define  BL_PORT        LPC_GPIO2
+#define  BL_PIN_NUM      4
+
+/* Touch Screen Config */
+#if (TSC2046_CONVERSION_BITS == 8)
+#define TOUCH_AD_LEFT    240
+#define TOUCH_AD_RIGHT   10
+#define TOUCH_AD_TOP     16
+#define TOUCH_AD_BOTTOM  240
+#else
+#define TOUCH_AD_LEFT    3964
+#define TOUCH_AD_RIGHT   102
+#define TOUCH_AD_TOP     184
+#define TOUCH_AD_BOTTOM  3842
+#endif
 #else  /*(_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)*/
 
 #define   LOGO_DISPLAYED                (0)
