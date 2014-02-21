@@ -285,7 +285,6 @@
 #endif
 
 #if (_CURR_USING_BRD == _RB4088_BOARD)
-
 //ADC input preset on this board
 #define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_2)
 #define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN2)
@@ -294,7 +293,14 @@
 #define BRD_ADC_PREPARED_CH_PIN         (25)
 #define BRD_ADC_PREPARED_CH_FUNC_NO     (1)
 
+//LED indicators preset
+#define BRD_LED_1_CONNECTED_PORT        (4)
+#define BRD_LED_1_CONNECTED_PIN         (15)
+#define BRD_LED_1_CONNECTED_MASK  (1 <<   BRD_LED_1_CONNECTED_PIN)
 
+#define BRD_LED_2_CONNECTED_PORT        (4)
+#define BRD_LED_2_CONNECTED_PIN         (16)
+#define BRD_LED_2_CONNECTED_MASK  (1 <<  BRD_LED_2_CONNECTED_PIN)
 #endif
 
 
