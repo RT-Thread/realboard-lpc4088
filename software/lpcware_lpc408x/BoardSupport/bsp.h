@@ -85,6 +85,7 @@
 #define _RUNNING_LCD_GFT035A320240Y     (1)
 #define _RUNNING_LCD_QVGA_TFT           (2)
 #define _RUNNING_LCD_G240320LTSW        (3)
+#define _RUNNING_LCD_MDM4301            (4)
 
 #if (_CURR_USING_BRD == _QVGA_BOARD)
 //Driver for PHY of LAN DP83848C IC
@@ -330,6 +331,12 @@
 #define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_HY27UF081G2A)
 #include "nandflash_hy27uf081g.h"
 
+// LCD
+#define _CUR_USING_LCD                  (_RUNNING_LCD_MDM4301)
+#define LCD_CS_PORT_NUM                 (4)
+#define LCD_CS_PIN_NUM                  (21)
+#define LCD_TS_SSP_CTRL                 (LPC_SSP1)
+
 #endif // (_CURR_USING_BRD == _RB4088_BOARD)
 
 
@@ -341,7 +348,7 @@
 #define _CUR_USING_LCD                  (_RUNNING_LCD_NONE)
 #endif
 
-#endif//BSP_H
+#endif //BSP_H
 
 /**
  * @}

@@ -41,6 +41,8 @@
 #include "sdram_mt48lc8m32lfb5.h"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
+#elif (_CURR_USING_BRD == _RB4088_BOARD)
+#include "sdram_h57v2562gtr.h"
 #endif
 
 
@@ -60,6 +62,8 @@ const unsigned char menu[] =
 " Test SDRAM MT48LC8M32LFB5 with LPC1788 EMC \n\r"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 " Test SDRAM IS42S32800D with LPC1788 EMC \n\r"
+#elif (_CURR_USING_BRD == _RB4088_BOARD)
+" Test SDRAM H57V2562GTR with LPC4088 EMC \n\r"
 #endif
 #ifdef CORE_M4
 "\t - MCU: LPC407x_8x \n\r"
