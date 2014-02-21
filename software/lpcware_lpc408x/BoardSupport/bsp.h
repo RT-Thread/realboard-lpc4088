@@ -301,6 +301,17 @@
 #define BRD_LED_2_CONNECTED_PORT        (4)
 #define BRD_LED_2_CONNECTED_PIN         (16)
 #define BRD_LED_2_CONNECTED_MASK  (1 <<  BRD_LED_2_CONNECTED_PIN)
+
+//PIO interrupt preset
+#define BRD_PIO_USED_INTR_PORT          (0)
+#define BRD_PIO_USED_INTR_PIN           (25)
+#define BRD_PIO_USED_INTR_MASK    (1 << BRD_PIO_USED_INTR_PIN)
+
+
+//MCI power active levell
+#define BRD_MCI_POWERED_ACTIVE_LEVEL    (0)
+
+
 #endif
 
 
