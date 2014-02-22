@@ -249,7 +249,7 @@ SPI2_MISO: P5.1
 SPI2_SCK : P5.2
 CS1: P0.20  TOUCH
 */
-void rt_hw_spi_init(void)
+int rt_hw_spi_init(void)
 {
     /* register spi bus */
     {
@@ -294,5 +294,9 @@ void rt_hw_spi_init(void)
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi00", "spi0", (void *)&spi_cs1);
     }
+	
+	return 0;
 }
+INIT_BOARD_EXPORT(rt_hw_spi_init);
+
 #endif

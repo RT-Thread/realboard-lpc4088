@@ -378,15 +378,17 @@ void GPIO_IRQHandler(void)
     }
 }
 
-rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
+int rtgui_touch_hw_init(void)
 {
     struct rt_spi_device *spi_device;
     struct rt_thread *touch_thread;
-    spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
+	char *device_name = "spi10";
+	
+    spi_device = (struct rt_spi_device *)rt_device_find(device_name);
     if (spi_device == RT_NULL)
     {
-        rt_kprintf("spi device %s not found!\r\n", spi_device_name);
-        return -RT_ENOSYS;
+        rt_kprintf("spi device %s not found!\r\n", device_name);
+        return -1;
     }
 
     /* config spi */
@@ -424,6 +426,7 @@ rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
 
     return RT_EOK;
 }
+INIT_DEVICE_EXPORT(rtgui_touch_hw_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

@@ -442,7 +442,7 @@ struct pbuf *lpc_emac_rx(rt_device_t dev)
     return p;
 }
 
-void lpc_emac_hw_init(void)
+int lpc_emac_hw_init(void)
 {
     rt_event_init(&tx_event, "tx_event", RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
@@ -471,7 +471,9 @@ void lpc_emac_hw_init(void)
     lpc_emac_device.parent.eth_tx           = lpc_emac_tx;
 
     eth_device_init(&(lpc_emac_device.parent), "e0");
+	return 0;
 }
+INIT_DEVICE_EXPORT(lpc_emac_hw_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

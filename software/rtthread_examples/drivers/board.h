@@ -56,5 +56,8 @@ extern int __bss_end;
 #define HEAP_END    (void*)(0x10000000 + 0x10000)
 
 void rt_hw_board_init(void);
+#ifdef RT_USING_RTGUI
+int  rtgui_lcd_init(void);
+#endif
 
 #endif

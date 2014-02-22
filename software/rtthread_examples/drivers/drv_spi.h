@@ -39,6 +39,6 @@ struct lpc_spi_cs
 rt_err_t lpc_spi_register(LPC_SSP_TypeDef *SPI,
                             struct lpc_spi_bus *lpc_spi,
                             const char *spi_bus_name);
-extern void rt_hw_spi_init(void);
+int rt_hw_spi_init(void);
 
 #endif // __DRV_SPI_H

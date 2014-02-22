@@ -35,6 +35,7 @@
 #define MCI_PWRCTRL_OPENDRAIN_NUMBIT           (1)
 #define MCI_PWRCTRL_OPENDRAIN_BMASK            (0x01)
 
+#define SDCARD_DET_VALUE ((LPC_GPIO2->PIN>>19)&0x01)
 rt_uint32_t dmaWrCh_TermianalCnt, dmaWrCh_ErrorCnt;
 rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 
@@ -1690,7 +1691,7 @@ static rt_err_t mci_read_config(void)
         c_size =  unstuff_bits(csd_buf, 48, 22);
         /* Calculate block count */
         _mci_device->geometry.sector_count = (c_size + 1) * 1024;
-        MCI_DEBUG("card sector_count:%d!\n", _mci_device.geometry.sector_count);
+        MCI_DEBUG("card sector_count:%d!\n", _mci_device->geometry.sector_count);
     }
     else     /* CSD V1.0 (for Standard Capacity) */
     {
@@ -1702,7 +1703,7 @@ static rt_err_t mci_read_config(void)
         read_bl_len = unstuff_bits(csd_buf, 80, 4);
         /* sector count = BLOCKNR*BLOCK_LEN/512, we manually set SECTOR_SIZE to 512*/
         _mci_device->geometry.sector_count = (((c_size + 1) * (0x01 << (c_size_mult + 2))) * (0x01 << read_bl_len)) / 512;
-        MCI_DEBUG("card sector_count:%d!\n", _mci_device.geometry.sector_count);
+        MCI_DEBUG("card sector_count:%d!\n", _mci_device->geometry.sector_count);
     }
 
     /* Get erase block size in unit of sector */
@@ -1732,8 +1733,8 @@ static rt_err_t mci_read_config(void)
     default:
         break;
     }
-    MCI_DEBUG("card block_size:%d!\n", _mci_device.geometry.block_size);
-    MCI_DEBUG("[info] card capacity : %d Mbyte\r\n", (_mci_device.geometry.sector_count * _mci_device.geometry.bytes_per_sector) / (1024 * 1024));
+    MCI_DEBUG("card block_size:%d!\n", _mci_device->geometry.block_size);
+    MCI_DEBUG("[info] card capacity : %d Mbyte\r\n", (_mci_device->geometry.sector_count * _mci_device->geometry.bytes_per_sector) / (1024 * 1024));
     /* Select Card */
     if (mci_cmd_selectCard() != RT_EOK)
     {
@@ -1793,6 +1794,11 @@ static rt_err_t rt_mci_init(rt_device_t dev)
     rt_err_t result = RT_EOK;
     _mci_device->card_type = MCI_CARD_UNKNOWN;
     rt_mutex_take(&_mci_device->lock, RT_WAITING_FOREVER);
+	  if(SDCARD_DET_VALUE!=RT_EOK)
+		{
+        MCI_DEBUG("can not found any sdcard!\n");
+        goto _exit;
+    }
     if (mci_card_reset() != RT_EOK)
     {
         MCI_DEBUG("card reset error!\n");
@@ -2075,17 +2081,16 @@ rt_err_t mci_hw_init(const char *device_name)
 
     // Set all MCI pins to outputs
     LPC_GPIO1->DIR |= 0x18EC;
-//
+	
     // Force all pins low (except power control pin)
-    LPC_GPIO1->CLR = 0x1000;
-    LPC_GPIO1->CLR = 0x0800;
-    LPC_GPIO1->CLR = 0x0080;
-    LPC_GPIO1->CLR = 0x0040;
-//
+    LPC_GPIO1->CLR = 0x18cc;
+	
+	  // Set power control pin high
     LPC_GPIO1->SET = 0x0020;
-//
-    LPC_GPIO1->CLR = 0x0008;
-    LPC_GPIO1->CLR = 0x0004;
+		
+		//config DET pin to input mode
+		LPC_IOCON->P2_19 &= ~0x07;
+		LPC_GPIO2->DIR &= ~(0x01<<19);
 
     rt_thread_delay(20);
 

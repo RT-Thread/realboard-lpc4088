@@ -93,12 +93,16 @@ static void key_thread_entry(void *parameter)
     }
 }
 
-void rt_hw_key_init(void)
+int rt_hw_key_init(void)
 {
     rt_thread_t key_tid;
     key_tid = rt_thread_create("key",
                                key_thread_entry, RT_NULL,
                                512, RTGUI_SVR_THREAD_PRIORITY-1, 5);
     if (key_tid != RT_NULL) rt_thread_startup(key_tid);
+	
+	return 0;
 }
+INIT_DEVICE_EXPORT(rt_hw_key_init);
+
 #endif

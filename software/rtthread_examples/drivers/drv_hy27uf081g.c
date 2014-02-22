@@ -340,3 +340,4 @@ int nand_hy27uf_hw_init(void)
 
     return RT_EOK;
 }
+INIT_DEVICE_EXPORT(nand_hy27uf_hw_init);

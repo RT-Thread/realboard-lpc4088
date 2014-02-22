@@ -22,6 +22,11 @@
 #include "drv_lcd.h"
 #ifdef LPC_EXT_SDRAM
 #include "drv_sdram.h"
+#include "drv_mpu.h"
+#endif
+
+#ifdef RT_USING_COMPONENTS_INIT
+#include <components.h>
 #endif
 
 /**
@@ -67,14 +72,37 @@ void rt_hw_board_init()
     lpc_sdram_hw_init();
 	mpu_init();
 #endif
+
+#ifdef RT_USING_COMPONENTS_INIT
+	/* initialization board with RT-Thread Components */
+	rt_components_board_init();
+#endif
 }
+
+#ifdef RT_USING_RTGUI
+#include <rtgui/driver.h>
+#include "drv_lcd.h"
+
+/* initialize for gui driver */
+int rtgui_lcd_init(void)
+{
+	rt_device_t device;
+
+	rt_hw_lcd_init();
+
+	device = rt_device_find("lcd");
+	/* set graphic device */
+	rtgui_graphic_set_device(device);
+	
+	return 0;
+}
+INIT_DEVICE_EXPORT(rtgui_lcd_init);
+#endif
 
 void MemManage_Handler(void)
 {
-	rt_kprintf("Memory Fault!\n");
-#ifdef RT_USING_FINSH
-	list_thread();
-#endif
-	while (1);
-}
+	extern void HardFault_Handler(void);
 
+	rt_kprintf("Memory Fault!\n");
+	HardFault_Handler();
+}

@@ -304,6 +304,6 @@
 #define DP83848C_DEF_ADR    0x0F00      /* Default PHY device address        */
 #define DP83848C_ID         0x20005C90  /* PHY Identifier                    */
 
-void lpc_emac_hw_init(void);
+int lpc_emac_hw_init(void);
 
 #endif
