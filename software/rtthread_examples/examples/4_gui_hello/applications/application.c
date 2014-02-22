@@ -1,42 +1,29 @@
 #include <board.h>
 #include <rtthread.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
+#include <rtgui/rtgui_system.h>
+#include <shell.h>
 
-#include "drv_lcd.h"
+#include <drv_key.h>
+#include <drv_spi.h>
+#include <drv_touch.h>
 #include "ui_hello.h"
 
 void rt_init_thread_entry(void* parameter)
 {
-#ifdef RT_USING_COMPONENTS_INIT
-	/* initialization RT-Thread Components */
-	rt_components_init();
-#endif
+	/* initialize LCD drv for GUI */
+	rtgui_lcd_init();
+	/* initialize GUI system */
+	rtgui_system_server_init();
+	/* initialize keyboard */
+	rt_hw_key_init();
+	/* initialize touch */
+	rt_hw_spi_init();
+	rtgui_touch_hw_init();
 
-#ifdef RT_USING_RTGUI
-	{
-		rt_device_t device;
-
-		rt_hw_lcd_init();
-
-		device = rt_device_find("lcd");
-		/* re-set graphic device */
-		rtgui_graphic_set_device(device);
-
-		/* initialize rtGUI server */
-		rtgui_system_server_init();
-
-		/* initialize keyboard and touch */
-		rt_hw_key_init();
-		rtgui_touch_hw_init("spi10");
-
-		/* say hello world in screen */
-		ui_hello();
-	}
-#endif
-
-    /* do some thing here. */
+	/* say hello world in screen */
+	ui_hello();
+	
+	finsh_system_init();
 }
 
 int rt_application_init()
