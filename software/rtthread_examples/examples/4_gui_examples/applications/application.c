@@ -4,42 +4,29 @@
  */
 #include <board.h>
 #include <rtthread.h>
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include <shell.h>
-#endif
-
-#ifdef RT_USING_DFS
+#include <rtgui/rtgui_system.h>
 #include <dfs_fs.h>
-#endif
+#include <dfs_init.h>
+#include <dfs_elm.h>
+#include <shell.h>
 
-#include <rtgui/calibration.h>
-#include "components.h"
-
-#include "drv_sd.h"
-#include "drv_lcd.h"
-#include "drv_touch.h"
-#include "setup.h"
-
-extern void rt_hw_key_init(void);
-extern rt_bool_t cali_setup(void);
-extern void cali_store(struct calibration_data *data);
-
+#include <drv_key.h>
+#include <drv_spi.h>
+#include <drv_touch.h>
+#include <drv_sd.h>
 
 void rt_init_thread_entry(void* parameter)
 {
-#ifdef RT_USING_COMPONENTS_INIT
-	/* initialization RT-Thread Components */
-	rt_components_init();
-#endif
-	
-	rt_hw_spi_init();
+	/* initialize LCD drv for GUI */
+	rtgui_lcd_init();
 
-	mci_hw_init("sd0");
-
-	
 	/* Filesystem Initialization */
-#ifdef RT_USING_DFS
+	mci_hw_init("sd0");
+	/* initialize the device file system */
+	dfs_init();
+	/* initialize the elm chan FatFS file system*/
+	elm_init();
+
 	/* mount sd card fat partition 1 as root directory */
 	if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
 	{
@@ -51,44 +38,24 @@ void rt_init_thread_entry(void* parameter)
                 ff_convert_init();
         }
 		#endif
-		
 	}
 	else 
 	{	
 		rt_kprintf("File System initialzation failed!\n");
 	}	
-#endif
 
+	/* initialize GUI system */
+	rtgui_system_server_init();
+	/* initialize keyboard */
+	rt_hw_key_init();
+	/* initialize touch */
+	rt_hw_spi_init();
+	rtgui_touch_hw_init();
 
-#ifdef RT_USING_RTGUI
-	{
-		rt_device_t device;
-		struct rt_device_rect_info info;
-		extern void application_init(void);
-
-		rt_hw_lcd_init();
-		rt_device_init_all();
-		
-		device = rt_device_find("lcd");
-		/* re-set graphic device */
-		rtgui_graphic_set_device(device);
-		
-		/* 在rt_components_init时由于文件系统尚未挂载，
-		中文字库还没准备好，所以待中文字库准备好后，再来一次rtgui初始化*/
-		rtgui_system_server_init();
-		
-		rt_hw_key_init();
-		rtgui_touch_hw_init("spi10");
-		
-		calibration_set_restore(cali_setup);
-	    calibration_set_after(cali_store);
-		calibration_init();		
-		
-		application_init();
-	}
-#endif
-
-    /* do some thing here. */
+    /* GUI examples initializtion */
+	application_init();
+	
+	finsh_system_init();
 }
 
 int rt_application_init()
@@ -98,7 +65,6 @@ int rt_application_init()
     tid = rt_thread_create("init",
         rt_init_thread_entry, RT_NULL,
         2048, RT_THREAD_PRIORITY_MAX/3, 20);//
-	
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 	
