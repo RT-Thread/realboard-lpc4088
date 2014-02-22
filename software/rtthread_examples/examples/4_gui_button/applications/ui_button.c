@@ -47,6 +47,8 @@ static void ui_thread_entry(void* parameter)
 	/* create the button */
 	button = rtgui_button_create("OK");
 	rtgui_button_set_onbutton(button, onbutton);
+	rtgui_widget_set_minwidth(RTGUI_WIDGET(button), 80);
+	rtgui_widget_set_minheight(RTGUI_WIDGET(button), 25);
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(button));
 
     rtgui_container_layout(RTGUI_CONTAINER(win));

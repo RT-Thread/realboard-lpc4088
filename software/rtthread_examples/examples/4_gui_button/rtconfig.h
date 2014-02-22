@@ -18,8 +18,8 @@
 #define RT_TICK_PER_SECOND	100
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE	512
-// <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
-#define RT_USING_MODULE
+// <bool name="RT_USING_MODULE" description="Using Application Module" default="false" />
+// #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
@@ -91,8 +91,8 @@
 #define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-#define RT_USING_COMPONENTS_INIT
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="false" />
+// #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
@@ -106,12 +106,12 @@
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
 // #define RT_USING_NEWLIB
-// <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-#define RT_USING_PTHREADS
+// <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="false" />
+// #define RT_USING_PTHREADS
 // </section>
 
-// <section name="RT_USING_DFS" description="Device file system" default="true" >
-#define RT_USING_DFS
+// <section name="RT_USING_DFS" description="Device file system" default="false" >
+// #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
@@ -143,8 +143,8 @@
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
 // #define RT_USING_DFS_UFFS
-// <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-#define RT_USING_DFS_DEVFS
+// <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="false" />
+// #define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
 //#define RT_USING_DFS_ROMFS
 // </section>
@@ -216,13 +216,13 @@
 // <bool name="RTGUI_USING_FONT12" description="Support 12 weight font" default="false" />
 //#define RTGUI_USING_FONT12
 // <bool name="RTGUI_USING_FONTHZ" description="Support Chinese font" default="false" />
-#define RTGUI_USING_FONTHZ
+// #define RTGUI_USING_FONTHZ
 // <bool name="RTGUI_USING_DFS_FILERW" description="Using DFS as file interface " default="true" />
-#define RTGUI_USING_DFS_FILERW
+// #define RTGUI_USING_DFS_FILERW
 // <bool name="RTGUI_USING_HZ_FILE" description="Using font file as Chinese font" default="false" />
-#define RTGUI_USING_HZ_FILE
+// #define RTGUI_USING_HZ_FILE
 // <bool name="RTGUI_USING_HZ_BMP" description="Using Chinese bitmap font" default="false" />
-//#define RTGUI_USING_HZ_BMP
+// #define RTGUI_USING_HZ_BMP
 // <bool name="RTGUI_USING_SMALL_SIZE" description="Using small size in RTGUI" default="false" />
 // #define RTGUI_USING_SMALL_SIZE
 // <bool name="RTGUI_USING_MOUSE_CURSOR" description="Using mouse cursor in RTGUI" default="false" />
@@ -236,7 +236,7 @@
 // <bool name="RTGUI_IMAGE_BMP" description="Using bmp image in RTGUI" default="true" />
 #define RTGUI_IMAGE_BMP
 // <bool name="RTGUI_USING_NOTEBOOK_IMAGE" description="Using notebook image in RTGUI" default="true" />
-#define RTGUI_USING_NOTEBOOK_IMAGE
+// #define RTGUI_USING_NOTEBOOK_IMAGE
 // <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
 //#define RTGUI_USING_HW_CURSOR
 
