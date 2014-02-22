@@ -15,6 +15,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <drv_sram.h>
 
 #include "board.h"
 

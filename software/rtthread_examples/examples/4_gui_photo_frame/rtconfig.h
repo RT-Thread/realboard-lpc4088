@@ -18,8 +18,8 @@
 #define RT_TICK_PER_SECOND	100
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE	512
-// <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
-#define RT_USING_MODULE
+// <bool name="RT_USING_MODULE" description="Using Application Module" default="false" />
+// #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
@@ -91,8 +91,8 @@
 #define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-#define RT_USING_COMPONENTS_INIT
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="false" />
+// #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
@@ -106,8 +106,8 @@
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
 // #define RT_USING_NEWLIB
-// <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-#define RT_USING_PTHREADS
+// <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="false" />
+// #define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -143,8 +143,8 @@
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
 // #define RT_USING_DFS_UFFS
-// <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-#define RT_USING_DFS_DEVFS
+// <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="false" />
+// #define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
 //#define RT_USING_DFS_ROMFS
 // </section>
@@ -239,6 +239,8 @@
 #define RTGUI_USING_NOTEBOOK_IMAGE
 // <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
 //#define RTGUI_USING_HW_CURSOR
+// <bool name="RTGUI_USING_CALI" description="Using calibration application in rtGUI" default="true" />
+// #define RTGUI_USING_CALI
 
 // </section>
 

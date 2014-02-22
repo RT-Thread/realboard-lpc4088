@@ -203,7 +203,7 @@ void timeout(struct rtgui_timer* timer, void* parameter)
     picture_show_next();
 }
 
-void picture_show(void)
+void picture_thread(void* parameter)
 {
     /* create application */
     struct rtgui_app *app;
@@ -255,3 +255,14 @@ void picture_show(void)
     rtgui_app_destroy(app);
 }
 
+int picture_init(void)
+{
+	rt_thread_t tid;
+
+    tid = rt_thread_create("PicViwer", picture_thread, RT_NULL,
+        2048, 20, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
+
+	return 0;
+}
