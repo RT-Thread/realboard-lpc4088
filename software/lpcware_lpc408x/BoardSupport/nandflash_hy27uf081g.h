@@ -1,6 +1,8 @@
 #ifndef __DRV_HY27UF081G_H__
 #define __DRV_HY27UF081G_H__
 
+#include "lpc_types.h"
+
 // total 1024 blocks in a device
 #define NANDFLASH_NUMOF_BLOCK       1024
 

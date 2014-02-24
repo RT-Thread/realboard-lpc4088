@@ -52,6 +52,11 @@
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
                LPC4088 OEM Board rev A and OEM Base Board rev PB1
                 Jumpers: default
+            2. RealBoard4088
+                - Configure the USB_PORT to 2(in usbhw.h).
+                - JP7: 2-3: ON (near the USB port)
+                - JP8: 2-3: ON (near the USB port)
+                - JP9: 2-3: ON (near the USB port)
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
     
     
@@ -67,7 +72,9 @@
             (Using UART0 on USB serial port
             Sure that you choose correct COM port number - Pls reference at:
             "Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
-            
+
+            2. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.

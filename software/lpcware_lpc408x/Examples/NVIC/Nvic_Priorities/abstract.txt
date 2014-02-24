@@ -59,22 +59,28 @@
         This example was tested on:
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
                LPC4088 OEM Board rev A and OEM Base Board rev PB1
-               
-                    Press SW6 Push Button to generate EXT0 interrupt for testing
-                    - LED1: connect to P1.18
-                    - LED2: connect to P0.13
-                2. LPC1788 IAR Start Kit Rev.B
-                    - 3.3VA_E    :ON
-                    - VREG        :ON
-                    - IO_E        :ON
-                    - PWR_SEL    :depends on power source selection
-                    
-                    - LED1: connect to P1.13
-                    - LED2: connect to P1.18
-                    To generate EXT0 interrupt, it should use a wire to pull P2.10 at ISP_E 
-                    jumper (at side that linked directly to R10 resistor) to GND
+
+                Press SW6 Push Button to generate EXT0 interrupt for testing
+                - LED1: connect to P1.18
+                - LED2: connect to P0.13
+            2. LPC1788 IAR Start Kit Rev.B
+                - 3.3VA_E    :ON
+                - VREG        :ON
+                - IO_E        :ON
+                - PWR_SEL    :depends on power source selection
+
+                - LED1: connect to P1.13
+                - LED2: connect to P1.18
+                To generate EXT0 interrupt, it should use a wire to pull P2.10 at ISP_E 
+                jumper (at side that linked directly to R10 resistor) to GND
+            3. RealBoard4088
+                - JP2: ON
+                - LED1: connect to P4.15
+                - LED2: connect to P4.16
+
+                Press K3 to generate EXT0 interrupt for testing
             (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)    
-            
+
     Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
                LPC4088 OEM Board rev A and OEM Base Board rev PB1
@@ -102,7 +108,10 @@
                     + P0.22 (@J3.25) - JP12.2
                     + P2.9  (@J3.15) - JP13.2
             2. LPC1788 IAR Start Kit Rev.B
-                - UART0: 
+                - UART0:
+                    All jumpers: optional
+            3. RealBoard4088
+                - UART0:
                     All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
@@ -131,7 +140,10 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
-    
+
+            3. RealBoard4088
+                - JP1: ON
+
     Step to run:
         - Step 1: Build example.
         - Step 2: Burn hex file into board (if run on ROM mode)

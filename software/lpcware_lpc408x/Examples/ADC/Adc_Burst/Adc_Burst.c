@@ -59,14 +59,9 @@
 
 #ifdef LPC_ADC_INJECT_TEST
 #define GPIO_INT    (1<<10)
-#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-#define LED_PORT    (1)         // P1.18 (LED USB Host) is used as polling LED when inject other ADC channel
-#define LED_PIN     (1<<18)
-#else
-#define LED_PORT    (0)         // P0.13 (LED USB Host) is used as polling LED when inject other ADC channel
-#define LED_PIN     (1<<13)
-#endif
-#endif /* (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)*/
+#define LED_PORT    BRD_LED_2_CONNECTED_PORT
+#define LED_PIN     BRD_LED_2_CONNECTED_PIN
+#endif /* LPC_ADC_INJECT_TEST*/
 
 #if __DMA_USED__
 uint32_t s_buf[DMA_SIZE];       
@@ -127,14 +122,14 @@ void EINT0_IRQHandler(void)
         ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,ENABLE);
 
         //Turn on LED -> indicate that extended channel was enable
-        GPIO_ClearValue(LED_PORT, LED_PIN);
+        GPIO_ClearValue(LED_PORT, 1 << LED_PIN);
     }
     else
     {
         ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,DISABLE);
 
         // Turn off LED ->indicate that extended channel was disable
-        GPIO_SetValue(LED_PORT, LED_PIN);
+        GPIO_SetValue(LED_PORT, 1 << LED_PIN);
     }
 #endif
 }
@@ -254,8 +249,8 @@ void c_entry(void)
     EXTICfg.EXTI_polarity = EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE;
 
     EXTI_Config(&EXTICfg);
-    GPIO_SetDir(LED_PORT,LED_PIN,1);
-    GPIO_SetValue(LED_PORT,LED_PIN);
+    GPIO_SetDir(LED_PORT,1<<LED_PIN,1);
+    GPIO_SetValue(LED_PORT,1<<LED_PIN);
 
     NVIC_EnableIRQ(EINT0_IRQn);
 #endif

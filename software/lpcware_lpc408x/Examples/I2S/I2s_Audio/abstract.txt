@@ -51,6 +51,7 @@
         This example was tested on:
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
                LPC4088 OEM Board rev A and OEM Base Board rev PB1
+            2. RealBoard4088
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
             
         I2S connection:
@@ -73,6 +74,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.

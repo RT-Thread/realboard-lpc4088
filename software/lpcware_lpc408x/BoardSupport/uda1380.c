@@ -39,8 +39,11 @@
 #include "lpc_i2c.h"
 #include "lpc_pinsel.h"
 
-//Uda1380 link to I2C0 only
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+#define UDA1380_I2C     I2C_1
+#else
 #define UDA1380_I2C     I2C_0
+#endif
 
 
 /*********************************************************************//**
@@ -53,11 +56,15 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
 {
     int32_t ret;
     uint8_t clk;
-    
-    // Config Pin for I2C_SDA and I2C_SCL of I2C0
-    // It's because the Uda1380 IC is linked to LPC407x_8x_177x_8x by I2C0 clearly
+
+    // Config Pin for I2C_SDA and I2C_SCL of I2C
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    PINSEL_ConfigPin (0, 19, 3);
+    PINSEL_ConfigPin (0, 20, 3);
+#else
     PINSEL_ConfigPin (0, 27, 1);
     PINSEL_ConfigPin (0, 28, 1);
+#endif
 
     I2C_Init(UDA1380_I2C, i2cClockFreq);
 
@@ -75,20 +82,20 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
         return ret;
 
 #if UDA1380_SYSCLK_USED //Use SYSCLK
-    ret = Uda1380_WriteData(UDA1380_REG_EVALCLK, 
+    ret = Uda1380_WriteData(UDA1380_REG_EVALCLK,
            EVALCLK_DEC_EN | EVALCLK_DAC_EN | EVALCLK_INT_EN | EVALCLK_DAC_SEL_SYSCLK );
     if(ret != UDA1380_FUNC_OK)
         return ret;
-    
+
     ret = Uda1380_WriteData(UDA1380_REG_PWRCTRL,
                       PWR_PON_HP_EN | PWR_PON_DAC_EN | PWR_PON_BIAS_EN);
     if(ret != UDA1380_FUNC_OK)
         return ret;
-    
+
 #else //Use WSPLL   
     if(i2sClockFreq >= 6250 && i2sClockFreq < 12500)
         clk = EVALCLK_WSPLL_SEL6_12K;
-    else if(i2sClockFreq >= 12501 && i2sClockFreq < 25000)  
+    else if(i2sClockFreq >= 12501 && i2sClockFreq < 25000)
         clk = EVALCLK_WSPLL_SEL12_25K;
     else if(i2sClockFreq >= 25001 && i2sClockFreq < 50000)
         clk = EVALCLK_WSPLL_SEL25_50K;
@@ -96,12 +103,12 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
         clk = EVALCLK_WSPLL_SEL50_100K;
     else
         clk= 0;
-        
-    ret = Uda1380_WriteData(UDA1380_REG_EVALCLK, 
+
+    ret = Uda1380_WriteData(UDA1380_REG_EVALCLK,
                      EVALCLK_DEC_EN | EVALCLK_DAC_EN | EVALCLK_INT_EN | EVALCLK_DAC_SEL_WSPLL | clk);
     if(ret != UDA1380_FUNC_OK)
         return ret;
-    
+
     ret = Uda1380_WriteData(UDA1380_REG_PWRCTRL,
                       PWR_PON_PLL_EN | PWR_PON_HP_EN | PWR_PON_DAC_EN | PWR_PON_BIAS_EN);
     if(ret != UDA1380_FUNC_OK)
@@ -168,14 +175,14 @@ int32_t Uda1380_ReadData(uint8_t reg, uint16_t *data)
         return UDA1380_FUNC_ERR;
 
     i2cBuf[0] = reg;
-    
+
     i2cData.sl_addr7bit = UDA1380_SLAVE_ADDR;
     i2cData.tx_length = 1;
     i2cData.tx_data = i2cBuf;
     i2cData.rx_data = &i2cBuf[1];
     i2cData.rx_length = UDA1380_CMD_BUFF_SIZE - 1;
-    i2cData.retransmissions_max = 3;    
-    
+    i2cData.retransmissions_max = 3;
+
     if (I2C_MasterTransferData(UDA1380_I2C, &i2cData, I2C_TRANSFER_POLLING) == SUCCESS)
     {
         *data = i2cBuf[1] << 8 | i2cBuf[2];
@@ -197,10 +204,13 @@ int32_t Uda1380_Mute(Bool MuteOn)
     ret = Uda1380_ReadData(UDA1380_REG_EVALCLK, &tmp);
     if(ret != UDA1380_FUNC_OK)
         return ret;
+    /* RealBoard4088 does not have the sysclk connection. */
+#if !(_CURR_USING_BRD == _RB4088_BOARD)
     /* Use sysclk */
     ret = Uda1380_WriteData(UDA1380_REG_EVALCLK, tmp & (~EVALCLK_DAC_SEL_WSPLL));
     if(ret != UDA1380_FUNC_OK)
         return ret;
+#endif
 
     if(!MuteOn)
     {
@@ -212,7 +222,7 @@ int32_t Uda1380_Mute(Bool MuteOn)
     }
     if(ret != UDA1380_FUNC_OK)
         return ret;
-    
+
      /* Use sysclk */
     ret = Uda1380_WriteData(UDA1380_REG_EVALCLK, tmp);
     if(ret != UDA1380_FUNC_OK)

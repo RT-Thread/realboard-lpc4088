@@ -99,6 +99,11 @@
                 - VREG        :ON
                 - IO_E        :ON
                 - PWR_SEL    :depends on power source selection
+            3. RealBoard4088
+                - Configure the USB_PORT to 2(in usbhw.h).
+                - JP7: 2-3: ON (near the USB port)
+                - JP8: 2-3: ON (near the USB port)
+                - JP9: 2-3: ON (near the USB port)
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
             
 
@@ -119,6 +124,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.

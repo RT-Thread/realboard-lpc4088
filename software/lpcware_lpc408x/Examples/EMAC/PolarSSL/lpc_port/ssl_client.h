@@ -54,6 +54,8 @@
 #include "sdram_mt48lc8m32lfb5.h"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
+#elif (_CURR_USING_BRD == _RB4088_BOARD)
+#include "sdram_h57v2562gtr.h"
 #endif
 #include "polarssl/error.h"
 #include "polarssl/config.h"
