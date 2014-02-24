@@ -60,6 +60,9 @@
                 - VREG        :ON
                 - IO_E        :ON
                 - PWR_SEL    :depends on power source selection
+
+            3. RealBoard4088
+                - JP2: ON
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
                                 
         ADC configure:
@@ -105,6 +108,9 @@
         2. LPC1788 IAR Start Kit Rev.B
             - UART0: 
                 All jumpers: optional
+        3. RealBoard4088
+            - UART0:
+                All jumpers: optional
         Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
         
         Setting:
@@ -131,7 +137,10 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
-    
+
+            3. RealBoard4088
+                - JP1: ON
+
     Step to run:        
         - Step 1: Choose correct working mode:
             + If test multiple input, then uncomment "#define LPC_ADC_BURST_MULTI"
@@ -157,3 +166,5 @@
                 - Press SW6 button
             2. On LPC1788 IAR Start Kit Rev.B:
                 - Connect ISP_E[2] with GND
+            3. RealBoard4088
+                - Press Key3 button
