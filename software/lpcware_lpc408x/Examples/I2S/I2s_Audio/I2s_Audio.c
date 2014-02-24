@@ -213,7 +213,7 @@ void c_entry (void) {                       /* Main Program */
     for(i = 0; i <0x1000000; i++);
 
     Uda1380_Init(200000, 44100);
-    
+
     I2S_Start(LPC_I2S);
 
     NVIC_EnableIRQ(I2S_IRQn);
