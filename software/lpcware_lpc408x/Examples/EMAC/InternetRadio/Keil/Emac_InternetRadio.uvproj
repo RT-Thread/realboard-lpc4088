@@ -485,6 +485,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\sdram_mt48lc8m32lfb5.c</FilePath>
             </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
