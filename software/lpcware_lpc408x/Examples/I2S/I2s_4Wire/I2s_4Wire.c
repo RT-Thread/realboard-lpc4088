@@ -134,17 +134,30 @@ void c_entry (void) {
 
     Buffer_Init();
 
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    /* Pin configuration:
+     * Assign:  - P0.6 as I2SRX_SDA
+     *          - P0.23 as I2SRX_SCK
+     *          - P0.24 as I2SRX_WS
+     */
+    PINSEL_ConfigPin(0,6,1);
+    PINSEL_ConfigPin(0,23,2);
+    PINSEL_ConfigPin(0,24,2);
+#else
     /* Pin configuration:
      * Assign:  - P0.4 as I2SRX_CLK
      *          - P0.5 as I2SRX_WS
      *          - P0.6 as I2SRX_SDA
-     *          - P0.7 as I2STX_CLK
-     *          - P0.8 as I2STX_WS
-     *          - P0.9 as I2STX_SDA
      */
     PINSEL_ConfigPin(0,4,1);
     PINSEL_ConfigPin(0,5,1);
     PINSEL_ConfigPin(0,6,1);
+#endif
+    /* Pin configuration:
+     * Assign:  - P0.7 as I2STX_CLK
+     *          - P0.8 as I2STX_WS
+     *          - P0.9 as I2STX_SDA
+     */
     PINSEL_ConfigPin(0,7,1);
     PINSEL_ConfigPin(0,8,1);
     PINSEL_ConfigPin(0,9,1);
