@@ -45,6 +45,7 @@
                 - VREG        :ON
                 - IO_E        :ON
                 - PWR_SEL    :depends on power source selection
+            3. RealBoard4088
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
                         
     
@@ -64,6 +65,9 @@
             2. LPC4088 and 1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.
