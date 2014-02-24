@@ -111,6 +111,8 @@
 
                 - Jumper PD/CTRL at 2-3 position
 
+        3. RealBoard4088
+
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
                 
         Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
@@ -141,6 +143,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - UART0: 
                     All jumpers: optional
+            3. RealBoard4088
+                - UART0:
+                    All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
             Setting:
@@ -166,6 +171,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.

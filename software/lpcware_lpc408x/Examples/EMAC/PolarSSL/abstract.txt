@@ -97,12 +97,14 @@
 @How to run:
     Hardware configuration:    
         This example is tested on:    
-            LPC1788 OEM board connects with QVGA base board v1.2
+            1. LPC1788 OEM board connects with QVGA base board v1.2
             These jumper should be configured as follows:
                 - ETH_PHY_PD: OFF
                 - JP 25~27: 2-3
                 - JP28: ON
             Note: Sure that all resistors from R44-R53 on OEM board were been filled.
+
+            2. RealBoard4088
                 
         Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
             1. LPC1788 OEM Board rev A and OEM Base Board rev A
@@ -126,6 +128,9 @@
                     + P2.9  (@J3.15) - JP13.2
             2. LPC1788 IAR Start Kit Rev.B
                 - UART0: 
+                    All jumpers: optional
+            3. RealBoard4088
+                - UART0:
                     All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
@@ -151,7 +156,10 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
-    
+
+            3. RealBoard4088
+                - JP1: ON
+
     Step to run:
         - Step 1: Build example.
         - Step 2: Burn hex file into board 
