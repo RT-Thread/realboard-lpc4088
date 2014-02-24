@@ -470,6 +470,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Drivers\source\lpc_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1490,6 +1495,11 @@
               <FileName>lpc_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Drivers\source\lpc_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
             </File>
           </Files>
         </Group>

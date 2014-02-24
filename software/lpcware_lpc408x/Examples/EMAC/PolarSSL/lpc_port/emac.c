@@ -72,7 +72,11 @@ BOOL_8 tapdev_init(uint8_t* EMACAddr)
 	PINSEL_ConfigPin(1,14,1);
 	PINSEL_ConfigPin(1,15,1);
 	PINSEL_ConfigPin(1,16,1);
-	PINSEL_ConfigPin(1,17,1);
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    PINSEL_ConfigPin(2,9,4);
+#else
+    PINSEL_ConfigPin(1,17,1);
+#endif
 
 	_DBG_("[DEBUG]Init EMAC module");
 	sprintf(db,"[DEBUG]MAC addr: %X-%X-%X-%X-%X-%X \n\r", \
