@@ -601,6 +601,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\lcd_qvga_tft_revPB1.c</FilePath>
             </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -1199,6 +1204,11 @@
               <FileName>lcd_qvga_tft_revPB1.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\lcd_qvga_tft_revPB1.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
             </File>
           </Files>
         </Group>

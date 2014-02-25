@@ -167,6 +167,16 @@ void c_entry (void) {                       /* Main Program */
     PINSEL_ConfigPin(0,8,1);
     PINSEL_ConfigPin(0,9,1);
     PINSEL_ConfigPin(1,16,2);
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    /* Pin configuration:
+     * Assign:  - P0.6 as I2SRX_SDA
+     *          - P0.23 as I2SRX_SCK
+     *          - P0.24 as I2SRX_WS
+     */
+    PINSEL_ConfigPin(0,6,1);
+    PINSEL_ConfigPin(0,23,2);
+    PINSEL_ConfigPin(0,24,2);
+#endif
 
     I2S_Init(LPC_I2S);
 
@@ -203,7 +213,7 @@ void c_entry (void) {                       /* Main Program */
     for(i = 0; i <0x1000000; i++);
 
     Uda1380_Init(200000, 44100);
-    
+
     I2S_Start(LPC_I2S);
 
     NVIC_EnableIRQ(I2S_IRQn);

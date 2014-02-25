@@ -51,13 +51,15 @@
                 - VREG        :ON
                 - IO_E        :ON
                 - PWR_SEL    :depends on power source selection
+
+            3. RealBoard4088
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)                
         
         Event Input pins:
-                Channel         Pin         EA          IAR
-                0               P0.7        J5.17       EXT-7
-                1               P0.8        J3.19       EXT-8
-                2               P0.9        J5.18       EXT-9
+                Channel         Pin         EA          IAR        RealBoard4088
+                0               P0.7        J5.17       EXT-7      CN1-Pin14
+                1               P0.8        J3.19       EXT-8      CN1-Pin13
+                2               P0.9        J5.18       EXT-9      CN1-Pin12
     Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
                LPC4088 OEM Board rev A and OEM Base Board rev PB1
@@ -87,6 +89,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - UART0: 
                     All jumpers: optional
+            3. RealBoard4088
+                - UART0:
+                    All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
             Setting:
@@ -113,6 +118,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.

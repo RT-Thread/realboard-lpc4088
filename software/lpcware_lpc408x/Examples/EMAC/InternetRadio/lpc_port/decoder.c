@@ -46,6 +46,8 @@
 #include "sdram_mt48lc8m32lfb5.h"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
+#elif (_CURR_USING_BRD == _RB4088_BOARD)
+#include "sdram_h57v2562gtr.h"
 #endif
 
 /** @defgroup Mp3_decoder Mp3 Decoder
@@ -579,6 +581,16 @@ Status Decoder_Init (void) {
     PINSEL_ConfigPin(0,8,1);
     PINSEL_ConfigPin(0,9,1);
     PINSEL_ConfigPin(1,16,2);
+#if (_CURR_USING_BRD == _RB4088_BOARD)
+    /* Pin configuration:
+     * Assign:  - P0.6 as I2SRX_SDA
+     *          - P0.23 as I2SRX_SCK
+     *          - P0.24 as I2SRX_WS
+     */
+    PINSEL_ConfigPin(0,6,1);
+    PINSEL_ConfigPin(0,23,2);
+    PINSEL_ConfigPin(0,24,2);
+#endif
     _DBG_("[DEBUG]Init I2S interface");
     I2S_Init(LPC_I2S);
     

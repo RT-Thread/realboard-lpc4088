@@ -53,6 +53,8 @@
                 - JP2: 3-4   : ON
                        Remain: Optional
                 - Remain jumpers: Default            
+
+            2. RealBoard4088
                 
     Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
             1. LPC1788 OEM Board rev A and OEM Base Board rev A or
@@ -83,6 +85,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - UART0: 
                     All jumpers: optional
+            3. RealBoard4088
+                - UART0:
+                    All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
             Setting:
@@ -109,7 +114,10 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
-    
+
+            3. RealBoard4088
+                - JP1: ON
+
     Step to run:
         - Step 1: Build example.
         - Step 2: Burn hex file into board (if run on ROM mode)

@@ -511,6 +511,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\sdram_is42s32800d.c</FilePath>
             </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1190,6 +1200,16 @@
               <FileName>sdram_is42s32800d.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\sdram_is42s32800d.c</FilePath>
+            </File>
+            <File>
+              <FileName>nandflash_hy27uf081g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\nandflash_hy27uf081g.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_h57v2562gtr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_h57v2562gtr.c</FilePath>
             </File>
           </Files>
         </Group>

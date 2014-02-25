@@ -59,6 +59,8 @@
                 - PWR_SEL    :depends on power source selection
                 - Remain jumpers: Optional
                 Using CAPTURE_PIN P0.4 (EXT-4) pin to enable interrupt for capturing with TIMER 2
+            3. RealBoard4088
+                Using CAPTURE_PIN P0.4 (CN1-Pin17) pin to enable interrupt for capturing with TIMER 2
         (Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
                 
                         
@@ -91,6 +93,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - UART0: 
                     All jumpers: optional
+            3. RealBoard4088
+                - UART0:
+                    All jumpers: optional
             Note: Pls sure that "USED_UART_DEBUG_PORT" macro in debug_frmwrk.h is set correctly
             
             Setting:
@@ -117,6 +122,9 @@
             2. LPC1788 IAR Start Kit Rev.B
                 - RST_E: ON
                 - ISP_E: ON
+
+            3. RealBoard4088
+                - JP1: ON
     
     Step to run:
         - Step 1: Build example.
