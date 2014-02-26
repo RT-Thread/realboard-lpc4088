@@ -70,12 +70,12 @@ void rt_hw_board_init()
 
 #if LPC_EXT_SDRAM == 1
     lpc_sdram_hw_init();
-	mpu_init();
+    mpu_init();
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
-	/* initialization board with RT-Thread Components */
-	rt_components_board_init();
+    /* initialization board with RT-Thread Components */
+    rt_components_board_init();
 #endif
 }
 
@@ -86,23 +86,36 @@ void rt_hw_board_init()
 /* initialize for gui driver */
 int rtgui_lcd_init(void)
 {
-	rt_device_t device;
+    rt_device_t device;
 
-	rt_hw_lcd_init();
+    rt_hw_lcd_init();
 
-	device = rt_device_find("lcd");
-	/* set graphic device */
-	rtgui_graphic_set_device(device);
-	
-	return 0;
+    device = rt_device_find("lcd");
+    /* set graphic device */
+    rtgui_graphic_set_device(device);
+
+    return 0;
 }
 INIT_DEVICE_EXPORT(rtgui_lcd_init);
 #endif
 
+/* initialization for system heap */
+int rt_hw_board_heap_init(void)
+{
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#if LPC_EXT_SDRAM
+    sram_init();
+#endif
+#endif
+
+    return 0;
+}
+
 void MemManage_Handler(void)
 {
-	extern void HardFault_Handler(void);
+    extern void HardFault_Handler(void);
 
-	rt_kprintf("Memory Fault!\n");
-	HardFault_Handler();
+    rt_kprintf("Memory Fault!\n");
+    HardFault_Handler();
 }

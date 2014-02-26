@@ -20,7 +20,6 @@
 #define SDRAM_BASE_ADDR     0xA0000000
 #define SDRAM_SIZE          0x2000000
 
-
 /*******************************************************************************************
 * @函数名：sdram_gpio_config()
 * @参数  ：void
@@ -85,9 +84,9 @@ static void  sdram_gpio_config(void)
 
 void lpc_sdram_hw_init(void)
 {
-  volatile uint32_t i;
+    volatile uint32_t i;
     volatile uint32_t dwtemp;
-	uint16_t wtemp = wtemp;
+    uint16_t wtemp = wtemp;
     TIM_TIMERCFG_Type TIM_ConfigStruct;
 
     TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
@@ -140,7 +139,6 @@ void lpc_sdram_hw_init(void)
     LPC_EMC->DynamicControl    = 0x00000083; /* Issue MODE command */
 
 #ifdef SDRAM_CONFIG_16BIT
-
     wtemp = *((volatile uint16_t *)(SDRAM_BASE | (0x33 << 12))); /* 8 burst, 3 CAS latency */
 #elif defined SDRAM_CONFIG_32BIT
     dwtemp = *((volatile uint32_t *)(SDRAM_BASE | (0x32 << 13))); /* 4 burst, 3 CAS latency */

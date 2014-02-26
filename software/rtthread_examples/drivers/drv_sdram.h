@@ -17,18 +17,18 @@
 
 #include <board.h>
 
-#define SDRAM_CONFIG_16BIT	   //use the 16 bitSDRAM
-//#define SDRAM_CONFIG_32BIT	//use the 32 bitSDRAM
+#define SDRAM_CONFIG_16BIT     //use the 16 bitSDRAM
+//#define SDRAM_CONFIG_32BIT    //use the 32 bitSDRAM
 
 #ifdef SDRAM_CONFIG_16BIT
-#define SDRAM_SIZE               0x2000000	// 256Mbit
-#elif defined SDRAM_CONFIG_32BIT	 //
-#define SDRAM_SIZE               0x4000000	// 512Mbit
+#define SDRAM_SIZE               0x2000000  // 256Mbit
+#elif defined SDRAM_CONFIG_32BIT     //
+#define SDRAM_SIZE               0x4000000  // 512Mbit
 #else
-	error Wrong SDRAM config, check ex_sdram.h
+error Wrong SDRAM config, check ex_sdram.h
 #endif
 
-#define SDRAM_BASE               0xA0000000	   /* CS0 */
+#define SDRAM_BASE               0xA0000000    /* CS0 */
 
 void lpc_sdram_hw_init(void);
 
