@@ -103,9 +103,11 @@ INIT_DEVICE_EXPORT(rtgui_lcd_init);
 int rt_hw_board_heap_init(void)
 {
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #if LPC_EXT_SDRAM
+    rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
     sram_init();
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 #endif
 
