@@ -55,13 +55,13 @@ extern int __bss_end;
 #endif
 #define HEAP_END    (void*)(0x10000000 + 0x10000)
 
-#if LPC_EXT_SDRAM
-#undef HEAP_BEGIN
-#undef HEAP_END
+//#if LPC_EXT_SDRAM
+//#undef HEAP_BEGIN
+//#undef HEAP_END
 
-#define HEAP_BEGIN 	((void*)LPC_EXT_SDRAM_BEGIN)
-#define HEAP_END	((void*)LPC_EXT_SDRAM_END)
-#endif
+//#define HEAP_BEGIN 	((void*)LPC_EXT_SDRAM_BEGIN)
+//#define HEAP_END	((void*)LPC_EXT_SDRAM_END)
+//#endif
 
 void rt_hw_board_init(void);
 int  rt_hw_board_heap_init(void);
