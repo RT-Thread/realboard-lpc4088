@@ -108,8 +108,8 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 	LPC_LCD->CTRL |= (1<<5);
 	/*设置LCD为单面板*/
 	LPC_LCD->CTRL &= ~(1<<7);
-	/*设置为RGB*/ 
-	LPC_LCD->CTRL &= ~(1<<8);
+	/*设置为BGR*/ 
+	LPC_LCD->CTRL |= (1<<8);
 	/*设置为小端字节序*/
 	LPC_LCD->CTRL &= ~(1<<9);
 	// little endian pix order
@@ -199,12 +199,9 @@ void rt_hw_lcd_init(void)
 
 
 	_rt_framebuffer = rt_malloc_align(sizeof(rt_uint16_t)*RT_HW_LCD_HEIGHT*RT_HW_LCD_WIDTH, 32);
-   if (_rt_framebuffer == RT_NULL) 
-   { 
-	  rt_kprintf("lcd malloc failed ,no memory yet!\n");
-	  return; /* no memory yet */
-   }  
- 	_lcd_info.bits_per_pixel = 16;
+  if (_rt_framebuffer == RT_NULL) return; /* no memory yet */
+  //_rt_framebuffer = (rt_uint16_t *)FRAME_BUFFER;
+	_lcd_info.bits_per_pixel = 16;
 	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
 	_lcd_info.framebuffer = (void*)_rt_framebuffer;
 	_lcd_info.width = RT_HW_LCD_WIDTH;
