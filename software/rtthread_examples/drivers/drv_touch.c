@@ -14,7 +14,7 @@ TOUCH INT: P0_13
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/calibration.h>
+
 /*
 7  6 - 4  3      2     1-0
 s  A2-A0 MODE SER/DFR PD1-PD0
@@ -54,10 +54,9 @@ s  A2-A0 MODE SER/DFR PD1-PD0
 #define MAX_X_DEFAULT   0x20
 #define MIN_Y_DEFAULT   0x53
 #define MAX_Y_DEFAULT   0x79b
-
 #define SAMP_CNT 8                              //the adc array size
 #define SAMP_CNT_DIV2 4                         //the middle of the adc array
-#define SH   10                                 // Valve value
+#define SH   20                                 // Valve value
 struct rtgui_touch_device
 {
     struct rt_device parent;
@@ -66,11 +65,7 @@ struct rtgui_touch_device
 
     rt_bool_t calibrating;
     rt_touch_calibration_func_t calibration_func;
-
-    rt_uint16_t min_x, max_x;
-    rt_uint16_t min_y, max_y;
-
-    struct rt_spi_device * spi_device;
+    struct rt_spi_device *spi_device;
     struct rt_event event;
 };
 
@@ -84,6 +79,7 @@ rt_inline void touch_int_enable(rt_bool_t);
 
 static void rtgui_touch_calculate(void)
 {
+    rt_uint16_t adc_x, adc_y;
     if (touch != RT_NULL)
     {
         /* read touch */
@@ -119,59 +115,50 @@ static void rtgui_touch_calculate(void)
             rt_spi_send(touch->spi_device, send_buffer, 1);
 
             /* calculate average */
-						{
-							rt_uint32_t total_x = 0;
-							rt_uint32_t total_y = 0;
-							for(k=0; k<2; k++)
-							{ 
-								// sorting the ADC value
-								for(i=0; i<SAMP_CNT-1; i++)
-								{
-									min=i;
-									for (j=i+1; j<SAMP_CNT; j++)
-									{
-										if (tmpxy[k][min] > tmpxy[k][j]) 
-											min=j;
-										}
-										temp = tmpxy[k][i];
-										tmpxy[k][i] = tmpxy[k][min];
-										tmpxy[k][min] = temp;
-								}
-							 //check value for Valve value
-								if((tmpxy[k][SAMP_CNT_DIV2+1]-tmpxy[k][SAMP_CNT_DIV2-2]) > SH)
-									{
-										return;
-									}
-							}
-							  total_x=tmpxy[0][SAMP_CNT_DIV2-2]+tmpxy[0][SAMP_CNT_DIV2-1]+tmpxy[0][SAMP_CNT_DIV2]+tmpxy[0][SAMP_CNT_DIV2+1];
-							 total_y=tmpxy[1][SAMP_CNT_DIV2-2]+tmpxy[1][SAMP_CNT_DIV2-1]+tmpxy[1][SAMP_CNT_DIV2]+tmpxy[1][SAMP_CNT_DIV2+1];
-								//calculate average value
-								touch->x=total_x>>2;
-								touch->y=total_y>>2;
-                rt_kprintf("touch->x:%d touch->y:%d\r\n", touch->x, touch->y);
-           } /* calculate average */
+            {
+                rt_uint32_t total_x = 0;
+                rt_uint32_t total_y = 0;
+
+                for (k = 0; k < 2; k++)
+                {
+                    // sorting the ADC value
+                    for (i = 0; i < SAMP_CNT - 1; i++)
+                    {
+                        min = i;
+                        for (j = i + 1; j < SAMP_CNT; j++)
+                        {
+                            if (tmpxy[k][min] > tmpxy[k][j])
+                                min = j;
+                        }
+                        temp = tmpxy[k][i];
+                        tmpxy[k][i] = tmpxy[k][min];
+                        tmpxy[k][min] = temp;
+                    }
+                    //check value for Valve value
+                    if ((tmpxy[k][SAMP_CNT_DIV2 + 1] - tmpxy[k][SAMP_CNT_DIV2 - 2]) > SH)
+                    {
+                        return;
+                    }
+                }
+                total_x = tmpxy[0][SAMP_CNT_DIV2 - 2] + tmpxy[0][SAMP_CNT_DIV2 - 1] + tmpxy[0][SAMP_CNT_DIV2] + tmpxy[0][SAMP_CNT_DIV2 + 1];
+                total_y = tmpxy[1][SAMP_CNT_DIV2 - 2] + tmpxy[1][SAMP_CNT_DIV2 - 1] + tmpxy[1][SAMP_CNT_DIV2] + tmpxy[1][SAMP_CNT_DIV2 + 1];
+                //calculate average value
+                adc_x = (total_x >> 2);
+                adc_y = (total_y >> 2);
+                rt_kprintf("touch->x:%d touch->y:%d\r\n", adc_x, adc_y);
+            } /* calculate average */
         } /* read touch */
 
         /* if it's not in calibration status  */
         if (touch->calibrating != RT_TRUE)
         {
-            if (touch->max_x > touch->min_x)
-            {
-                touch->x = (touch->x - touch->min_x) * X_WIDTH/(touch->max_x - touch->min_x);
-            }
-            else
-            {
-                touch->x = (touch->min_x - touch->x) * X_WIDTH/(touch->min_x - touch->max_x);
-            }
-
-            if (touch->max_y > touch->min_y)
-            {
-                touch->y = (touch->y - touch->min_y) * Y_WIDTH /(touch->max_y - touch->min_y);
-            }
-            else
-            {
-                touch->y = (touch->min_y - touch->y) * Y_WIDTH /(touch->min_y - touch->max_y);
-            }
+            touch->x = rtgui_calibrate_x(adc_x, adc_y);
+            touch->y = rtgui_calibrate_y(adc_x, adc_y);
+        }
+        else
+        {
+            touch->x = adc_x;
+            touch->y = adc_y;
         }
     }
 }
@@ -233,14 +220,10 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     case RT_TOUCH_CALIBRATION_DATA:
     {
-        struct calibration_data* data;
-        data = (struct calibration_data*) args;
+        calibration_typedef *data;
+        data = (calibration_typedef *) args;
 
-         //update
-        touch->min_x = data->min_x;
-        touch->max_x = data->max_x;
-        touch->min_y = data->min_y;
-        touch->max_y = data->max_y;
+        //update
 
     }
     break;
@@ -378,17 +361,15 @@ void GPIO_IRQHandler(void)
     }
 }
 
-int rtgui_touch_hw_init(void)
+rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
 {
     struct rt_spi_device *spi_device;
     struct rt_thread *touch_thread;
-	char *device_name = "spi10";
-	
-    spi_device = (struct rt_spi_device *)rt_device_find(device_name);
+    spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
     if (spi_device == RT_NULL)
     {
-        rt_kprintf("spi device %s not found!\r\n", device_name);
-        return -1;
+        rt_kprintf("spi device %s not found!\r\n", spi_device_name);
+        return -RT_ENOSYS;
     }
 
     /* config spi */
@@ -426,7 +407,6 @@ int rtgui_touch_hw_init(void)
 
     return RT_EOK;
 }
-INIT_DEVICE_EXPORT(rtgui_touch_hw_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

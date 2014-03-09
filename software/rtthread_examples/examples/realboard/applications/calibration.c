@@ -11,13 +11,11 @@ void calibration_set_restore(rt_bool_t (*calibration_restore)(void))
     _cali_restore = calibration_restore;
 }
 
-static rt_bool_t (*_cali_after)(calibration_typedef *data);
-void calibration_set_after(rt_bool_t (*calibration_after)(calibration_typedef *data))
+static rt_bool_t (*_cali_after)(calculate_data_t *data);
+void calibration_set_after(rt_bool_t (*calibration_after)(calculate_data_t *data))
 {
     _cali_after = calibration_after;
 }
-
-calibration_typedef *cal_data;
 
 #define CALIBRATION_STEP_LEFTTOP        0
 #define CALIBRATION_STEP_RIGHTTOP       1
@@ -34,7 +32,11 @@ calibration_typedef *cal_data;
 struct calibration_session
 {
     rt_uint8_t step;
+	
+	  calibration_typedef data;
+	
     rt_uint16_t width;
+	
     rt_uint16_t height;
 
     rtgui_win_t *win;
@@ -43,9 +45,12 @@ struct calibration_session
 
     struct rtgui_app *app;
 };
-static struct calibration_session *calibration_ptr = RT_NULL;
 
-static int perform_calibration(calibration_typedef *cal)
+
+static struct calibration_session *calibration_ptr = RT_NULL;
+static calculate_data_t *cal_data=RT_NULL;
+
+static rt_bool_t perform_calibration(struct calibration_session *session,calculate_data_t *cal)
 {
     int j;
     float n, x, y, x2, y2, xy, z, zx, zy;
@@ -57,18 +62,18 @@ static int perform_calibration(calibration_typedef *cal)
     for (j = 0; j < 5; j++)
     {
         n += 1.0f;
-        x += (float)cal->x[j];
-        y += (float)cal->y[j];
-        x2 += (float)(cal->x[j] * cal->x[j]);
-        y2 += (float)(cal->y[j] * cal->y[j]);
-        xy += (float)(cal->x[j] * cal->y[j]);
+        x += (float)session->data.x[j];
+        y += (float)session->data.y[j];
+        x2 += (float)(session->data.x[j] * session->data.x[j]);
+        y2 += (float)(session->data.y[j] * session->data.y[j]);
+        xy += (float)(session->data.x[j] * session->data.y[j]);
     }
 
 // Get determinant of matrix -- check if determinant is too small
     det = n * (x2 * y2 - xy * xy) + x * (xy * y - x * y2) + y * (x * xy - y * x2);
     if (det < 0.1f && det > -0.1)
     {
-        return 0;
+        return RT_FALSE;
     }
 
 // Get elements of inverse matrix
@@ -83,47 +88,47 @@ static int perform_calibration(calibration_typedef *cal)
     z = zx = zy = 0;
     for (j = 0; j < 5; j++)
     {
-        z += (float)cal->xfb[j];
-        zx += (float)(cal->xfb[j] * cal->x[j]);
-        zy += (float)(cal->xfb[j] * cal->y[j]);
+        z += (float)session->data.xfb[j];
+        zx += (float)(session->data.xfb[j] * session->data.x[j]);
+        zy += (float)(session->data.xfb[j] * session->data.y[j]);
     }
 
 // Now multiply out to get the calibration for framebuffer x coord
-    cal->a[2] = (int)((a * z + b * zx + c * zy) * (scaling));
-    cal->a[0] = (int)((b * z + e * zx + f * zy) * (scaling));
-    cal->a[1] = (int)((c * z + f * zx + i * zy) * (scaling));
+    cal->x_coord[2] = (int)((a * z + b * zx + c * zy) * (scaling));
+    cal->x_coord[0] = (int)((b * z + e * zx + f * zy) * (scaling));
+    cal->x_coord[1] = (int)((c * z + f * zx + i * zy) * (scaling));
 
 // Get sums for y calibration
     z = zx = zy = 0;
     for (j = 0; j < 5; j++)
     {
-        z += (float)cal->yfb[j];
-        zx += (float)(cal->yfb[j] * cal->x[j]);
-        zy += (float)(cal->yfb[j] * cal->y[j]);
+        z += (float)session->data.yfb[j];
+        zx += (float)(session->data.yfb[j] * session->data.x[j]);
+        zy += (float)(session->data.yfb[j] * session->data.y[j]);
     }
 
 // Now multiply out to get the calibration for framebuffer y coord
-    cal->a[5] = (int)((a * z + b * zx + c * zy) * (scaling));
-    cal->a[3] = (int)((b * z + e * zx + f * zy) * (scaling));
-    cal->a[4] = (int)((c * z + f * zx + i * zy) * (scaling));
+    cal->y_coord[2] = (int)((a * z + b * zx + c * zy) * (scaling));
+    cal->y_coord[0] = (int)((b * z + e * zx + f * zy) * (scaling));
+    cal->y_coord[1] = (int)((c * z + f * zx + i * zy) * (scaling));
 
 // If we got here, we're OK, so assign scaling to a[6] and return
-    cal->a[6] = (int)scaling;
-    return 1;
+    cal->scaling = (int)scaling;
+    return RT_TRUE;
 }
-rt_uint16_t  Calibrate_X(rt_uint16_t ad_x, rt_uint16_t ad_y)
+rt_uint16_t  rtgui_calibrate_x(rt_uint16_t adc_x, rt_uint16_t adc_y)
 {
-    rt_uint16_t temp;
-    temp = (rt_uint16_t)((ad_x * cal_data->a[0] + ad_y * cal_data->a[1] + cal_data->a[2]) / cal_data->a[6]);
-    return temp;
+    rt_uint16_t result;
+    result = (rt_uint16_t)((adc_x * cal_data->x_coord[0] + adc_y * cal_data->x_coord[1] + cal_data->x_coord[2]) / cal_data->scaling);
+    return result;
 }
-rt_uint16_t  Calibrate_Y(rt_uint16_t ad_x, rt_uint16_t ad_y)
+rt_uint16_t  rtgui_calibrate_y(rt_uint16_t adc_x, rt_uint16_t adc_y)
 {
-    rt_uint16_t temp;
-    temp = (rt_uint16_t)((ad_x * cal_data->a[3] + ad_y * cal_data->a[4] + cal_data->a[5]) / cal_data->a[6]);
-    return temp;
+    rt_uint16_t result;
+    result = (rt_uint16_t)((adc_x * cal_data->y_coord[0] + adc_y * cal_data->y_coord[1] + cal_data->y_coord[2]) / cal_data->scaling);
+    return result;
 }
-void calibration_set_data(calibration_typedef *data)
+void calibration_set_data(calculate_data_t *data)
 {
  cal_data=data;
 }
@@ -135,31 +140,31 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
     switch (calibration_ptr->step)
     {
     case CALIBRATION_STEP_LEFTTOP:
-        cal_data->xfb[0] = CALIBRATION_WIDTH;
-        cal_data->yfb[0] = CALIBRATION_HEIGHT;
-        cal_data->x[0] = x;
-        cal_data->y[0] = y;
+        calibration_ptr->data.xfb[0] = CALIBRATION_WIDTH;
+        calibration_ptr->data.yfb[0] = CALIBRATION_HEIGHT;
+        calibration_ptr->data.x[0] = x;
+        calibration_ptr->data.y[0] = y;
         break;
 
     case CALIBRATION_STEP_RIGHTTOP:
-        cal_data->xfb[1] = calibration_ptr->width - CALIBRATION_WIDTH;
-        cal_data->yfb[1] =  CALIBRATION_HEIGHT;
-        cal_data->x[1] = x;
-        cal_data->y[1] = y;
+        calibration_ptr->data.xfb[1] = calibration_ptr->width - CALIBRATION_WIDTH;
+        calibration_ptr->data.yfb[1] =  CALIBRATION_HEIGHT;
+        calibration_ptr->data.x[1] = x;
+        calibration_ptr->data.y[1] = y;
         break;
 
     case CALIBRATION_STEP_LEFTBOTTOM:
-        cal_data->xfb[3] = CALIBRATION_WIDTH;
-        cal_data->yfb[3] = calibration_ptr->height - CALIBRATION_HEIGHT;
-        cal_data->x[3] = x;
-        cal_data->y[3] = y;
+        calibration_ptr->data.xfb[3] = CALIBRATION_WIDTH;
+        calibration_ptr->data.yfb[3] = calibration_ptr->height - CALIBRATION_HEIGHT;
+        calibration_ptr->data.x[3] = x;
+        calibration_ptr->data.y[3] = y;
         break;
 
     case CALIBRATION_STEP_RIGHTBOTTOM:
-        cal_data->xfb[2] = calibration_ptr->width - CALIBRATION_WIDTH;
-        cal_data->yfb[2] = calibration_ptr->height - CALIBRATION_HEIGHT;
-        cal_data->x[2] = x;
-        cal_data->y[2] = y;
+        calibration_ptr->data.xfb[2] = calibration_ptr->width - CALIBRATION_WIDTH;
+        calibration_ptr->data.yfb[2] = calibration_ptr->height - CALIBRATION_HEIGHT;
+        calibration_ptr->data.x[2] = x;
+        calibration_ptr->data.y[2] = y;
         break;
 
     case CALIBRATION_STEP_CENTER:
@@ -170,15 +175,18 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
         RTGUI_EVENT_COMMAND_INIT(&ecmd);
         ecmd.wid = calibration_ptr->win;
         ecmd.command_id = TOUCH_WIN_CLOSE;
-        cal_data->xfb[4] = (calibration_ptr->width >> 1);
-        cal_data->yfb[4] = (calibration_ptr->height >> 1);
-        cal_data->x[4] = x;
-        cal_data->y[4] = y;
+        calibration_ptr->data.xfb[4] = (calibration_ptr->width >> 1);
+        calibration_ptr->data.yfb[4] = (calibration_ptr->height >> 1);
+        calibration_ptr->data.x[4] = x;
+        calibration_ptr->data.y[4] = y;
         for (i = 0; i < 5; i++)
         {
-            rt_kprintf("xfb[%d]:%d,yfb[%d]:%d,x[%d]:%d,y[%d]:%d\r\n", i, cal_data->xfb[i], i, cal_data->yfb[i], i, cal_data->x[i], i, cal_data->y[i]);
+            rt_kprintf("xfb[%d]:%d,yfb[%d]:%d,x[%d]:%d,y[%d]:%d\n", i, calibration_ptr->data.xfb[i], i, calibration_ptr->data.yfb[i], i, calibration_ptr->data.x[i], i, calibration_ptr->data.y[i]);
         }
-        perform_calibration(cal_data);
+        if(RT_FALSE==perform_calibration(calibration_ptr,cal_data))
+					{
+            rt_kprintf("touch calibration failure,please try again.\n");
+          }
         rtgui_send(calibration_ptr->app, &ecmd.parent, sizeof(struct rtgui_event_command));
     }
     calibration_ptr->step = 0;

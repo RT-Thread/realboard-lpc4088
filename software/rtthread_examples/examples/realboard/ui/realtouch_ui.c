@@ -9,12 +9,12 @@
 
 #define SETUP_FILE "/setup.bin"
 
-static calibration_typedef *setup_data;
+static calculate_data_t *setup_data;
 
 rt_bool_t cali_setup(void)
 {
     int fd, length;
-    fd = open(SETUP_FILE, O_RDONLY | O_CREAT, 0);
+    fd = open(SETUP_FILE, O_RDONLY , 0);
     if (fd >= 0)
     {
         length = read(fd, setup_data, sizeof(calibration_typedef));
@@ -73,11 +73,11 @@ void realtouch_ui_init(void)
 
     app_mgr_init();
     rt_thread_delay(10);
-    setup_data=(calibration_typedef *)rt_malloc(sizeof(calibration_typedef));
+    setup_data=(calculate_data_t *)rt_malloc(sizeof(calibration_typedef));
 		calibration_set_restore(cali_setup);
 		calibration_set_after(cali_store);
 		calibration_set_data(setup_data);
-		if(cali_setup()!=RT_EOK)
+		if(cali_setup()!=RT_TRUE)
 			{
        calibration_init();
       }
