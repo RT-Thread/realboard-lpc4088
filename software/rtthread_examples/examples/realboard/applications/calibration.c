@@ -48,7 +48,7 @@ struct calibration_session
 
 
 static struct calibration_session *calibration_ptr = RT_NULL;
-static calculate_data_t *cal_data=RT_NULL;
+static calculate_data_t cal_data;
 
 static rt_bool_t perform_calibration(struct calibration_session *session,calculate_data_t *cal)
 {
@@ -119,18 +119,18 @@ static rt_bool_t perform_calibration(struct calibration_session *session,calcula
 rt_uint16_t  rtgui_calibrate_x(rt_uint16_t adc_x, rt_uint16_t adc_y)
 {
     rt_uint16_t result;
-    result = (rt_uint16_t)((adc_x * cal_data->x_coord[0] + adc_y * cal_data->x_coord[1] + cal_data->x_coord[2]) / cal_data->scaling);
+    result = (rt_uint16_t)((adc_x * cal_data.x_coord[0] + adc_y * cal_data.x_coord[1] + cal_data.x_coord[2]) / cal_data.scaling);
     return result;
 }
 rt_uint16_t  rtgui_calibrate_y(rt_uint16_t adc_x, rt_uint16_t adc_y)
 {
     rt_uint16_t result;
-    result = (rt_uint16_t)((adc_x * cal_data->y_coord[0] + adc_y * cal_data->y_coord[1] + cal_data->y_coord[2]) / cal_data->scaling);
+    result = (rt_uint16_t)((adc_x * cal_data.y_coord[0] + adc_y * cal_data.y_coord[1] + cal_data.y_coord[2]) / cal_data.scaling);
     return result;
 }
 void calibration_set_data(calculate_data_t *data)
 {
- cal_data=data;
+ cal_data=*data;
 }
 static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 {
@@ -183,7 +183,7 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
         {
             rt_kprintf("xfb[%d]:%d,yfb[%d]:%d,x[%d]:%d,y[%d]:%d\n", i, calibration_ptr->data.xfb[i], i, calibration_ptr->data.yfb[i], i, calibration_ptr->data.x[i], i, calibration_ptr->data.y[i]);
         }
-        if(RT_FALSE==perform_calibration(calibration_ptr,cal_data))
+        if(RT_FALSE==perform_calibration(calibration_ptr,&cal_data))
 					{
             rt_kprintf("touch calibration failure,please try again.\n");
           }
@@ -406,7 +406,7 @@ static void calibration_entry(void *parameter)
                       RT_NULL);
 
     if (_cali_after)
-        _cali_after(cal_data);
+        _cali_after(&cal_data);
 
     /* recover to normal */
     rt_device_control(calibration_ptr->device, RT_TOUCH_NORMAL, RT_NULL);
