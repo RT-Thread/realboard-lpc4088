@@ -89,6 +89,7 @@ int rtgui_lcd_init(void)
     rt_device_t device;
 
     rt_hw_lcd_init();
+    rtgui_touch_hw_init("spi10");
 
     device = rt_device_find("lcd");
     /* set graphic device */
