@@ -10,10 +10,9 @@ TOUCH INT: P0_13
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rtgui/rtgui.h>
 #include <rtgui/event.h>
-#include <rtgui/kbddef.h>
-#include <rtgui/rtgui_server.h>
-#include <rtgui/rtgui_system.h>
+#include <rtgui/touch.h>
 
 /*
 7  6 - 4  3      2     1-0
@@ -63,16 +62,12 @@ struct rtgui_touch_device
 
     rt_uint16_t x, y;
 
-    rt_bool_t calibrating;
-    rt_touch_calibration_func_t calibration_func;
     struct rt_spi_device *spi_device;
     struct rt_event event;
 };
-
-static struct rtgui_touch_device *touch = RT_NULL;
+static struct rtgui_touch_device* touch = RT_NULL;
 
 rt_inline void touch_int_enable(rt_bool_t);
-
 
 #define X_WIDTH 480
 #define Y_WIDTH 272
@@ -84,7 +79,6 @@ static void rtgui_touch_calculate(void)
     {
         /* read touch */
         {
-
             uint8_t i, j, k, min;
             uint16_t temp;
             rt_uint16_t tmpxy[2][SAMP_CNT];
@@ -142,24 +136,18 @@ static void rtgui_touch_calculate(void)
                 }
                 total_x = tmpxy[0][SAMP_CNT_DIV2 - 2] + tmpxy[0][SAMP_CNT_DIV2 - 1] + tmpxy[0][SAMP_CNT_DIV2] + tmpxy[0][SAMP_CNT_DIV2 + 1];
                 total_y = tmpxy[1][SAMP_CNT_DIV2 - 2] + tmpxy[1][SAMP_CNT_DIV2 - 1] + tmpxy[1][SAMP_CNT_DIV2] + tmpxy[1][SAMP_CNT_DIV2 + 1];
-                //calculate average value
+
+				/* calculate to get average value */
                 adc_x = (total_x >> 2);
                 adc_y = (total_y >> 2);
-                rt_kprintf("touch->x:%d touch->y:%d\r\n", adc_x, adc_y);
+
+                // rt_kprintf("touch->x:%d touch->y:%d\r\n", adc_x, adc_y);
             } /* calculate average */
         } /* read touch */
 
-        /* if it's not in calibration status  */
-        if (touch->calibrating != RT_TRUE)
-        {
-            touch->x = rtgui_calibrate_x(adc_x, adc_y);
-            touch->y = rtgui_calibrate_y(adc_x, adc_y);
-        }
-        else
-        {
-            touch->x = adc_x;
-            touch->y = adc_y;
-        }
+		/* update x,y */
+        touch->x = adc_x;
+        touch->y = adc_y;
     }
 }
 
@@ -167,12 +155,12 @@ rt_inline void touch_int_enable(rt_bool_t en)
 {
     if (RT_TRUE == en)
     {
-        /*enable P0.13 failling edge interrupt*/
+        /* enable P0.13 failling edge interrupt */
         LPC_GPIOINT->IO0IntEnF |= (0x01 << 13);
     }
     else
     {
-        /*disable P0.13 failling edge interrupt*/
+        /* disable P0.13 failling edge interrupt */
         LPC_GPIOINT->IO0IntEnF &= ~(0x01 << 13);
     }
 }
@@ -192,7 +180,7 @@ static void touch_int_config(void)
 }
 
 /* RT-Thread Device Interface */
-static rt_err_t rtgui_touch_init(rt_device_t dev)
+static rt_err_t touch_device_init(rt_device_t dev)
 {
     uint8_t send;
     struct rtgui_touch_device *touch_device = (struct rtgui_touch_device *)dev;
@@ -205,46 +193,11 @@ static rt_err_t rtgui_touch_init(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
-{
-    switch (cmd)
-    {
-    case RT_TOUCH_CALIBRATION:
-        touch->calibrating = RT_TRUE;
-        touch->calibration_func = (rt_touch_calibration_func_t)args;
-        break;
-
-    case RT_TOUCH_NORMAL:
-        touch->calibrating = RT_FALSE;
-        break;
-
-    case RT_TOUCH_CALIBRATION_DATA:
-    {
-        calibration_typedef *data;
-        data = (calibration_typedef *) args;
-
-        //update
-
-    }
-    break;
-    }
-
-    return RT_EOK;
-}
-extern void _set_mouse_position(uint32_t X, uint32_t Y);
 static void touch_thread_entry(void *parameter)
 {
     rt_bool_t touch_down = RT_FALSE;
     rt_uint32_t event_value;
-    struct rtgui_event_mouse emouse;
-    static struct _touch_previous
-    {
-        rt_uint32_t x;
-        rt_uint32_t y;
-    } touch_previous;
 
-    RTGUI_EVENT_MOUSE_BUTTON_INIT(&emouse);
-    emouse.wid = RT_NULL;
     while (1)
     {
         if (rt_event_recv(&touch->event,
@@ -258,92 +211,41 @@ static void touch_thread_entry(void *parameter)
             {
                 if (IS_TOUCH_UP())
                 {
-                    /* touch up */
-                    emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP);
-
-                    /* use old value */
-                    emouse.x = touch->x;
-                    emouse.y = touch->y;
-
                     if (touch_down != RT_TRUE)
                     {
                         touch_int_enable(RT_TRUE);
                         break;
                     }
 
-                    if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
-                    {
-                        /* callback function */
-                        touch->calibration_func(emouse.x, emouse.y);
-
-                    }
-                    else
-                    {
-                        rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-                    }
-                    //  rt_kprintf("touch up: (%d, %d)\n", emouse.x, emouse.y);
+					rtgui_touch_post(RTGUI_TOUCH_UP, touch->x, touch->y);
 
                     /* clean */
-                    touch_previous.x = touch_previous.y = 0;
                     touch_down = RT_FALSE;
-
                     touch_int_enable(RT_TRUE);
                     break;
                 } /* touch up */
                 else /* touch down or move */
                 {
+					int type = RTGUI_TOUCH_DOWN;
                     if (touch_down == RT_FALSE)
                     {
                         rt_thread_delay(RT_TICK_PER_SECOND / 10);
                     }
                     else
                     {
-                        rt_thread_delay(5);
+                        rt_thread_delay(RT_TICK_PER_SECOND / 20);
+						/* touch motion event */
+						type = RTGUI_TOUCH_MOTION;
                     }
 
+					/* check it again */
                     if (IS_TOUCH_UP()) continue;
 
                     /* calculation */
                     rtgui_touch_calculate();
+					rtgui_touch_post(type, touch->x, touch->y);
 
-                    /* send mouse event */
-                    emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
-                    emouse.parent.sender = RT_NULL;
-
-                    emouse.x = touch->x;
-                    emouse.y = touch->y;
-
-                    /* init mouse button */
-                    emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN);
-
-                    /* send event to server */
-                    if (touch->calibrating != RT_TRUE)
-                    {
-#define previous_keep      8
-                        /* filter. */
-                        if ((touch_previous.x > touch->x + previous_keep)
-                                || (touch_previous.x < touch->x - previous_keep)
-                                || (touch_previous.y > touch->y + previous_keep)
-                                || (touch_previous.y < touch->y - previous_keep))
-                        {
-                            touch_previous.x = touch->x;
-                            touch_previous.y = touch->y;
-                            rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-                            if (touch_down == RT_FALSE)
-                            {
-                                touch_down = RT_TRUE;
-                                rt_kprintf("touch down: (%d, %d)\n", emouse.x, emouse.y);
-                            }
-                            else
-                            {
-                                rt_kprintf("touch motion: (%d, %d)\n", emouse.x, emouse.y);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        touch_down = RT_TRUE;
-                    }
+                    touch_down = RT_TRUE;
                 } /* touch down or move */
             } /* read touch */
         } /* event recv */
@@ -366,6 +268,7 @@ rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
     struct rt_spi_device *spi_device;
     struct rt_thread *touch_thread;
     spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
+
     if (spi_device == RT_NULL)
     {
         rt_kprintf("spi device %s not found!\r\n", spi_device_name);
@@ -389,14 +292,14 @@ rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
     rt_event_init(&touch->event, "touch", RT_IPC_FLAG_FIFO);
 
     touch->spi_device = spi_device;
-    touch->calibrating = false;
 
     /* init device structure */
-    touch->parent.type = RT_Device_Class_Unknown;
-    touch->parent.init = rtgui_touch_init;
-    touch->parent.control = rtgui_touch_control;
+    touch->parent.type = RT_Device_Class_Miscellaneous;
+    touch->parent.init = touch_device_init;
+    touch->parent.control = RT_NULL;
     touch->parent.user_data = RT_NULL;
-    rtgui_touch_init(&(touch->parent));
+
+    touch_device_init(&(touch->parent));
     /* register touch device to RT-Thread */
     rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
 
@@ -407,26 +310,3 @@ rt_err_t rtgui_touch_hw_init(const char *spi_device_name)
 
     return RT_EOK;
 }
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-
-void touch_t(rt_uint16_t x , rt_uint16_t y)
-{
-    struct rtgui_event_mouse emouse ;
-    emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
-    emouse.parent.sender = RT_NULL;
-
-    emouse.x = x ;
-    emouse.y = y ;
-    /* init mouse button */
-    emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN);
-    rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-
-    rt_thread_delay(2) ;
-    emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP);
-    rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-}
-
-FINSH_FUNCTION_EXPORT(touch_t, x &y) ;
-#endif

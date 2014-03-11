@@ -89,7 +89,6 @@ int rtgui_lcd_init(void)
     rt_device_t device;
 
     rt_hw_lcd_init();
-    rtgui_touch_hw_init("spi10");
 
     device = rt_device_find("lcd");
     /* set graphic device */
@@ -98,6 +97,28 @@ int rtgui_lcd_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rtgui_lcd_init);
+
+#include <rtgui/touch.h>
+#include <calibration.h>
+#include "drv_touch.h"
+/* initialize for touch & calibration */
+int touch_calibration_init(void)
+{
+	struct rtgui_calibration_ops* ops;
+
+	ops = calibration_get_ops();
+
+    rtgui_touch_hw_init("spi10");
+
+	/* restore calibration data */
+
+	/* set callback to save calibration data */
+	// calibration_set_after(calibration_data_save);
+
+	rtgui_touch_init(ops);
+    return 0;
+}
+INIT_APP_EXPORT(touch_calibration_init);
 #endif
 
 /* initialization for system heap */

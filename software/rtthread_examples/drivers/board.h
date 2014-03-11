@@ -59,7 +59,8 @@ void rt_hw_board_init(void);
 int  rt_hw_board_heap_init(void);
 
 #ifdef RT_USING_RTGUI
-int  rtgui_lcd_init(void);
+int rtgui_lcd_init(void);
+int touch_calibration_init(void);
 #endif
 
 #endif
