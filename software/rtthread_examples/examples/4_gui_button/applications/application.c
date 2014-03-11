@@ -10,16 +10,18 @@
 
 void rt_init_thread_entry(void* parameter)
 {
-	/* initialize LCD drv for GUI */
-	rtgui_lcd_init();
-	/* initialize GUI system */
-	rtgui_system_server_init();
 	/* initialize keyboard */
 	rt_hw_key_init();
 	/* initialize touch */
 	rt_hw_spi_init();
-	rtgui_touch_hw_init();
+	/* initialize LCD drv for GUI */
+	rtgui_lcd_init();
 
+	/* initialize GUI system */
+	rtgui_system_server_init();
+    /* initialize touch */
+    touch_calibration_init();
+    
 	/* create button example */
 	ui_button();
 	

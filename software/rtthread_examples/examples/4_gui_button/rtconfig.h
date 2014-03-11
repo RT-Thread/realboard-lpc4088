@@ -239,6 +239,8 @@
 // #define RTGUI_USING_NOTEBOOK_IMAGE
 // <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
 //#define RTGUI_USING_HW_CURSOR
+// <bool name="RTGUI_USING_CALI" description="Using calibration apps to do touch calibration" default="true" />
+#define RTGUI_USING_CALI
 
 // </section>
 

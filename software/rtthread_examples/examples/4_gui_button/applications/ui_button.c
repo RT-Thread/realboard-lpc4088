@@ -4,6 +4,7 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
+#include <string.h>
 
 #include "ui_button.h"
 
@@ -14,8 +15,22 @@ static void onbutton(struct rtgui_object *object, struct rtgui_event *event)
 	rt_kprintf("hello, button!\n");
 	if (label != RT_NULL)
 	{
-		rtgui_label_set_text(label, "Hello from button");
+        struct rtgui_button *button;
+        
+        button = RTGUI_BUTTON(object);
+        
+        if (strcmp(rtgui_label_get_text(label), "Hello World") == 0)
+            rtgui_label_set_text(label, "Hello from button");
+        else
+            rtgui_label_set_text(label, "Hello World");
+        
+        if (strcmp(rtgui_label_get_text(RTGUI_LABEL(button)), "OK") == 0)
+            rtgui_label_set_text(RTGUI_LABEL(button), "Hello");
+        else
+            rtgui_label_set_text(RTGUI_LABEL(button), "OK");
+
 		rtgui_widget_update(RTGUI_WIDGET(label));
+        rtgui_widget_update(RTGUI_WIDGET(button));
 	}
 
 	return;
@@ -41,7 +56,7 @@ static void ui_thread_entry(void* parameter)
 
     /* create the 'hello world' label */
 	label = rtgui_label_create("Hello World");
-	rtgui_widget_set_minwidth(RTGUI_WIDGET(label), 120);
+	rtgui_widget_set_minwidth(RTGUI_WIDGET(label), 150);
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
 
 	/* create the button */

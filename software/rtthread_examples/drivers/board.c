@@ -99,7 +99,7 @@ int rtgui_lcd_init(void)
 INIT_DEVICE_EXPORT(rtgui_lcd_init);
 
 #include <rtgui/touch.h>
-#include <calibration.h>
+#include <rtgui/calibration.h>
 #include "drv_touch.h"
 /* initialize for touch & calibration */
 int touch_calibration_init(void)
