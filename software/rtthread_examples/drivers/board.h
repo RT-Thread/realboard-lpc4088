@@ -39,7 +39,7 @@
 // <bool name="RT_USING_UART2" description="Using UART2" default="true" />
 #define RT_USING_UART2
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The name of console device" default="" />
-#define RT_CONSOLE_DEVICE_NAME	"uart0"
+#define RT_CONSOLE_DEVICE_NAME  "uart0"
 
 // </RDTConfigurator>
 

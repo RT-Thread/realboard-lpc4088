@@ -22,8 +22,8 @@
 
 static void system_delay(unsigned int cnt)
 {
-	cnt = cnt * 100;
-    while(cnt--);
+    cnt = cnt * 100;
+    while (cnt--);
 }
 
 static void wait_for_ready(void)
@@ -57,13 +57,13 @@ static rt_bool_t read_status(rt_uint8_t cmd)
     /* if ready bit not set, it gets stuck here */
     while ((NAND_DATA & 0xE0) != 0xE0);
 
-	value = NAND_DATA;
+    value = NAND_DATA;
 
     switch (cmd)
     {
     case NAND_CMD_SEQIN:
     case NAND_CMD_ERASE1:
-        if (value & 0x01)  			/* Erase/Program failure(1) or pass(0) */
+        if (value & 0x01)           /* Erase/Program failure(1) or pass(0) */
             return (RT_FALSE);
         else
             return (RT_TRUE);
@@ -88,24 +88,24 @@ static rt_err_t nand_hy27uf_readid(struct rt_mtd_nand_device *device)
     a = NAND_DATA;
     b = NAND_DATA;
 
-	rt_kprintf("NAND ID: 0x%02X%02X\n", a, b);
+    rt_kprintf("NAND ID: 0x%02X%02X\n", a, b);
 
     return RT_EOK;
 }
 
 static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
-                                   rt_off_t                   page,
-                                   rt_uint8_t                *data,
-                                   rt_uint32_t                data_len,
-                                   rt_uint8_t                *spare,
-                                   rt_uint32_t                spare_len)
+                                     rt_off_t                   page,
+                                     rt_uint8_t                *data,
+                                     rt_uint32_t                data_len,
+                                     rt_uint8_t                *spare,
+                                     rt_uint32_t                spare_len)
 {
     rt_uint32_t i;
     rt_err_t result = RT_MTD_EOK;
-	rt_uint8_t oob_buffer[PAGE_OOB_SIZE];
+    rt_uint8_t oob_buffer[PAGE_OOB_SIZE];
 
     page = page + device->block_start * device->pages_per_block;
-    if (page/device->pages_per_block > device->block_end)
+    if (page / device->pages_per_block > device->block_end)
     {
         return -RT_MTD_EIO;
     }
@@ -120,25 +120,25 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
         NAND_COMMAND = NAND_CMD_READ3;
 
         wait_for_ready();
-		for (i = 0; i < PAGE_DATA_SIZE; i ++)
-			data[i] = NAND_DATA;
-		for (i = 0; i < PAGE_OOB_SIZE; i ++)
-			oob_buffer[i] = NAND_DATA;
+        for (i = 0; i < PAGE_DATA_SIZE; i ++)
+            data[i] = NAND_DATA;
+        for (i = 0; i < PAGE_OOB_SIZE; i ++)
+            oob_buffer[i] = NAND_DATA;
 
-		/* verify ECC */
+        /* verify ECC */
 #ifdef RT_USING_NFTL
-		if (nftl_ecc_verify256(data, PAGE_DATA_SIZE, oob_buffer) != RT_MTD_EOK)
-		{
-			rt_kprintf("ECC error, block: %d, page: %d!\n", page/device->pages_per_block,
-				page%device->pages_per_block);
-			result = RT_MTD_EECC;
-		}
+        if (nftl_ecc_verify256(data, PAGE_DATA_SIZE, oob_buffer) != RT_MTD_EOK)
+        {
+            rt_kprintf("ECC error, block: %d, page: %d!\n", page / device->pages_per_block,
+                       page % device->pages_per_block);
+            result = RT_MTD_EECC;
+        }
 #endif
 
-		if (spare != RT_NULL && spare_len > 0)
-		{
-			memcpy(spare, oob_buffer, spare_len);
-		}
+        if (spare != RT_NULL && spare_len > 0)
+        {
+            memcpy(spare, oob_buffer, spare_len);
+        }
     }
     else if (spare != RT_NULL && spare_len != RT_NULL)
     {
@@ -150,37 +150,37 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
         NAND_COMMAND = NAND_CMD_READ3;
 
         wait_for_ready();
-		for (i = 0; i < spare_len; i ++)
-			spare[i] = NAND_DATA;
+        for (i = 0; i < spare_len; i ++)
+            spare[i] = NAND_DATA;
     }
 
     return result;
 }
 
 static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
-                             rt_off_t                   page,
-                             const rt_uint8_t          *data,
-                             rt_uint32_t                data_len,
-                             const rt_uint8_t          *spare,
-                             rt_uint32_t                spare_len)
+                                      rt_off_t                   page,
+                                      const rt_uint8_t          *data,
+                                      rt_uint32_t                data_len,
+                                      const rt_uint8_t          *spare,
+                                      rt_uint32_t                spare_len)
 {
-	rt_uint32_t i;
-	rt_uint8_t oob_buffer[PAGE_OOB_SIZE];
+    rt_uint32_t i;
+    rt_uint8_t oob_buffer[PAGE_OOB_SIZE];
 
     page = page + device->block_start * device->pages_per_block;
-    if (page/device->pages_per_block > device->block_end)
+    if (page / device->pages_per_block > device->block_end)
     {
         return -RT_MTD_EIO;
     }
-	if (data == RT_NULL) return -RT_MTD_EIO; /* we didn't support write data only */
-	if (spare != RT_NULL && spare_len > 0)
-	{
-		memcpy(oob_buffer, spare, spare_len);
-	}
+    if (data == RT_NULL) return -RT_MTD_EIO; /* we didn't support write data only */
+    if (spare != RT_NULL && spare_len > 0)
+    {
+        memcpy(oob_buffer, spare, spare_len);
+    }
 
-	/* generate ECC */
+    /* generate ECC */
 #ifdef RT_USING_NFTL
-	nftl_ecc_compute256(data, PAGE_DATA_SIZE, oob_buffer);
+    nftl_ecc_compute256(data, PAGE_DATA_SIZE, oob_buffer);
 #endif
 
     NAND_COMMAND = NAND_CMD_SEQIN;
@@ -190,16 +190,16 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
     NAND_ADDRESS = page & 0xFF;
     NAND_ADDRESS = page >> 8;
 
-	for (i = 0; i < PAGE_DATA_SIZE; i ++)
-		NAND_DATA = data[i];
-	for (i = 0; i < PAGE_OOB_SIZE; i ++)
-		NAND_DATA = oob_buffer[i];
+    for (i = 0; i < PAGE_DATA_SIZE; i ++)
+        NAND_DATA = data[i];
+    for (i = 0; i < PAGE_OOB_SIZE; i ++)
+        NAND_DATA = oob_buffer[i];
 
     NAND_COMMAND = NAND_CMD_PAGEPROG;
 
     wait_for_ready();
 
-    if(read_status(NAND_CMD_SEQIN) == RT_FALSE)
+    if (read_status(NAND_CMD_SEQIN) == RT_FALSE)
     {
         nand_reset();
 
@@ -210,21 +210,21 @@ static rt_err_t nand_hy27uf_writepage(struct rt_mtd_nand_device *device,
 }
 
 static rt_err_t nand_hy27uf_eraseblock(struct rt_mtd_nand_device *device,
-                                     rt_uint32_t block)
+                                       rt_uint32_t block)
 {
     unsigned int blockPage;
 
     /* add the start blocks */
     block = block + device->block_start;
-    blockPage = (block<<6);
+    blockPage = (block << 6);
 
     NAND_COMMAND = NAND_CMD_ERASE1;                        /* send erase command */
     NAND_ADDRESS = blockPage & 0xff;
-    NAND_ADDRESS = (blockPage>>8)&0xff;
+    NAND_ADDRESS = (blockPage >> 8) & 0xff;
     NAND_COMMAND = NAND_CMD_ERASE2;                        /* start erase */
 
     wait_for_ready();
-    if(read_status(NAND_CMD_ERASE1) == RT_FALSE)
+    if (read_status(NAND_CMD_ERASE1) == RT_FALSE)
     {
         nand_reset();
         return -RT_MTD_EIO;
@@ -234,33 +234,33 @@ static rt_err_t nand_hy27uf_eraseblock(struct rt_mtd_nand_device *device,
 }
 
 static rt_err_t nand_hy27uf_pagecopy(struct rt_mtd_nand_device *device,
-                                   rt_off_t                   src_page,
-                                   rt_off_t                   dst_page)
+                                     rt_off_t                   src_page,
+                                     rt_off_t                   dst_page)
 {
     rt_err_t result = RT_MTD_EOK;
 
     src_page = src_page + device->block_start * device->pages_per_block;
     dst_page = dst_page + device->block_start * device->pages_per_block;
 
-	/* read data */
+    /* read data */
     NAND_COMMAND = NAND_CMD_READ0;
-	/* read start from the beginning of page */
-	NAND_ADDRESS = 0;
-	NAND_ADDRESS = 0;
+    /* read start from the beginning of page */
+    NAND_ADDRESS = 0;
+    NAND_ADDRESS = 0;
 
-	/* send the page address */
-    NAND_ADDRESS =(src_page & 0xff);
-    NAND_ADDRESS =((src_page>>8) & 0xff);
+    /* send the page address */
+    NAND_ADDRESS = (src_page & 0xff);
+    NAND_ADDRESS = ((src_page >> 8) & 0xff);
     NAND_COMMAND = NAND_CMD_READ_CB;
 
     wait_for_ready();
 
-	/* copy back for program */
-	NAND_COMMAND = NAND_CMD_CB_PROG;
-	NAND_ADDRESS = 0;
-	NAND_ADDRESS = 0;
+    /* copy back for program */
+    NAND_COMMAND = NAND_CMD_CB_PROG;
+    NAND_ADDRESS = 0;
+    NAND_ADDRESS = 0;
 
-	/* send the page address */
+    /* send the page address */
     NAND_ADDRESS = dst_page & 0xff;
     NAND_ADDRESS = (dst_page >> 8) & 0xff;
 
@@ -268,7 +268,7 @@ static rt_err_t nand_hy27uf_pagecopy(struct rt_mtd_nand_device *device,
 
     wait_for_ready();
 
-    if(read_status(NAND_CMD_SEQIN) == RT_FALSE)
+    if (read_status(NAND_CMD_SEQIN) == RT_FALSE)
     {
         nand_reset();
         return RT_MTD_EIO;
@@ -311,7 +311,7 @@ int nand_hy27uf_hw_init(void)
     config.PageMode = 0;
     config.WaitWEn = EMC_StaticWaitWen_WAITWEN(0x1f/*2*/);
     config.WaitOEn = EMC_StaticWaitOen_WAITOEN(0/*2*/);
-    config.WaitWr =EMC_StaticWaitwr_WAITWR(6);
+    config.WaitWr = EMC_StaticWaitwr_WAITWR(6);
     config.WaitPage = EMC_StaticwaitPage_WAITPAGE(0x1f);
     config.WaitRd = EMC_StaticWaitwr_WAITWR(0x1f);
     config.WaitTurn = EMC_StaticWaitTurn_WAITTURN(0x1f);
@@ -320,8 +320,8 @@ int nand_hy27uf_hw_init(void)
     // Init GPIO pin
     // PINSEL_ConfigPin(2, 21, 0);
     // FIO2DIR &= ~(1 << 21);
-    LPC_IOCON->P4_31&=~0x07;
-    LPC_GPIO4->DIR&=~(0x01UL<<31);
+    LPC_IOCON->P4_31 &= ~0x07;
+    LPC_GPIO4->DIR &= ~(0x01UL << 31);
 
     /* register nand0 */
     _partition[0].page_size       = PAGE_DATA_SIZE;
