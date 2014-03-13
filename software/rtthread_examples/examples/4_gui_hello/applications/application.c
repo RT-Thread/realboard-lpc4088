@@ -10,6 +10,8 @@
 
 void rt_init_thread_entry(void* parameter)
 {
+	/* initialize spi driver */
+		rt_hw_spi_init();
 	/* initialize LCD drv for GUI */
 	rtgui_lcd_init();
 	/* initialize GUI system */
@@ -17,8 +19,7 @@ void rt_init_thread_entry(void* parameter)
 	/* initialize keyboard */
 	rt_hw_key_init();
 	/* initialize touch */
-	rt_hw_spi_init();
-	rtgui_touch_hw_init();
+	touch_calibration_init();
 
 	/* say hello world in screen */
 	ui_hello();
