@@ -17,7 +17,7 @@ static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
     return RT_EOK;
 }
 
-static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     return 0;
 }
@@ -26,7 +26,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
     time_t *time;
     RTC_TIME_Type   RTC_TimeStructure;
-	  
+
     struct tm time_temp;
 
     RT_ASSERT(dev != RT_NULL);
@@ -38,7 +38,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
         time = (time_t *)args;
 
         /* Get the current Time */
-		    RTC_GetFullTime(LPC_RTC,&RTC_TimeStructure);
+        RTC_GetFullTime(LPC_RTC, &RTC_TimeStructure);
         /* Years since 1900 : 0-99 range */
         time_temp.tm_year = RTC_TimeStructure.YEAR + 2000 - 1900;
         /* Months *since* january 0-11 : RTC_Month_Date_Definitions 1 - 12 */
@@ -57,7 +57,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        const struct tm* time_new;
+        const struct tm *time_new;
         time = (time_t *)args;
         time_new = localtime(time);
 
@@ -77,8 +77,8 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
         RTC_TimeStructure.SEC = time_new->tm_sec;
 
         /* Set Current Time and Date */
-				RTC_SetFullTime(LPC_RTC,&RTC_TimeStructure);
-				RTC_WriteGPREG(LPC_RTC,0,FIRST_DATA);
+        RTC_SetFullTime(LPC_RTC, &RTC_TimeStructure);
+        RTC_WriteGPREG(LPC_RTC, 0, FIRST_DATA);
     }
     break;
     }
@@ -88,9 +88,9 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
 void rt_hw_rtc_init(void)
 {
-	rtc.type	= RT_Device_Class_RTC;
-	RTC_Init(LPC_RTC);
-    if (RTC_ReadGPREG(LPC_RTC,0) != FIRST_DATA)
+    rtc.type    = RT_Device_Class_RTC;
+    RTC_Init(LPC_RTC);
+    if (RTC_ReadGPREG(LPC_RTC, 0) != FIRST_DATA)
     {
         rt_kprintf("rtc is not configured\n");
         rt_kprintf("please configure with set_date and set_time\n");
@@ -98,13 +98,13 @@ void rt_hw_rtc_init(void)
     else
     {
     }
-    RTC_Cmd(LPC_RTC,ENABLE);
+    RTC_Cmd(LPC_RTC, ENABLE);
     /* register rtc device */
-    rtc.init 	= RT_NULL;
-    rtc.open 	= rt_rtc_open;
-    rtc.close	= RT_NULL;
-    rtc.read 	= rt_rtc_read;
-    rtc.write	= RT_NULL;
+    rtc.init    = RT_NULL;
+    rtc.open    = rt_rtc_open;
+    rtc.close   = RT_NULL;
+    rtc.read    = rt_rtc_read;
+    rtc.write   = RT_NULL;
     rtc.control = rt_rtc_control;
 
     /* no private */

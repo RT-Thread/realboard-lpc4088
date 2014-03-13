@@ -17,8 +17,6 @@
 
 void rt_init_thread_entry(void* parameter)
 {
-	/* initialize LCD drv for GUI */
-	rtgui_lcd_init();
 
 	/* Filesystem Initialization */
 	mci_hw_init("sd0");
@@ -44,13 +42,17 @@ void rt_init_thread_entry(void* parameter)
 		rt_kprintf("File System initialzation failed!\n");
 	}	
 
-	/* initialize GUI system */
-	rtgui_system_server_init();
 	/* initialize keyboard */
 	rt_hw_key_init();
 	/* initialize touch */
 	rt_hw_spi_init();
-	rtgui_touch_hw_init();
+	/* initialize LCD drv for GUI */
+	rtgui_lcd_init();
+
+	/* initialize GUI system */
+	 rtgui_system_server_init();
+    /* initialize touch */
+    touch_calibration_init();
 
     /* GUI examples initializtion */
 	application_init();

@@ -65,7 +65,7 @@ struct rtgui_touch_device
     struct rt_spi_device *spi_device;
     struct rt_event event;
 };
-static struct rtgui_touch_device* touch = RT_NULL;
+static struct rtgui_touch_device *touch = RT_NULL;
 
 rt_inline void touch_int_enable(rt_bool_t);
 
@@ -137,7 +137,7 @@ static void rtgui_touch_calculate(void)
                 total_x = tmpxy[0][SAMP_CNT_DIV2 - 2] + tmpxy[0][SAMP_CNT_DIV2 - 1] + tmpxy[0][SAMP_CNT_DIV2] + tmpxy[0][SAMP_CNT_DIV2 + 1];
                 total_y = tmpxy[1][SAMP_CNT_DIV2 - 2] + tmpxy[1][SAMP_CNT_DIV2 - 1] + tmpxy[1][SAMP_CNT_DIV2] + tmpxy[1][SAMP_CNT_DIV2 + 1];
 
-				/* calculate to get average value */
+                /* calculate to get average value */
                 adc_x = (total_x >> 2);
                 adc_y = (total_y >> 2);
 
@@ -145,7 +145,7 @@ static void rtgui_touch_calculate(void)
             } /* calculate average */
         } /* read touch */
 
-		/* update x,y */
+        /* update x,y */
         touch->x = adc_x;
         touch->y = adc_y;
     }
@@ -217,7 +217,7 @@ static void touch_thread_entry(void *parameter)
                         break;
                     }
 
-					rtgui_touch_post(RTGUI_TOUCH_UP, touch->x, touch->y);
+                    rtgui_touch_post(RTGUI_TOUCH_UP, touch->x, touch->y);
 
                     /* clean */
                     touch_down = RT_FALSE;
@@ -226,7 +226,7 @@ static void touch_thread_entry(void *parameter)
                 } /* touch up */
                 else /* touch down or move */
                 {
-					int type = RTGUI_TOUCH_DOWN;
+                    int type = RTGUI_TOUCH_DOWN;
                     if (touch_down == RT_FALSE)
                     {
                         rt_thread_delay(RT_TICK_PER_SECOND / 10);
@@ -234,16 +234,16 @@ static void touch_thread_entry(void *parameter)
                     else
                     {
                         rt_thread_delay(RT_TICK_PER_SECOND / 20);
-						/* touch motion event */
-						type = RTGUI_TOUCH_MOTION;
+                        /* touch motion event */
+                        type = RTGUI_TOUCH_MOTION;
                     }
 
-					/* check it again */
+                    /* check it again */
                     if (IS_TOUCH_UP()) continue;
 
                     /* calculation */
                     rtgui_touch_calculate();
-					rtgui_touch_post(type, touch->x, touch->y);
+                    rtgui_touch_post(type, touch->x, touch->y);
 
                     touch_down = RT_TRUE;
                 } /* touch down or move */
