@@ -5,8 +5,8 @@
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
 
-#define key_left_GETVALUE()     (LPC_GPIO4->PIN&(1<<19))  	  //定义KEY1连接的GPIO管脚
-#define key_right_GETVALUE()    (LPC_GPIO4->PIN&(1<<13))	    //定义KEY2连接的GPIO管脚
+#define key_left_GETVALUE()     (LPC_GPIO4->PIN&(1<<26))  	  //定义KEY1连接的GPIO管脚
+#define key_right_GETVALUE()    (LPC_GPIO4->PIN&(1<<19))	    //定义KEY2连接的GPIO管脚
 #define key_enter_GETVALUE()    (LPC_GPIO2->PIN&(1<<10))  		//定义KEY3连接的GPIO管脚
 
 
@@ -19,10 +19,10 @@
 static void key_gpio_config(void)
 {
   LPC_IOCON->P4_19 &= ~0x07;				  //配置P4_19为GPIO模式
- // LPC_IOCON->P4_13 &= ~0x07;					//配置P4_13为GPIO模式
+  LPC_IOCON->P4_26 &= ~0x07;					//配置P4_26为GPIO模式
   LPC_IOCON->P2_10 &= ~0x07;					//配置P2_10为GPIO模式
   LPC_GPIO4->DIR&=~(1<<19);					  //配置P4_19的GPIO方向为输入
-  //LPC_GPIO4->DIR&=~(1<<13);					  //配置P4_13的GPIO方向为输入
+  LPC_GPIO4->DIR&=~(1<<26);					  //配置P4_26的GPIO方向为输入
   LPC_GPIO2->DIR&=~(1<<10);					  //配置P2_10的GPIO方向为输入     
 }
 
@@ -48,7 +48,7 @@ static void key_thread_entry(void *parameter)
         if ( key_enter_GETVALUE() == 0 )
         {
             rt_thread_delay( next_delay*4 );
-            if (key_enter_GETVALUE() != 0)
+            if (key_enter_GETVALUE() == 0)
             {
                 /* HOME key */
                 rt_kprintf("key_home\n");
@@ -67,11 +67,11 @@ static void key_thread_entry(void *parameter)
             kbd_event.key  = RTGUIK_LEFT;
         }
 
-//        if ( key_right_GETVALUE()  == 0 )
-//        {
-//            rt_kprintf("key_right\n");
-//            kbd_event.key  = RTGUIK_RIGHT;
-//        }
+        if ( key_right_GETVALUE()  == 0 )
+        {
+            rt_kprintf("key_right\n");
+            kbd_event.key  = RTGUIK_RIGHT;
+        }
 
 
         if (kbd_event.key != RTGUIK_UNKNOWN)
