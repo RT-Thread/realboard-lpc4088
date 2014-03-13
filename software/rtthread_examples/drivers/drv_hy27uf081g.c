@@ -289,39 +289,59 @@ static const struct rt_mtd_nand_driver_ops ops =
 };
 static struct rt_mtd_nand_device _partition[1];
 
+static void hy27uf_gpio_config(void)
+{
+    LPC_IOCON->P3_0 |= 0x01; /* EMC_D0 @ P3.0 */
+    LPC_IOCON->P3_1 |= 0x01; /* EMC_D1 @ P3.1 */
+    LPC_IOCON->P3_2 |= 0x01; /* EMC_D2 @ P3.2 */
+    LPC_IOCON->P3_3 |= 0x01; /* EMC_D3 @ P3.3 */
+
+    LPC_IOCON->P3_4 |= 0x01; /* EMC_D4 @ P3.4 */
+    LPC_IOCON->P3_5 |= 0x01; /* EMC_D5 @ P3.5 */
+    LPC_IOCON->P3_6 |= 0x01; /* EMC_D6 @ P3.6 */
+    LPC_IOCON->P3_7 |= 0x01; /* EMC_D7 @ P3.7 */
+	  
+	  LPC_IOCON->P5_0 |= 0x01; /* EMC_A24 @ P5.0 */
+	  LPC_IOCON->P5_1 |= 0x01; /* EMC_A25 @ P5.1 */
+	  
+	  LPC_IOCON->P4_24 |= 0x01; /* EMC_OE @ P4.24 */
+	  LPC_IOCON->P4_25 |= 0x01; /* EMC_WEN @ P4.25 */
+	  LPC_IOCON->P4_30 |= 0x01; /* EMC_CS0 @ P4.30 */
+    /*config  R/B PIN*/
+	  LPC_IOCON->P4_31&=~0x07;
+    LPC_GPIO4->DIR&=~(0x01UL<<31);
+}
 int nand_hy27uf_hw_init(void)
 {
-    LPC_EMC_TypeDef *pEMC = LPC_EMC;
-    EMC_STATIC_MEM_Config_Type config;
 
     /**************************************************************************
     * Initialize EMC for NAND FLASH
     **************************************************************************/
-    EMC_Init();
-    pEMC->Control = EMC_Control_E;
-
+    hy27uf_gpio_config();
+	  /*enable the EMC*/
+    LPC_EMC->Control = EMC_Control_E;
     /**************************************************************************
     * Initialize EMC for NAND FLASH
     **************************************************************************/
-    config.CSn = 0;
-    config.AddressMirror = 0;
-    config.ByteLane = 1;
-    config.DataWidth = 8;
-    config.ExtendedWait = 2;
-    config.PageMode = 0;
-    config.WaitWEn = EMC_StaticWaitWen_WAITWEN(0x1f/*2*/);
-    config.WaitOEn = EMC_StaticWaitOen_WAITOEN(0/*2*/);
-    config.WaitWr = EMC_StaticWaitwr_WAITWR(6);
-    config.WaitPage = EMC_StaticwaitPage_WAITPAGE(0x1f);
-    config.WaitRd = EMC_StaticWaitwr_WAITWR(0x1f);
-    config.WaitTurn = EMC_StaticWaitTurn_WAITTURN(0x1f);
-    StaticMem_Init(&config);
-
-    // Init GPIO pin
-    // PINSEL_ConfigPin(2, 21, 0);
-    // FIO2DIR &= ~(1 << 21);
-    LPC_IOCON->P4_31 &= ~0x07;
-    LPC_GPIO4->DIR &= ~(0x01UL << 31);
+	  /*config nand data width to 8 bits*/
+	  LPC_EMC->StaticConfig0 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
+    LPC_EMC->StaticConfig0 |= EMC_STATIC_CFG_MW_8BITS;
+	
+		/*config the bytelane*/
+	  LPC_EMC->StaticConfig0 &= ~EMC_STATIC_CFG_BYTELAND_MASK;
+    LPC_EMC->StaticConfig0 |= EMC_CFG_BYTELAND_READ_BITSLOW&EMC_STATIC_CFG_BYTELAND_MASK;
+		
+		/*config the PageMode*/
+		LPC_EMC->StaticConfig0  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
+    LPC_EMC->StaticConfig0 |= EMC_CFG_PM_DISABLE&EMC_STATIC_CFG_PAGEMODE_MASK;
+		
+		LPC_EMC->StaticExtendedWait=EMC_StaticExtendedWait(2);
+		LPC_EMC->StaticWaitWen0 = EMC_StaticWaitWen_WAITWEN(0x1f/*2*/);
+		LPC_EMC->StaticWaitOen0 = EMC_StaticWaitOen_WAITOEN(0/*2*/);
+		LPC_EMC->StaticWaitWr0 = EMC_StaticWaitwr_WAITWR(6);
+		LPC_EMC->StaticWaitPage0 = EMC_StaticwaitPage_WAITPAGE(0x1f);
+		LPC_EMC->StaticWaitRd0 = EMC_StaticWaitwr_WAITWR(0x1f);
+		LPC_EMC->StaticWaitTurn0 = EMC_StaticWaitTurn_WAITTURN(0x1f);
 
     /* register nand0 */
     _partition[0].page_size       = PAGE_DATA_SIZE;
