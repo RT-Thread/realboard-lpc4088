@@ -40,7 +40,7 @@ static struct rt_event tx_event;
 
 /* Local Function Prototypes */
 static void write_PHY(rt_uint32_t PhyReg, rt_uint32_t Value);
-static rt_uint16_t read_PHY(rt_uint8_t PhyReg) ;
+//static rt_uint16_t read_PHY(rt_uint8_t PhyReg) ;
 
 void ENET_IRQHandler(void)
 {
@@ -101,26 +101,26 @@ static void write_PHY(rt_uint32_t PhyReg, rt_uint32_t Value)
     }
 }
 
-/* phy read */
-static rt_uint16_t read_PHY(rt_uint8_t PhyReg)
-{
-    rt_uint32_t tout;
+///* phy read */
+//static rt_uint16_t read_PHY(rt_uint8_t PhyReg)
+//{
+//    rt_uint32_t tout;
 
-    LPC_EMAC->MADR = DP83848C_DEF_ADR | PhyReg;
-    LPC_EMAC->MCMD = MCMD_READ;
+//    LPC_EMAC->MADR = DP83848C_DEF_ADR | PhyReg;
+//    LPC_EMAC->MCMD = MCMD_READ;
 
-    /* Wait until operation completed */
-    tout = 0;
-    for (tout = 0; tout < MII_RD_TOUT; tout++)
-    {
-        if ((LPC_EMAC->MIND & MIND_BUSY) == 0)
-        {
-            break;
-        }
-    }
-    LPC_EMAC->MCMD = 0;
-    return (LPC_EMAC->MRDD);
-}
+//    /* Wait until operation completed */
+//    tout = 0;
+//    for (tout = 0; tout < MII_RD_TOUT; tout++)
+//    {
+//        if ((LPC_EMAC->MIND & MIND_BUSY) == 0)
+//        {
+//            break;
+//        }
+//    }
+//    LPC_EMAC->MCMD = 0;
+//    return (LPC_EMAC->MRDD);
+//}
 
 /* init rx descriptor */
 rt_inline void rx_descr_init(void)
