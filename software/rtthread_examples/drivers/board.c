@@ -165,6 +165,7 @@ int rt_hw_board_heap_init(void)
 {
 #ifdef RT_USING_HEAP
 #if LPC_EXT_SDRAM
+#include "drv_sram.h"
     rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
     sram_init();
 #else
