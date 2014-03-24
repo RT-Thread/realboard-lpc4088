@@ -1,6 +1,6 @@
 import os
 import sys
-import SCons.cpp
+
 import rtconfig 
 
 sconstruct = File('SConstruct')
@@ -9,16 +9,16 @@ name = fn.name
 building_dir = os.path.dirname(fn.abspath)
 program_dir  = r'..\bin'
 
-if os.getenv('RTT_ROOT'):
-    RTT_ROOT = os.getenv('RTT_ROOT')
-else:
-    # we use setting on rtconfig.py
-    RTT_ROOT = rtconfig.RTT_ROOT
+from rtconfig import RTT_ROOT
+from rtconfig import BSP_ROOT
 
-sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools'), BSP_ROOT]
 from building import *
+from rtua import GetCPPPATH
+from rtua import GetCPPDEFINES
 
 Export('RTT_ROOT')
+Export('BSP_ROOT')
 
 # add target option
 AddOption('--app',
@@ -41,22 +41,14 @@ if GetOption('type') == 'ext':
 else:
     linkflags = rtconfig.LFLAGS + ' -e main'
 
+CPPPATH = GetCPPPATH(BSP_ROOT, RTT_ROOT)
+
 env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = linkflags,
-        CPPPATH = [os.path.join(building_dir), 
-                RTT_ROOT + '/include',
-                RTT_ROOT + '/components/finsh',
-                RTT_ROOT + '/components/dfs', 
-                RTT_ROOT + '/components/dfs/include',
-                RTT_ROOT + '/components/net/lwip-1.4.1/src', 
-                RTT_ROOT + '/components/net/lwip-1.4.1/src/include', 
-                RTT_ROOT + '/components/net/lwip-1.4.1/src/include/ipv4', 
-                RTT_ROOT + '/components/net/lwip-1.4.1/src/arch/include', 
-                building_dir + '/rtgui/include',
-                ])
+        CPPPATH = CPPPATH)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 PrepareModuleBuilding(env, RTT_ROOT)
