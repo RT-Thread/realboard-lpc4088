@@ -7,7 +7,7 @@
 #include <dfs_posix.h>
 #include <string.h>
 
-#define PICTURE_DIR "/"
+#define PICTURE_DIR "/picture"
 
 /* current picture file name */
 static char current_fn[32] = {0};

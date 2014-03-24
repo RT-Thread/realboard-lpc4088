@@ -471,7 +471,7 @@ int lpc_emac_hw_init(void)
     lpc_emac_device.parent.eth_tx           = lpc_emac_tx;
 
     eth_device_init(&(lpc_emac_device.parent), "e0");
-	return 0;
+    return 0;
 }
 INIT_DEVICE_EXPORT(lpc_emac_hw_init);
 

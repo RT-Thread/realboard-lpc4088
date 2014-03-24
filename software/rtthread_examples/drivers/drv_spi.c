@@ -255,11 +255,11 @@ int rt_hw_spi_init(void)
     {
         static struct lpc_spi_bus lpc_spi1;
         lpc_spi_register(LPC_SSP1, &lpc_spi1, "spi1");
-			  LPC_IOCON->P4_20 &= ~0x07;
+        LPC_IOCON->P4_20 &= ~0x07;
         LPC_IOCON->P4_20 |= 0x03;
-			  LPC_IOCON->P4_22 &= ~0x07;
+        LPC_IOCON->P4_22 &= ~0x07;
         LPC_IOCON->P4_22 |= 0x03;
-			  LPC_IOCON->P4_23 &= ~0x07;
+        LPC_IOCON->P4_23 &= ~0x07;
         LPC_IOCON->P4_23 |= 0x03;
     }
     /* attach cs */
@@ -274,7 +274,7 @@ int rt_hw_spi_init(void)
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi10", "spi1", (void *)&spi_cs1);
     }
-		    /* register spi bus */
+    /* register spi bus */
     {
         static struct lpc_spi_bus lpc_spi0;
         lpc_spi_register(LPC_SSP0, &lpc_spi0, "spi0");
@@ -294,8 +294,8 @@ int rt_hw_spi_init(void)
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi00", "spi0", (void *)&spi_cs1);
     }
-	
-	return 0;
+
+    return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 

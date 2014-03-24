@@ -22,6 +22,8 @@
 #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+// <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
+#define RT_DEBUG_INIT   0
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -249,6 +251,10 @@
 #define RTGUI_IMAGE_TJPGD
 /* #define RTGUI_IMAGE_PNG */
 #define RTGUI_USING_NOTEBOOK_IMAGE
+// <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
+//#define RTGUI_USING_HW_CURSOR
+// <bool name="RTGUI_USING_CALI" description="Using calibration application in rtGUI" default="true" />
+#define RTGUI_USING_CALI
 // </section>
 
 // </RDTConfigurator>
