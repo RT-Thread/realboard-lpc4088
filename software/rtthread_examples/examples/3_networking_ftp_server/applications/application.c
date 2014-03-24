@@ -55,10 +55,13 @@ void rt_init_thread_entry(void* parameter)
 	
     /* do some thing here. */
 #if defined(RT_USING_DFS) && defined(RT_USING_LWIP)
-	/* start ftp server */
-	rt_kprintf("ftp server begin...\n");
-	ftpd_start();
-	rt_kprintf("ftp server started!!\n");
+		{
+		extern void ftpd_start(void);
+		/* start ftp server */
+		rt_kprintf("ftp server begin...\n");
+		ftpd_start();
+		rt_kprintf("ftp server started!!\n");
+		}
 #endif
     
 }
