@@ -52,7 +52,7 @@ void _onidle(struct rtgui_object *object, rtgui_event_t *event)
     if(rt_tick_get()-ticks >= RT_TICK_PER_SECOND)
     {
         char buf[16];
-        sprintf(buf, "%.2f", (double)area/(800*480));
+        rt_sprintf(buf, "%.2f", (double)area/(800*480));
         rt_kprintf("frames per second: %s fps\n", buf);
         area = 0;
         ticks = rt_tick_get();

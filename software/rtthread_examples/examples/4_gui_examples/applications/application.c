@@ -15,6 +15,7 @@
 #include <drv_touch.h>
 #include <drv_sd.h>
 
+extern void application_init(void);
 void rt_init_thread_entry(void* parameter)
 {
 
@@ -55,7 +56,7 @@ void rt_init_thread_entry(void* parameter)
     touch_calibration_init();
 
     /* GUI examples initializtion */
-	application_init();
+	 application_init();
 	
 	finsh_system_init();
 }

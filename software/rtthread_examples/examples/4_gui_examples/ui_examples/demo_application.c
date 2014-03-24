@@ -7,6 +7,9 @@
 
 struct rtgui_notebook *the_notebook;
 
+extern void demo_view_next(struct rtgui_object *object, struct rtgui_event *event);
+extern void demo_view_prev(struct rtgui_object *object, struct rtgui_event *event);
+
 static rt_bool_t demo_handle_key(struct rtgui_object *object, struct rtgui_event *event)
 {
     struct rtgui_event_kbd *ekbd = (struct rtgui_event_kbd *)event;
@@ -28,6 +31,32 @@ static rt_bool_t demo_handle_key(struct rtgui_object *object, struct rtgui_event
 }
 
 struct rtgui_win *main_win;
+extern rtgui_container_t *demo_view_dc(void);
+extern rtgui_container_t *demo_view_benchmark(void);
+extern rtgui_container_t *demo_view_dc_buffer(void);
+extern rtgui_container_t *demo_view_animation(void);
+extern rtgui_container_t *demo_view_buffer_animation(void);
+extern rtgui_container_t *demo_view_instrument_panel(void);
+extern rtgui_container_t *demo_view_window(void);
+extern rtgui_container_t *demo_view_label(void);
+extern rtgui_container_t *demo_view_button(void);
+extern rtgui_container_t *demo_view_checkbox(void);
+extern rtgui_container_t *demo_view_progressbar(void);
+extern rtgui_container_t *demo_view_scrollbar(void);
+extern rtgui_container_t *demo_view_radiobox(void);
+extern rtgui_container_t *demo_view_textbox(void);
+extern rtgui_container_t *demo_view_listbox(void);
+extern rtgui_container_t *demo_view_menu(void);
+extern rtgui_container_t *demo_view_listctrl(void);
+extern rtgui_container_t *demo_view_combobox(void);
+extern rtgui_container_t *demo_view_slider(void);
+extern rtgui_container_t *demo_view_notebook(void);
+extern rtgui_container_t *demo_view_mywidget(void);
+extern rtgui_container_t *demo_plot(void);
+extern rtgui_container_t *demo_view_digtube(void);
+extern rtgui_container_t *demo_view_edit(void);
+extern rtgui_container_t *demo_view_bmp(void);
+
 static void application_entry(void *parameter)
 {
     struct rtgui_app *app;
