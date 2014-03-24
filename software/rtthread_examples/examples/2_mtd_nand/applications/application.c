@@ -17,6 +17,11 @@
 #include <finsh.h>
 #include <shell.h>
 #endif
+#ifdef RT_USING_SPI
+#include "drv_spi.h"
+#include "drv_gd5f1g.h"
+#endif
+#include "drv_hy27uf081g.h"
 
 void rt_init_thread_entry(void* parameter)
 {
