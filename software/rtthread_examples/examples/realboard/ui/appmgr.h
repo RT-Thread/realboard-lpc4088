@@ -8,5 +8,6 @@
 #include <rtgui/widgets/panel.h>
 
 void app_mgr_win_init(void);
+void app_mgr_init(void);
 
 #endif

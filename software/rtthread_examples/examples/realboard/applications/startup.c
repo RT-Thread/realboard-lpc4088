@@ -17,6 +17,7 @@
 #include <rtthread.h>
 
 #include "board.h"
+#include "drv_sram.h"
 
 extern int rt_application_init(void);
 
