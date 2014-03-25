@@ -7,7 +7,7 @@ sconstruct = File('SConstruct')
 fn = sconstruct.rfile()
 name = fn.name
 building_dir = os.path.dirname(fn.abspath)
-program_dir  = r'..\bin'
+program_dir  = r'../bin'
 
 from rtconfig import RTT_ROOT
 from rtconfig import BSP_ROOT
