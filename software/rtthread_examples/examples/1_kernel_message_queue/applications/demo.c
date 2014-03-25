@@ -35,7 +35,7 @@ static void thread1_entry(void* parameter)
             rt_kprintf("thread1: recv msg from msg queue, the content:%s\n", buf);
             
             /* 检查是否收到了紧急消息 */
-            if (strcmp(buf, MSG_VIP) == 0)
+            if (rt_strcmp(buf, MSG_VIP) == 0)
                 break;
         }
 
@@ -97,7 +97,6 @@ static void thread3_entry(void* parameter)
 
 int demo_init(void)
 {
-    rt_thread_t init_thread;
     rt_err_t result;
 
     /* 初始化消息队列 */

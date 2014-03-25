@@ -17,7 +17,9 @@
 #include <rtthread.h>
 
 #include "board.h"
-
+#if LPC_EXT_SDRAM
+#include "drv_sram.h"
+#endif
 extern int  rt_application_init(void);
 
 /**

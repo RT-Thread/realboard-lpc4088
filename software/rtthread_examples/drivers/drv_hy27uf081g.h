@@ -17,4 +17,6 @@
 #define NAND_CMD_ERASE2    0xd0
 #define NAND_CMD_RESET     0xff
 
+int nand_hy27uf_hw_init(void);
+
 #endif

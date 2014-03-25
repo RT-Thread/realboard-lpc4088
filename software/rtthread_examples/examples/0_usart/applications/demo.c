@@ -57,4 +57,6 @@ int demo_init(void)
                    &thread2_stack[0],
                    sizeof(thread2_stack),11,5);
     rt_thread_startup(&thread2);
+	
+	 return 0;
 }

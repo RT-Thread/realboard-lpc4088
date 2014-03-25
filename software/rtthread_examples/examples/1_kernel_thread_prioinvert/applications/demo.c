@@ -17,13 +17,14 @@ static void thread1_entry(void* parameter)
     rt_err_t result;
     
     result = rt_sem_take(sem, RT_WAITING_FOREVER);
-    
-    for(t1_count = 0; t1_count < 10; t1_count ++)
-    {
-        rt_kprintf("thread1: got semaphore, count: %d\n", t1_count);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-    }
-    
+    if(RT_EOK==result)
+			{
+				for(t1_count = 0; t1_count < 10; t1_count ++)
+				{
+						rt_kprintf("thread1: got semaphore, count: %d\n", t1_count);
+						rt_thread_delay(RT_TICK_PER_SECOND);
+				}
+	    }
     rt_kprintf("thread1: release semaphore\n");
     rt_sem_release(sem);
 }

@@ -82,7 +82,6 @@ static void thread2_entry(void* parameter)
 
 int demo_init(void)
 {
-    rt_thread_t init_thread;
     rt_err_t result;
 
     /* 初始化一个mailbox */

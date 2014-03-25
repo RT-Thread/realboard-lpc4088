@@ -1,15 +1,14 @@
 #include "drv_hy27uf081g.h"
-
-#ifdef RT_USING_NFTL
-#include <nftl.h>
-#endif
-
 #include "lpc_emc.h"
 #include "lpc_clkpwr.h"
 #include "lpc_pinsel.h"
 
 #include <rtdevice.h>
 #include <string.h>
+
+#ifdef RT_USING_NFTL
+#include <nftl.h>
+#endif
 
 /* nandflash confg */
 #define PAGES_PER_BLOCK         64

@@ -22,7 +22,7 @@ static rt_thread_t tid2 = RT_NULL;
 /* 线程1入口 */
 static void thread1_entry(void* parameter)
 {
-    rt_bool_t result;
+    rt_bool_t result=RT_FALSE;
     rt_uint8_t data_buffer[33];
     rt_uint32_t i = 1;
 
@@ -31,9 +31,10 @@ static void thread1_entry(void* parameter)
         rt_sem_take (sem,RT_WAITING_FOREVER);
         result = rt_ringbuffer_get(&rb,&data_buffer[0],33);
         rt_sem_release(sem);
-
+        if(RT_TRUE==result)
+				{
         rt_kprintf("%s\n",data_buffer);
-        
+        }
         rt_thread_delay(5);
     }
 
@@ -42,7 +43,7 @@ static void thread1_entry(void* parameter)
 /* 线程2入口，线程2的优先级比线程1低，应该线程1先获得执行。*/
 static void thread2_entry(void *parameter)
 {
-    rt_bool_t result;
+    rt_bool_t result=RT_FALSE;
     rt_uint32_t index,setchar,i = 1;
     rt_uint8_t data_buffer[33];
 
@@ -62,8 +63,10 @@ static void thread2_entry(void *parameter)
         rt_sem_take(sem,RT_WAITING_FOREVER);
 
         result = rt_ringbuffer_put(&rb,&data_buffer[0],33);
+				 if(RT_TRUE==result)
+				{
         rt_kprintf("write buffer success!\n");
-        
+        }
         rt_sem_release(sem);
         
         rt_thread_delay(10);

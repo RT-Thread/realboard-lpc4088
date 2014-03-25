@@ -13,7 +13,7 @@
 
 extern struct netif * netif_list;
 extern void lpc_emac_hw_init(void);
-
+extern void list_if(void);
 void rt_init_thread_entry(void* parameter)
 {
 #ifdef RT_USING_LWIP

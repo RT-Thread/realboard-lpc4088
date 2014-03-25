@@ -51,41 +51,8 @@ static rt_err_t lpc_i2c_stop(LPC_I2C_TypeDef *I2Cx)
     I2Cx->CONCLR = I2C_I2CONCLR_SIC;
     return RT_EOK;
 }
-static rt_uint32_t lpc_i2c_sendbyte(LPC_I2C_TypeDef *I2Cx, rt_uint8_t byte)
-{
-    /* Make sure start bit is not active */
-    if (I2Cx->CONSET & I2C_I2CONSET_STA)
-    {
-        I2Cx->CONCLR = I2C_I2CONCLR_STAC;
-    }
 
-    I2Cx->DAT = byte & I2C_I2DAT_BITMASK;
 
-    I2Cx->CONCLR = I2C_I2CONCLR_SIC;
-
-    while (!(I2Cx->CONSET & I2C_I2CONSET_SI));
-
-    return (I2Cx->STAT & I2C_STAT_CODE_BITMASK);
-}
-static rt_uint32_t lpc_i2c_getbyte(LPC_I2C_TypeDef *I2Cx, rt_uint8_t *retdat, rt_bool_t ack)
-{
-    if (RT_TRUE == ack)
-    {
-        I2Cx->CONSET = I2C_I2CONSET_AA;
-    }
-    else
-    {
-        I2Cx->CONCLR = I2C_I2CONCLR_AAC;
-    }
-
-    I2Cx->CONCLR = I2C_I2CONCLR_SIC;
-
-    while (!(I2Cx->CONSET & I2C_I2CONSET_SI));
-
-    *retdat = (uint8_t)(I2Cx->DAT & I2C_I2DAT_BITMASK);
-
-    return (I2Cx->STAT & I2C_STAT_CODE_BITMASK);
-}
 static rt_size_t lpc_i2c_recv_bytes(LPC_I2C_TypeDef *I2Cx, struct rt_i2c_msg *msg)
 {
     rt_size_t bytes = 0;
@@ -193,7 +160,6 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
     rt_err_t ret = RT_ERROR;
-    rt_uint16_t ignore_nack;
     rt_uint32_t stat = 0;
     struct lpc_i2c_bus *lpc_i2c = (struct lpc_i2c_bus *)bus;
     /*start the i2c bus*/
@@ -206,7 +172,6 @@ static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
-        ignore_nack = msg->flags & RT_I2C_IGNORE_NACK;
         if (!(msg->flags & RT_I2C_NO_START))
         {
             if (i)

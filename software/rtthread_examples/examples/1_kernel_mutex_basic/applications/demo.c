@@ -113,9 +113,6 @@ static char thread2_stack[1024];
 struct rt_thread thread2;
 static void rt_thread_entry2(void* parameter)
 {
-    rt_err_t result;
-    rt_tick_t tick;
-
     /* 1. static mutex test */
     rt_kprintf("thread2 try to get static mutex\n");
     rt_mutex_take(&static_mutex, 10);

@@ -14,6 +14,8 @@
 #include <drv_touch.h>
 #include <drv_sd.h>
 
+extern int picture_init(void);
+
 void rt_init_thread_entry(void* parameter)
 {
 	/* initialize spi driver */

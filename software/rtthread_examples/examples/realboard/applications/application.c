@@ -17,6 +17,7 @@
 #include <board.h>
 #include <components.h>
 
+extern void realtouch_ui_init(void);
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {

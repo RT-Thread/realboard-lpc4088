@@ -34,7 +34,7 @@ rt_bool_t event_handler(struct rtgui_object* object, rtgui_event_t* event)
 
     return result;
 }
-
+extern struct rtgui_panel* program_create(struct rtgui_panel* panel);
 void app_mgr_win_init(void)
 {
     struct rtgui_win* win;

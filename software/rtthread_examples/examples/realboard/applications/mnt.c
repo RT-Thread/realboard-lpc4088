@@ -1,6 +1,7 @@
 #include <rtthread.h>
 #include <dfs_fs.h>
 
+#include "drv_sd.h"
 #ifdef RT_USING_NFTL
 #include "nftl.h"
 #endif
@@ -24,5 +25,6 @@ int mnt_init(void)
 		rt_kprintf("File System initialized!\n");
 	else
 		rt_kprintf("File System init failed!\n");
+	return 0;
 }
 INIT_ENV_EXPORT(mnt_init);

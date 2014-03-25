@@ -24,7 +24,7 @@ struct demo_bmp_dt
 
 rt_bool_t demo_bitmap_showbox(struct rtgui_object* object, struct rtgui_event* event)
 {
-	rtgui_container_t *container;
+	rtgui_container_t *container=container;
 	rtgui_widget_t *widget;
 	
 	RT_ASSERT(object != RT_NULL);
@@ -153,10 +153,10 @@ void demo_image_zoom_in(struct rtgui_object* object, struct rtgui_event* event)
 
 	if (bmpdt.image == RT_NULL) return;
 
-	if (bmpdt.scale > 0.45)
+	if (bmpdt.scale > 0.45f)
 	{	/* 更新缩放倍率 */
-		if (bmpdt.scale > 1.0) bmpdt.scale -= (float)0.5;
-		else bmpdt.scale -= (float)0.1;
+		if (bmpdt.scale > 1.0f) bmpdt.scale -= (float)0.5f;
+		else bmpdt.scale -= (float)0.1f;
 	}
 	/* 根据缩放倍率, 缩放原始图形, 并得到新图形的指针 */
 	bmpdt.showimg = rtgui_image_zoom(bmpdt.image, bmpdt.scale, bmpdt.scale, RTGUI_IMG_ZOOM_BILINEAR);
@@ -177,9 +177,9 @@ void demo_image_zoom_out(struct rtgui_object* object, struct rtgui_event* event)
 
 	if (bmpdt.image == RT_NULL) return;
 
-	if (bmpdt.scale < 4.95)
+	if (bmpdt.scale < 4.95f)
 	{	/* 更新缩放倍率 */
-		if (bmpdt.scale > 0.95) bmpdt.scale += (float)0.5;
+		if (bmpdt.scale > 0.95f) bmpdt.scale += (float)0.5f;
 		else bmpdt.scale += (float)0.1;
 	}
 
@@ -201,8 +201,8 @@ void demo_image_rotate(struct rtgui_object* object, struct rtgui_event* event)
 
 	if (bmpdt.image == RT_NULL) return;
 	/* 更新图像旋转角度 */
-	if (bmpdt.angle < 360.0)
-		bmpdt.angle += (float)1.0;
+	if (bmpdt.angle < 360.0f)
+		bmpdt.angle += (float)1.0f;
 	else
 		bmpdt.angle = 0.0;
 	/* 调用旋转函数执行旋转, 并取得一个新的图像指针 */

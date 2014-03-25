@@ -33,7 +33,7 @@ static const rtgui_menu_item_t items[] =
 };
 static rtgui_menu_t *menu;
 
-static rt_bool_t _onmenu(struct rtgui_object *object, struct rtgui_event *event)
+static void _onmenu(struct rtgui_object *object, struct rtgui_event *event)
 {
     rtgui_rect_t rect;
 
@@ -43,7 +43,6 @@ static rt_bool_t _onmenu(struct rtgui_object *object, struct rtgui_event *event)
     if (menu != RT_NULL)
         rtgui_menu_pop(menu, rect.x1, rect.y2 + 5);
 
-    return RT_TRUE;
 }
 
 /* 创建用于演示menu控件的视图 */

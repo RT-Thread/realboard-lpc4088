@@ -77,7 +77,6 @@ static void thread3_entry(void *param)
 
 int demo_init(void)
 {
-    rt_thread_t init_thread;
     rt_err_t result;
 
     /* 初始化事件对象 */
