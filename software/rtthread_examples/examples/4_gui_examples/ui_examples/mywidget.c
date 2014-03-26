@@ -84,7 +84,7 @@ static void _rtgui_mywidget_constructor(rtgui_mywidget_t *mywidget)
 }
 
 DEFINE_CLASS_TYPE(mywidget, "mywidget",
-                  RTGUI_WIDGET_TYPE,
+                  RTGUI_PARENT_TYPE(widget), 
                   _rtgui_mywidget_constructor,
                   RT_NULL,
                   sizeof(struct rtgui_mywidget));

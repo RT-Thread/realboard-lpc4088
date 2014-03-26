@@ -152,23 +152,6 @@ void demo_image_zoom_in(struct rtgui_object* object, struct rtgui_event* event)
 	rtgui_button_t *button = RTGUI_BUTTON(object);
 
 	if (bmpdt.image == RT_NULL) return;
-
-	if (bmpdt.scale > 0.45f)
-	{	/* 更新缩放倍率 */
-		if (bmpdt.scale > 1.0f) bmpdt.scale -= (float)0.5f;
-		else bmpdt.scale -= (float)0.1f;
-	}
-	/* 根据缩放倍率, 缩放原始图形, 并得到新图形的指针 */
-	bmpdt.showimg = rtgui_image_zoom(bmpdt.image, bmpdt.scale, bmpdt.scale, RTGUI_IMG_ZOOM_BILINEAR);
-	if (bmpdt.showimg != RT_NULL)
-		rtgui_widget_update(RTGUI_WIDGET(bmpdt.showbox));
-	else
-		return;
-	if(bmpdt.showimg != bmpdt.image)
-	{	/* 释放掉新图形所用的资源 */
-		rtgui_image_destroy(bmpdt.showimg);
-		bmpdt.showimg = RT_NULL;
-	}
 }
 
 void demo_image_zoom_out(struct rtgui_object* object, struct rtgui_event* event)
@@ -176,23 +159,6 @@ void demo_image_zoom_out(struct rtgui_object* object, struct rtgui_event* event)
 	rtgui_button_t *button = RTGUI_BUTTON(object);
 
 	if (bmpdt.image == RT_NULL) return;
-
-	if (bmpdt.scale < 4.95f)
-	{	/* 更新缩放倍率 */
-		if (bmpdt.scale > 0.95f) bmpdt.scale += (float)0.5f;
-		else bmpdt.scale += (float)0.1;
-	}
-
-	bmpdt.showimg = rtgui_image_zoom(bmpdt.image, bmpdt.scale, bmpdt.scale, RTGUI_IMG_ZOOM_BILINEAR);
-	if (bmpdt.showimg != RT_NULL)
-		rtgui_widget_update(RTGUI_WIDGET(bmpdt.showbox));
-	else
-		return;
-	if(bmpdt.showimg != bmpdt.image)
-	{
-		rtgui_image_destroy(bmpdt.showimg);
-		bmpdt.showimg = RT_NULL;
-	}
 }
 
 void demo_image_rotate(struct rtgui_object* object, struct rtgui_event* event)
@@ -200,22 +166,6 @@ void demo_image_rotate(struct rtgui_object* object, struct rtgui_event* event)
 	rtgui_button_t *button = RTGUI_BUTTON(object);
 
 	if (bmpdt.image == RT_NULL) return;
-	/* 更新图像旋转角度 */
-	if (bmpdt.angle < 360.0f)
-		bmpdt.angle += (float)1.0f;
-	else
-		bmpdt.angle = 0.0;
-	/* 调用旋转函数执行旋转, 并取得一个新的图像指针 */
-	bmpdt.showimg = rtgui_image_rotate(bmpdt.image, bmpdt.angle);
-	if (bmpdt.showimg != RT_NULL)
-		rtgui_widget_update(RTGUI_WIDGET(bmpdt.showbox));
-	else
-		return;
-	if(bmpdt.showimg != bmpdt.image)
-	{
-		rtgui_image_destroy(bmpdt.showimg);
-		bmpdt.showimg = RT_NULL;
-	}
 }
 
 rtgui_container_t *demo_view_bmp(void)
