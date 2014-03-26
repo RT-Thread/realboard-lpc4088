@@ -51,7 +51,7 @@ static void _block_panel_constructor(block_panel_t *panel)
 }
 
 DEFINE_CLASS_TYPE(block_panel, "block_panel", 
-				  RTGUI_PANEL_TYPE,
+				  RTGUI_PARENT_TYPE(panel),
 				  _block_panel_constructor,
 				  RT_NULL,
 				  sizeof(struct block_panel));
