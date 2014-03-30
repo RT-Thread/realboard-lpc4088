@@ -25,11 +25,13 @@ int main(int argc, char** argv)
 
 		win = rtgui_mainwin_create(RT_NULL, "button",
 			RTGUI_WIN_STYLE_MAINWIN | RTGUI_WIN_STYLE_DESTROY_ON_CLOSE);
+        rtgui_widget_get_extent(RTGUI_WIDGET(win), &rect);
 
 		/* create lable in app window */
         button = rtgui_button_create("close");
 		rtgui_button_set_onbutton(button, _on_close);
-        rtgui_rect_init(&rect, 150, 240, 80, 25);
+        rect.x2 -= 5; rect.y2 -= 5;
+        rect.x1 = rect.x2 - 80; rect.y1 = rect.y2 - 25;
 		rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
 		rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(button));
 
@@ -39,4 +41,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
