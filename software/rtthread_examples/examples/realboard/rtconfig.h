@@ -75,7 +75,7 @@
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
-#define RT_UART_RX_BUFFER_SIZE    64
+#define RT_UART_RX_BUFFER_SIZE    2048
 // <bool name="RT_USING_MTD_NAND" description="Using MTD NAND Framework" default="true" />
 #define RT_USING_MTD_NAND
 // <bool name="RT_MTD_NAND_DEBUG" description="Enable MTD NAND Framework Debug" default="true" />
