@@ -24,6 +24,28 @@
 #define EMAC_PHY_100MBIT    2
 
 #define MAX_ADDR_LEN 6
+#ifdef __CC_ARM
+static rt_uint32_t ETH_RAM_BASE[4*1024] SECTION("ETH_RAM");
+#endif
+/* EMAC variables located in 16K Ethernet SRAM */
+#define RX_DESC_BASE         (uint32_t)&ETH_RAM_BASE[0]
+#define RX_STAT_BASE        (RX_DESC_BASE + NUM_RX_FRAG*8)
+#define TX_DESC_BASE        (RX_STAT_BASE + NUM_RX_FRAG*8)
+#define TX_STAT_BASE        (TX_DESC_BASE + NUM_TX_FRAG*8)
+#define RX_BUF_BASE         (TX_STAT_BASE + NUM_TX_FRAG*4)
+#define TX_BUF_BASE         (RX_BUF_BASE  + NUM_RX_FRAG*ETH_FRAG_SIZE)
+
+/* RX and TX descriptor and status definitions. */
+#define RX_DESC_PACKET(i)   (*(unsigned int *)(RX_DESC_BASE   + 8*i))
+#define RX_DESC_CTRL(i)     (*(unsigned int *)(RX_DESC_BASE+4 + 8*i))
+#define RX_STAT_INFO(i)     (*(unsigned int *)(RX_STAT_BASE   + 8*i))
+#define RX_STAT_HASHCRC(i)  (*(unsigned int *)(RX_STAT_BASE+4 + 8*i))
+#define TX_DESC_PACKET(i)   (*(unsigned int *)(TX_DESC_BASE   + 8*i))
+#define TX_DESC_CTRL(i)     (*(unsigned int *)(TX_DESC_BASE+4 + 8*i))
+#define TX_STAT_INFO(i)     (*(unsigned int *)(TX_STAT_BASE   + 4*i))
+#define RX_BUF(i)           (RX_BUF_BASE + ETH_FRAG_SIZE*i)
+#define TX_BUF(i)           (TX_BUF_BASE + ETH_FRAG_SIZE*i)
+
 struct lpc_emac
 {
     /* inherit from ethernet device */
@@ -40,7 +62,7 @@ static struct rt_event tx_event;
 
 /* Local Function Prototypes */
 static void write_PHY(rt_uint32_t PhyReg, rt_uint32_t Value);
-//static rt_uint16_t read_PHY(rt_uint8_t PhyReg) ;
+static rt_uint16_t read_PHY(rt_uint8_t PhyReg) ;
 
 void ENET_IRQHandler(void)
 {
@@ -101,26 +123,26 @@ static void write_PHY(rt_uint32_t PhyReg, rt_uint32_t Value)
     }
 }
 
-///* phy read */
-//static rt_uint16_t read_PHY(rt_uint8_t PhyReg)
-//{
-//    rt_uint32_t tout;
+/* phy read */
+static rt_uint16_t read_PHY(rt_uint8_t PhyReg)
+{
+    rt_uint32_t tout;
 
-//    LPC_EMAC->MADR = DP83848C_DEF_ADR | PhyReg;
-//    LPC_EMAC->MCMD = MCMD_READ;
+    LPC_EMAC->MADR = DP83848C_DEF_ADR | PhyReg;
+    LPC_EMAC->MCMD = MCMD_READ;
 
-//    /* Wait until operation completed */
-//    tout = 0;
-//    for (tout = 0; tout < MII_RD_TOUT; tout++)
-//    {
-//        if ((LPC_EMAC->MIND & MIND_BUSY) == 0)
-//        {
-//            break;
-//        }
-//    }
-//    LPC_EMAC->MCMD = 0;
-//    return (LPC_EMAC->MRDD);
-//}
+    /* Wait until operation completed */
+    tout = 0;
+    for (tout = 0; tout < MII_RD_TOUT; tout++)
+    {
+        if ((LPC_EMAC->MIND & MIND_BUSY) == 0)
+        {
+            break;
+        }
+    }
+    LPC_EMAC->MCMD = 0;
+    return (LPC_EMAC->MRDD);
+}
 
 /* init rx descriptor */
 rt_inline void rx_descr_init(void)
@@ -471,7 +493,7 @@ int lpc_emac_hw_init(void)
     lpc_emac_device.parent.eth_tx           = lpc_emac_tx;
 
     eth_device_init(&(lpc_emac_device.parent), "e0");
-    return 0;
+		return 0;
 }
 INIT_DEVICE_EXPORT(lpc_emac_hw_init);
 
