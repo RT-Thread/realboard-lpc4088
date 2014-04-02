@@ -24,24 +24,6 @@
 
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
 
-/* EMAC variables located in 16K Ethernet SRAM */
-#define RX_DESC_BASE        0x20000000
-#define RX_STAT_BASE        (RX_DESC_BASE + NUM_RX_FRAG*8)
-#define TX_DESC_BASE        (RX_STAT_BASE + NUM_RX_FRAG*8)
-#define TX_STAT_BASE        (TX_DESC_BASE + NUM_TX_FRAG*8)
-#define RX_BUF_BASE         (TX_STAT_BASE + NUM_TX_FRAG*4)
-#define TX_BUF_BASE         (RX_BUF_BASE  + NUM_RX_FRAG*ETH_FRAG_SIZE)
-
-/* RX and TX descriptor and status definitions. */
-#define RX_DESC_PACKET(i)   (*(unsigned int *)(RX_DESC_BASE   + 8*i))
-#define RX_DESC_CTRL(i)     (*(unsigned int *)(RX_DESC_BASE+4 + 8*i))
-#define RX_STAT_INFO(i)     (*(unsigned int *)(RX_STAT_BASE   + 8*i))
-#define RX_STAT_HASHCRC(i)  (*(unsigned int *)(RX_STAT_BASE+4 + 8*i))
-#define TX_DESC_PACKET(i)   (*(unsigned int *)(TX_DESC_BASE   + 8*i))
-#define TX_DESC_CTRL(i)     (*(unsigned int *)(TX_DESC_BASE+4 + 8*i))
-#define TX_STAT_INFO(i)     (*(unsigned int *)(TX_STAT_BASE   + 4*i))
-#define RX_BUF(i)           (RX_BUF_BASE + ETH_FRAG_SIZE*i)
-#define TX_BUF(i)           (TX_BUF_BASE + ETH_FRAG_SIZE*i)
 
 /* MAC Configuration Register 1 */
 #define MAC1_REC_EN         0x00000001  /* Receive Enable                    */

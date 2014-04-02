@@ -36,14 +36,22 @@
 #define MCI_PWRCTRL_OPENDRAIN_BMASK            (0x01)
 
 #define SDCARD_DET_VALUE ((LPC_GPIO2->PIN>>19)&0x01)
+
+static rt_uint8_t MCI_RAM_BASE[MCI_DMA_SIZE*2] SECTION("MCI_RAM");
+
+/* This is the area original data is stored or data to be written to the SD/MMC card. */
+#define MCI_DMA_SRC_ADDR        &MCI_RAM_BASE[0]
+/* This is the area, after reading from the SD/MMC*/
+#define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + MCI_DMA_SIZE)
+
 rt_uint32_t dmaWrCh_TermianalCnt, dmaWrCh_ErrorCnt;
 rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 
-static struct mci_device *_mci_device;
+static struct mci_device* _mci_device;
 volatile rt_uint32_t CardRCA;
 
-volatile uint8_t *dataSrcBlock = (uint8_t *) MCI_DMA_SRC_ADDR;
-volatile uint8_t *dataDestBlock = (uint8_t *) MCI_DMA_DST_ADDR;
+volatile rt_uint8_t *dataSrcBlock = MCI_DMA_SRC_ADDR;
+volatile rt_uint8_t *dataDestBlock = MCI_DMA_DST_ADDR;
 
 volatile rt_uint8_t CCS;
 rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t DMAMode);
@@ -357,9 +365,9 @@ void mci_process_ISR()
             LPC_MCI->CLEAR =  MCI_START_BIT_ERR;
             MCI_DEBUG("mci start bit error!\n");
         }
-        _mci_device->data_error = RT_TRUE;
-        rt_event_send(_mci_device->finish_event, 1);
-
+          _mci_device->data_error = RT_TRUE;
+         rt_event_send(_mci_device->finish_event,1);
+       
 
     }
     else if (mci_status & DATA_END_INT_MASK)
@@ -367,9 +375,9 @@ void mci_process_ISR()
         if (mci_status &  MCI_DATA_END)          /* Data end, and Data block end  */
         {
             LPC_MCI->CLEAR = MCI_DATA_END;
-            _mci_device->data_error = RT_FALSE;
-            rt_event_send(_mci_device->finish_event, 1);
-
+             _mci_device->data_error = RT_FALSE;
+					  rt_event_send(_mci_device->finish_event,1);
+          
             mci_tx_enable(RT_FALSE);
 
             mci_rx_enable(RT_FALSE);
@@ -1794,8 +1802,8 @@ static rt_err_t rt_mci_init(rt_device_t dev)
     rt_err_t result = RT_EOK;
     _mci_device->card_type = MCI_CARD_UNKNOWN;
     rt_mutex_take(&_mci_device->lock, RT_WAITING_FOREVER);
-    if (SDCARD_DET_VALUE != RT_EOK)
-    {
+	  if(SDCARD_DET_VALUE!=RT_EOK)
+		{
         MCI_DEBUG("can not found any sdcard!\n");
         goto _exit;
     }
@@ -1882,7 +1890,7 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 {
     // struct mci_device * msd = (struct mci_device *)dev;
     rt_uint32_t DataCtrl = 0;
-    rt_uint32_t event_value;
+     rt_uint32_t event_value;
     if (BLOCK_LENGTH * size > DATA_RW_MAX_LEN)
     {
         MCI_DEBUG("too many block to read:%d\n", size);
@@ -1938,11 +1946,11 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         MCI_DEBUG("send read cmd error!pos:%d,size:%d\n", pos, size);
         goto _exit;
     }
-    rt_event_recv(_mci_device->finish_event,
-                  1,
-                  RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                  50,
-                  &event_value);
+		rt_event_recv(_mci_device->finish_event,
+                          1,
+                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                          50,
+                          &event_value);
     if ((size > 1) || (_mci_device->data_error == RT_TRUE))
     {
         mci_cmd_stopTransmission();
@@ -1967,8 +1975,8 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 {
     struct mci_device *mci = (struct mci_device *)dev;
     rt_uint32_t DataCtrl = 0;
-    rt_uint32_t event_value;
-
+     rt_uint32_t event_value;
+	
     if (BLOCK_LENGTH * size > DATA_RW_MAX_LEN)
     {
         MCI_DEBUG("too many block to write:%d\n", size);
@@ -2019,10 +2027,10 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
     LPC_MCI->DATACTRL = DataCtrl;
 
     rt_event_recv(_mci_device->finish_event,
-                  1,
-                  RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                  50,
-                  &event_value);
+                          1,
+                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                          50,
+                          &event_value);
     if ((size > 1) || (_mci_device->data_error == RT_TRUE))
     {
         mci_cmd_stopTransmission();
@@ -2081,16 +2089,16 @@ rt_err_t mci_hw_init(const char *device_name)
 
     // Set all MCI pins to outputs
     LPC_GPIO1->DIR |= 0x18EC;
-
+	
     // Force all pins low (except power control pin)
     LPC_GPIO1->CLR = 0x18cc;
-
-    // Set power control pin high
+	
+	  // Set power control pin high
     LPC_GPIO1->SET = 0x0020;
-
-    //config DET pin to input mode
-    LPC_IOCON->P2_19 &= ~0x07;
-    LPC_GPIO2->DIR &= ~(0x01 << 19);
+		
+		//config DET pin to input mode
+		LPC_IOCON->P2_19 &= ~0x07;
+		LPC_GPIO2->DIR &= ~(0x01<<19);
 
     rt_thread_delay(20);
 
@@ -2147,13 +2155,13 @@ rt_err_t mci_hw_init(const char *device_name)
     LPC_MCI->POWER |= 0x01;        /* bit 1 is set already, from power up to power on */
     for (i = 0; i < 0x10; i++);      /* delay 3MCLK + 2PCLK  */
     NVIC_EnableIRQ(MCI_IRQn);
-    _mci_device = (struct mci_device *)rt_malloc(sizeof(struct mci_device));
+		_mci_device=(struct mci_device*)rt_malloc(sizeof(struct mci_device));
     rt_memset(_mci_device, 0, sizeof(struct mci_device));
     /* initialize mutex lock */
     rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_FIFO);
-    /* create finish event */
-    _mci_device->finish_event = rt_event_create(device_name, RT_IPC_FLAG_FIFO);
-
+		 /* create finish event */
+		_mci_device->finish_event=rt_event_create(device_name, RT_IPC_FLAG_FIFO);
+		
     _mci_device->card_type = MCI_CARD_UNKNOWN;
     /* register sdcard device */
     _mci_device->parent.type    = RT_Device_Class_Block;
