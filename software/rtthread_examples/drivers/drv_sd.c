@@ -37,12 +37,12 @@
 
 #define SDCARD_DET_VALUE ((LPC_GPIO2->PIN>>19)&0x01)
 
-static rt_uint8_t MCI_RAM_BASE[MCI_DMA_SIZE*2] SECTION("MCI_RAM");
+#define  MCI_RAM_BASE LPC_PERI_RAM_BASE
 
-/* This is the area original data is stored or data to be written to the SD/MMC card. */
-#define MCI_DMA_SRC_ADDR        &MCI_RAM_BASE[0]
-/* This is the area, after reading from the SD/MMC*/
-#define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + MCI_DMA_SIZE)
+///* This is the area original data is stored or data to be written to the SD/MMC card. */
+//#define MCI_DMA_SRC_ADDR        MCI_RAM_BASE
+///* This is the area, after reading from the SD/MMC*/
+//#define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + MCI_DMA_SIZE)
 
 rt_uint32_t dmaWrCh_TermianalCnt, dmaWrCh_ErrorCnt;
 rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
@@ -50,8 +50,8 @@ rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 static struct mci_device* _mci_device;
 volatile rt_uint32_t CardRCA;
 
-volatile rt_uint8_t *dataSrcBlock = MCI_DMA_SRC_ADDR;
-volatile rt_uint8_t *dataDestBlock = MCI_DMA_DST_ADDR;
+volatile rt_uint8_t *dataSrcBlock = (rt_uint8_t*)MCI_DMA_SRC_ADDR;
+volatile rt_uint8_t *dataDestBlock = (rt_uint8_t*)MCI_DMA_DST_ADDR;
 
 volatile rt_uint8_t CCS;
 rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t DMAMode);

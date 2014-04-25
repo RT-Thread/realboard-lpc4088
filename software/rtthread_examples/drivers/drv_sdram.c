@@ -101,7 +101,7 @@ void lpc_sdram_hw_init(void)
     LPC_EMC->Config  = 0x00000000;
 
     sdram_gpio_config();
-    LPC_SC->EMCCLKSEL = 1;           //跑主频的一般频率，60Mhz
+    //LPC_SC->EMCCLKSEL = 1;           //跑主频的一般频率，60Mhz
     LPC_EMC->DynamicRP         = EMC_NS2CLK(20); /* 20ns,  */
     LPC_EMC->DynamicRAS        = /*EMC_NS2CLK(42, nsPerClk);*/ 15; /* 42ns to 100K ns,  */
     LPC_EMC->DynamicSREX       = 1 - 1; /* tSRE, 1clk, */

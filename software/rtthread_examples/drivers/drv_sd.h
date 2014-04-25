@@ -207,6 +207,10 @@ support all the SD and MMC card. */
 */
 /* This is the size of the buffer of origin data */
 #define MCI_DMA_SIZE            (1000UL)
+/* This is the area original data is stored or data to be written to the SD/MMC card. */
+#define MCI_DMA_SRC_ADDR        LPC_PERI_RAM_BASE
+/* This is the area, after reading from the SD/MMC*/
+#define MCI_DMA_DST_ADDR        (MCI_DMA_SRC_ADDR + MCI_DMA_SIZE)
 
 /* To simplify the programming, please note that, BLOCK_LENGTH is a multiple
 of FIFO_SIZE */
