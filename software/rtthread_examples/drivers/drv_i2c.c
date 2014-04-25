@@ -277,8 +277,10 @@ rt_err_t lpc_i2c_register(LPC_I2C_TypeDef *I2Cx,
 void rt_hw_i2c_init(void)
 {
     static struct lpc_i2c_bus lpc_i2c1;
-    LPC_IOCON->P0_19 = 0x03;
-    LPC_IOCON->P0_20 = 0x03;
+    LPC_IOCON->P0_19 &= ~0x1F;    /*  I2C I/O config */
+    LPC_IOCON->P0_19 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SDA */
+    LPC_IOCON->P0_20 &= ~0x1F;
+    LPC_IOCON->P0_20 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SCL */
     i2c_set_clock(LPC_I2C1, 400000);
     /* set I2C1 operation to default */
     LPC_I2C1->CONCLR = (I2C_I2CONCLR_AAC | I2C_I2CONCLR_STAC | I2C_I2CONCLR_I2ENC);
