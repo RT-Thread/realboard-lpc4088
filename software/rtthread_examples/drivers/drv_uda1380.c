@@ -2,7 +2,7 @@
 #include "drv_uda1380.h"
 #include "lpc_i2s.h"
 
-#define USE_DMA
+//#define USE_DMA
 #define DATA_NODE_MAX 5
 /* data node for Tx Mode */
 struct codec_data_node
@@ -298,6 +298,7 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
     /* check data_list full */
     if (next_index == device->read_index)
     {
+			 rt_kprintf("data_list full\n");
         rt_set_errno(-RT_EFULL);
         return 0;
     }
