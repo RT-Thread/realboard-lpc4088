@@ -22,7 +22,7 @@
 
 /* disable SDRAM in default */
 #ifndef LPC_EXT_SDRAM
-#define LPC_EXT_SDRAM       1
+#define LPC_EXT_SDRAM       0
 #endif
 
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">

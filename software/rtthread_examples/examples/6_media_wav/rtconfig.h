@@ -236,5 +236,6 @@
 // </section>
 
 // </RDTConfigurator>
+#define LPC_EXT_SDRAM   1
 
 #endif
