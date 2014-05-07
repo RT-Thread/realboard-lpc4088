@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 #include <rtthread.h>
-#include <lpc407x_8x_177x_8x.h>
+#include <LPC407x_8x_177x_8x.h>
 #include "lpc_gpdma.h"
 
 

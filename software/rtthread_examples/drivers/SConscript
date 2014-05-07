@@ -39,6 +39,7 @@ if GetDepend('RT_USING_MTD_NAND') == True:
 # add i2c driver.
 if GetDepend('RT_USING_I2C') == True:
 	src += ['drv_i2c.c']
+	src += ['drv_uda1380.c']
 
 # add LCD driver.
 if GetDepend('RT_USING_RTGUI') == True:
