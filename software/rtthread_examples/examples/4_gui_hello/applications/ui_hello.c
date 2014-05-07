@@ -19,11 +19,11 @@ static void ui_thread_entry(void* parameter)
 
 	/* create main window */
     win = rtgui_mainwin_create(RT_NULL, "UiWindow", RTGUI_WIN_STYLE_DEFAULT);
-
+    
     /* we use layout engine to place sub-widgets */
     box = rtgui_box_create(RTGUI_HORIZONTAL, 10);
     rtgui_container_set_box(RTGUI_CONTAINER(win), box);
-
+    
     /* create the 'hello world' label */
 	label = rtgui_label_create("Hello World");
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
