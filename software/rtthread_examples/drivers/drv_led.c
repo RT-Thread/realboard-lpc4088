@@ -114,7 +114,7 @@ static rt_err_t rt_led_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-void rt_led_hw_init(void)
+int rt_led_hw_init(void)
 {
     led.parent.type         = RT_Device_Class_Char;
     led.parent.rx_indicate  = RT_NULL;
@@ -131,8 +131,9 @@ void rt_led_hw_init(void)
     rt_device_register(&led.parent, "led", RT_DEVICE_FLAG_RDWR);
     /* init led device */
     rt_led_init(&led.parent);
+	return 0;
 }
-
+INIT_DEVICE_EXPORT(rt_led_hw_init);
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void led_test(rt_uint32_t led_num, rt_uint32_t value)
