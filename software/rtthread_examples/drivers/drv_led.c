@@ -22,24 +22,24 @@ static struct lpc_led led;
 
 static rt_err_t rt_led_init(rt_device_t dev)
 {
-    /* led0 : P4.14,led1:P4.15 ,led2:P4.16 ,led3:P4.17*/
+    /* led0 : P4.27,led1:P4.15 ,led2:P4.16 ,led3:P4.17*/
     /* set P4.14,P4.15,P4.16,P4.17 as GPIO. */
-    LPC_IOCON->P4_14 = 0x00;
+    LPC_IOCON->P4_27 = 0x00;
     LPC_IOCON->P4_15 = 0x00;
-    LPC_IOCON->P4_16 = 0x00;
-    LPC_IOCON->P4_17 = 0x00;
-    /* set P4.14,P4.15,P4.16,P4.17  output. */
-    LPC_GPIO4->DIR |= (0x0f << 14);
+	  LPC_IOCON->P4_16 = 0x00;
+	  LPC_IOCON->P4_17 = 0x00;
+    /* set P4.27,P4.15,P4.16,P4.17  output. */
+    LPC_GPIO4->DIR |= (0x07 << 15)|(0x01<<27);
     /* turn off all the led */
-    LPC_GPIO4->SET = (0x0f << 14);
-    led.ctrl[0].num = 14;
-    led.ctrl[0].port = LPC_GPIO4;
-    led.ctrl[1].num = 15;
-    led.ctrl[1].port = LPC_GPIO4;
-    led.ctrl[2].num = 16;
-    led.ctrl[2].port = LPC_GPIO4;
-    led.ctrl[3].num = 17;
+    LPC_GPIO4->SET = (0x07 << 15)|(0x01<<27);
+    led.ctrl[3].num = 27;
     led.ctrl[3].port = LPC_GPIO4;
+    led.ctrl[2].num = 15;
+    led.ctrl[2].port = LPC_GPIO4;
+	  led.ctrl[1].num = 16;
+    led.ctrl[1].port = LPC_GPIO4;
+	  led.ctrl[0].num = 17;
+    led.ctrl[0].port = LPC_GPIO4;
     return RT_EOK;
 }
 
