@@ -26,7 +26,8 @@
 
 #define MCI_DMA_WRITE_CHANNEL            (0)
 #define MCI_DMA_READ_CHANNEL             (1)
-#define DMA_MCI_SIZE                     BLOCK_LENGTH
+#define MAX_DMA_BLOCKS                   16
+#define DMA_MCI_SIZE                     MAX_DMA_BLOCKS*BLOCK_LENGTH
 #define MCI_ACMD41_HCS_POS                     (30)
 
 #define MCI_PWRCTRL_BMASK                      (0xC3)
@@ -37,21 +38,19 @@
 
 #define SDCARD_DET_VALUE ((LPC_GPIO2->PIN>>19)&0x01)
 
-#define  MCI_RAM_BASE LPC_PERI_RAM_BASE
+volatile rt_uint8_t MCI_RAM_BASE[DMA_MCI_SIZE] SECTION("MCI_RAM");
 
-///* This is the area original data is stored or data to be written to the SD/MMC card. */
-//#define MCI_DMA_SRC_ADDR        MCI_RAM_BASE
-///* This is the area, after reading from the SD/MMC*/
-//#define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + MCI_DMA_SIZE)
+/* This is the area original data is stored or data to be written to the SD/MMC card. */
+#define MCI_DMA_SRC_ADDR        &MCI_RAM_BASE[0]
+/* This is the area, after reading from the SD/MMC*/
+#define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + DMA_MCI_SIZE)
 
 rt_uint32_t dmaWrCh_TermianalCnt, dmaWrCh_ErrorCnt;
 rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 
-static struct mci_device* _mci_device;
+static struct mci_device *_mci_device;
 volatile rt_uint32_t CardRCA;
 
-volatile rt_uint8_t *dataSrcBlock = (rt_uint8_t*)MCI_DMA_SRC_ADDR;
-volatile rt_uint8_t *dataDestBlock = (rt_uint8_t*)MCI_DMA_DST_ADDR;
 
 volatile rt_uint8_t CCS;
 rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t DMAMode);
@@ -146,7 +145,7 @@ rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t
     GPDMA_Channel_CFG_Type GPDMACfg;
 
     // Transfer size
-    GPDMACfg.TransferSize = DMA_MCI_SIZE;
+    GPDMACfg.TransferSize = BLOCK_LENGTH;
     // Transfer width
     GPDMACfg.TransferWidth = GPDMA_WIDTH_WORD;
     // Transfer type
@@ -274,8 +273,6 @@ static void mci_set_clock(rt_uint32_t clk)
     }
     LPC_MCI->CLOCK = (LPC_MCI->CLOCK & ~(0xFF)) | (1 << 8)  | value;
 
-    // rt_thread_delay(1);    /* delay 3MCLK + 2PCLK before next write */
-
 }
 
 
@@ -365,9 +362,9 @@ void mci_process_ISR()
             LPC_MCI->CLEAR =  MCI_START_BIT_ERR;
             MCI_DEBUG("mci start bit error!\n");
         }
-          _mci_device->data_error = RT_TRUE;
-         rt_event_send(_mci_device->finish_event,1);
-       
+        _mci_device->data_error = RT_TRUE;
+        rt_event_send(_mci_device->finish_event, 1);
+
 
     }
     else if (mci_status & DATA_END_INT_MASK)
@@ -375,9 +372,9 @@ void mci_process_ISR()
         if (mci_status &  MCI_DATA_END)          /* Data end, and Data block end  */
         {
             LPC_MCI->CLEAR = MCI_DATA_END;
-             _mci_device->data_error = RT_FALSE;
-					  rt_event_send(_mci_device->finish_event,1);
-          
+            _mci_device->data_error = RT_FALSE;
+            rt_event_send(_mci_device->finish_event, 1);
+
             mci_tx_enable(RT_FALSE);
 
             mci_rx_enable(RT_FALSE);
@@ -1802,8 +1799,8 @@ static rt_err_t rt_mci_init(rt_device_t dev)
     rt_err_t result = RT_EOK;
     _mci_device->card_type = MCI_CARD_UNKNOWN;
     rt_mutex_take(&_mci_device->lock, RT_WAITING_FOREVER);
-	  if(SDCARD_DET_VALUE!=RT_EOK)
-		{
+    if (SDCARD_DET_VALUE != RT_EOK)
+    {
         MCI_DEBUG("can not found any sdcard!\n");
         goto _exit;
     }
@@ -1888,21 +1885,15 @@ static rt_err_t rt_mci_close(rt_device_t dev)
 
 static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    // struct mci_device * msd = (struct mci_device *)dev;
-    rt_uint32_t DataCtrl = 0;
-     rt_uint32_t event_value;
-    if (BLOCK_LENGTH * size > DATA_RW_MAX_LEN)
-    {
-        MCI_DEBUG("too many block to read:%d\n", size);
-        return RT_ERROR;
-    }
-    rt_mutex_take(&_mci_device->lock, RT_WAITING_FOREVER);
-    dataDestBlock = (uint8_t *)buffer;
+    struct mci_device *mci = (struct mci_device *)dev;
+    rt_uint16_t index = 0, num_block;
+    rt_uint32_t event_value;
+
+    rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+
     LPC_MCI->CLEAR = 0x7FF;
 
     LPC_MCI->DATACTRL = 0;
-
-    //rt_thread_delay(1);
 
     /* Wait the SD Card enters to TRANS state. */
     if (mci_check_status(CARD_STATE_TRAN) != RT_EOK)
@@ -1910,58 +1901,52 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         MCI_DEBUG("Wait the SD Card enters to TRANS state error!\n");
         goto _exit;
     }
-    mci_rx_enable(RT_TRUE);
-
-    LPC_MCI->DATATMR = DATA_TIMER_VALUE_R;
-
-    LPC_MCI->DATALEN = BLOCK_LENGTH * size;
-
-    _mci_device->data_error = RT_TRUE;
-
-
-
-    // Start data engine on READ before command to avoid overflow of the FIFO.
+    for (index = 0; index < size; index += MAX_DMA_BLOCKS)
     {
-#if MCI_DMA_ENABLED
-        MCI_SettingDma((uint8_t *) dataDestBlock, MCI_DMA_READ_CHANNEL, GPDMA_TRANSFERTYPE_P2M_SRC_CTRL);
+        if (size - index < MAX_DMA_BLOCKS)
+        {
+            num_block = size - index;
+        }
+        else
+        {
+            num_block = MAX_DMA_BLOCKS;
+        }
+        mci_rx_enable(RT_TRUE);
+
+        LPC_MCI->DATATMR = DATA_TIMER_VALUE_R;
+
+        LPC_MCI->DATALEN = BLOCK_LENGTH * num_block;
+
+        _mci_device->data_error = RT_TRUE;
+        MCI_SettingDma((uint8_t *)  MCI_RAM_BASE, MCI_DMA_READ_CHANNEL, GPDMA_TRANSFERTYPE_P2M_SRC_CTRL);
 
         /* Write, block transfer, DMA, and data length */
-        DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_FROM_CARD
-                    | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
-#else
-        //Retrieving the result after reading the card is done by the FIFO handling for interrupt
+        LPC_MCI->DATACTRL = MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_FROM_CARD
+                            | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
 
-        /* Read, enable, block transfer, and data length */
-        DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_FROM_CARD | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
-
-#endif
-    }
-
-    LPC_MCI->DATACTRL = DataCtrl;
-
-    //rt_thread_delay(1);
-
-    if (mci_cmd_read(pos, size) != RT_EOK)
-    {
-        MCI_DEBUG("send read cmd error!pos:%d,size:%d\n", pos, size);
-        goto _exit;
-    }
-		rt_event_recv(_mci_device->finish_event,
-                          1,
-                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                          50,
-                          &event_value);
-    if ((size > 1) || (_mci_device->data_error == RT_TRUE))
-    {
-        mci_cmd_stopTransmission();
-    }
-    if (_mci_device->data_error == RT_TRUE)
-    {
-        MCI_DEBUG("read data error!pos:%d,size:%d\n", pos, size);
-    }
-    else
-    {
-        MCI_DEBUG("read data success!pos:%d,size:%d\n", pos, size);
+        if (mci_cmd_read(pos + index, num_block) != RT_EOK)
+        {
+            MCI_DEBUG("send read cmd error!pos:%d,size:%d\n", pos+index, num_block);
+            break;
+        }
+        rt_event_recv(_mci_device->finish_event,
+                      1,
+                      RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+                      200,
+                      &event_value);
+        if ((size > 1) || (_mci_device->data_error == RT_TRUE))
+        {
+            mci_cmd_stopTransmission();
+        }
+        if (_mci_device->data_error == RT_TRUE)
+        {
+            MCI_DEBUG("read data error!pos:%d,size:%d\n", pos+index, num_block);
+        }
+        else
+        {
+            MCI_DEBUG("read data success!pos:%d,size:%d\n", pos, num_block);
+        }
+        rt_memcpy((void *)((uint8_t *)buffer + index * BLOCK_LENGTH), (void *) MCI_RAM_BASE, num_block * BLOCK_LENGTH);
     }
 
 _exit:
@@ -1974,22 +1959,14 @@ _exit:
 static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct mci_device *mci = (struct mci_device *)dev;
-    rt_uint32_t DataCtrl = 0;
-     rt_uint32_t event_value;
-	
-    if (BLOCK_LENGTH * size > DATA_RW_MAX_LEN)
-    {
-        MCI_DEBUG("too many block to write:%d\n", size);
-        return RT_ERROR;
-    }
+    rt_uint16_t index = 0, num_block;
+    rt_uint32_t event_value;
+
     rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
-    dataSrcBlock = (uint8_t *)buffer;
 
     LPC_MCI->CLEAR = 0x7FF;
 
     LPC_MCI->DATACTRL = 0;
-
-    //rt_thread_delay(1);
 
     /* Wait the SD Card enters to TRANS state. */
     if (mci_check_status(CARD_STATE_TRAN) != RT_EOK)
@@ -1997,53 +1974,55 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
         MCI_DEBUG("Wait the SD Card enters to TRANS state error!\n");
         goto _exit;
     }
-    LPC_MCI->DATATMR = DATA_TIMER_VALUE_W;
-
-    LPC_MCI->DATALEN = BLOCK_LENGTH * size;
-
-    _mci_device->data_error = TRUE;
-    mci_tx_enable(RT_TRUE);
-
-    if (mci_cmd_write(pos, size) != RT_EOK)
+    for (index = 0; index < size; index += MAX_DMA_BLOCKS)
     {
-        MCI_DEBUG("send write cmd error!pos:%d,size:%d", pos, size);
-        goto _exit;
-    }
+        if (size - index < MAX_DMA_BLOCKS)
+        {
+            num_block = size - index;
+        }
+        else
+        {
+            num_block = MAX_DMA_BLOCKS;
+        }
+        LPC_MCI->DATATMR = DATA_TIMER_VALUE_W;
 
-    //for(blockCnt = 0; blockCnt < numOfBlock; blockCnt++)
-    {
-#if MCI_DMA_ENABLED
-        MCI_SettingDma((uint8_t *) dataSrcBlock, MCI_DMA_WRITE_CHANNEL, GPDMA_TRANSFERTYPE_M2P_DEST_CTRL);
+        LPC_MCI->DATALEN = BLOCK_LENGTH * num_block;
+
+        rt_memcpy((void *) MCI_RAM_BASE, (void *)((uint8_t *)buffer + index * BLOCK_LENGTH), num_block * BLOCK_LENGTH);
+        _mci_device->data_error = TRUE;
+        mci_tx_enable(RT_TRUE);
+
+        if (mci_cmd_write(pos + index, num_block) != RT_EOK)
+        {
+            MCI_DEBUG("send write cmd error!pos:%d,size:%d", pos + index, num_block);
+            break;
+        }
+
+        MCI_SettingDma((uint8_t *)MCI_RAM_BASE, MCI_DMA_WRITE_CHANNEL, GPDMA_TRANSFERTYPE_M2P_DEST_CTRL);
 
         /* Write, block transfer, DMA, and data length */
-        DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_TO_CARD
-                    | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
-#else
-        /* Write, block transfer, and data length */
-        DataCtrl |= MCI_DATACTRL_ENABLE  | MCI_DATACTRL_DIR_TO_CARD  | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
-#endif
-    }
+        LPC_MCI->DATACTRL = MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_TO_CARD
+                            | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
 
-    LPC_MCI->DATACTRL = DataCtrl;
 
-    rt_event_recv(_mci_device->finish_event,
-                          1,
-                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                          50,
-                          &event_value);
-    if ((size > 1) || (_mci_device->data_error == RT_TRUE))
-    {
-        mci_cmd_stopTransmission();
+        rt_event_recv(_mci_device->finish_event,
+                      1,
+                      RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+                      200,
+                      &event_value);
+        if ((size > 1) || (_mci_device->data_error == RT_TRUE))
+        {
+            mci_cmd_stopTransmission();
+        }
+        if (_mci_device->data_error == RT_TRUE)
+        {
+            MCI_DEBUG("write data error!pos:%d,size:%d\n", pos+index, num_block);
+        }
+        else
+        {
+            MCI_DEBUG("write data success!pos:%d,size:%d\n", pos+index, num_block);
+        }
     }
-    if (_mci_device->data_error == RT_TRUE)
-    {
-        MCI_DEBUG("write data error!pos:%d,size:%d\n", pos, size);
-    }
-    else
-    {
-        MCI_DEBUG("write data success!pos:%d,size:%d\n", pos, size);
-    }
-
 _exit:
     /* release and exit */
     rt_mutex_release(&_mci_device->lock);
@@ -2089,16 +2068,16 @@ rt_err_t mci_hw_init(const char *device_name)
 
     // Set all MCI pins to outputs
     LPC_GPIO1->DIR |= 0x18EC;
-	
+
     // Force all pins low (except power control pin)
     LPC_GPIO1->CLR = 0x18cc;
-	
-	  // Set power control pin high
+
+    // Set power control pin high
     LPC_GPIO1->SET = 0x0020;
-		
-		//config DET pin to input mode
-		LPC_IOCON->P2_19 &= ~0x07;
-		LPC_GPIO2->DIR &= ~(0x01<<19);
+
+    //config DET pin to input mode
+    LPC_IOCON->P2_19 &= ~0x07;
+    LPC_GPIO2->DIR &= ~(0x01 << 19);
 
     rt_thread_delay(20);
 
@@ -2155,13 +2134,13 @@ rt_err_t mci_hw_init(const char *device_name)
     LPC_MCI->POWER |= 0x01;        /* bit 1 is set already, from power up to power on */
     for (i = 0; i < 0x10; i++);      /* delay 3MCLK + 2PCLK  */
     NVIC_EnableIRQ(MCI_IRQn);
-		_mci_device=(struct mci_device*)rt_malloc(sizeof(struct mci_device));
+    _mci_device = (struct mci_device *)rt_malloc(sizeof(struct mci_device));
     rt_memset(_mci_device, 0, sizeof(struct mci_device));
     /* initialize mutex lock */
     rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_FIFO);
-		 /* create finish event */
-		_mci_device->finish_event=rt_event_create(device_name, RT_IPC_FLAG_FIFO);
-		
+    /* create finish event */
+    _mci_device->finish_event = rt_event_create(device_name, RT_IPC_FLAG_FIFO);
+
     _mci_device->card_type = MCI_CARD_UNKNOWN;
     /* register sdcard device */
     _mci_device->parent.type    = RT_Device_Class_Block;
@@ -2186,32 +2165,4 @@ rt_err_t mci_hw_init(const char *device_name)
                        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
     return RT_EOK;
 }
-#ifdef RT_USING_FINSH
-#include "finsh.h"
-void mci_test(void)
-{
-    rt_uint8_t *tx_buf, *rx_buf;
-    rt_uint16_t i = 0;
-    rt_device_t dev;
-    dev = rt_device_find("sd0");
-    tx_buf = (rt_uint8_t *)rt_malloc(2048);
-    rx_buf = (rt_uint8_t *)rt_malloc(2048);
-    for (i = 0; i < 2048; i++)
-    {
-        tx_buf[i] = i % 0xff;
-    }
-    dev->write(dev, 0, tx_buf, 4);
-    rt_memset(rx_buf, 0, 2048);
-    dev->read(dev, 0, rx_buf, 4);
-    for (i = 0; i < 2048; i++)
-    {
-        rt_kprintf("%02x ", rx_buf[i]);
-        if ((i % 32) == 0)
-        {
-            rt_kprintf("\n");
-        }
-    }
 
-}
-FINSH_FUNCTION_EXPORT(mci_test, mci read write test.)
-#endif
