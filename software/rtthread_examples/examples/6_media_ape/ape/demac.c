@@ -65,18 +65,33 @@ struct ape_ctx_t ape_ctx;
 
 
 // 两个PCM Buffer
-static unsigned char PCM_buffer[BLOCKS_PER_LOOP*4];
-static unsigned char PCM_buffer1[BLOCKS_PER_LOOP*4];
-static int32_t decoded0[BLOCKS_PER_LOOP];
-static int32_t decoded1[BLOCKS_PER_LOOP];
+static unsigned char *PCM_buffer0;//[BLOCKS_PER_LOOP*4];
+static unsigned char *PCM_buffer1;//[BLOCKS_PER_LOOP*4];
+static int32_t *decoded0;//[BLOCKS_PER_LOOP];
+static int32_t *decoded1;//[BLOCKS_PER_LOOP];
 
 /* We assume that 32KB of compressed data is enough to extract up to
    27648 bytes of decompressed data. */
 //file buffer
-static unsigned char inbuffer[INPUT_CHUNKSIZE];
+static unsigned char *inbuffer;
+
 
 //本次用到的信号量
 static struct rt_semaphore ape_sem;
+
+/* Statically allocate the filter buffers */
+
+#ifdef FILTER256_IRAM
+extern filter_int *filterbuf32;
+                  /* 2432 or 4864 bytes */
+extern filter_int *filterbuf256;
+                  /* 5120 or 10240 bytes */
+#else
+extern filter_int *filterbuf64;
+                  /* 2432 or 4864 bytes */
+extern filter_int *filterbuf256; /* 5120 or 10240 bytes */
+#endif
+extern filter_int *filterbuf1280;
 
 //将临时的decoded0与decoded1合成送CODE的PCM
 void __inline decoded_to_PCM(int32_t* decoded0, int32_t* decoded1,unsigned char *PCM_buffer ,int blockstodecode)
@@ -131,7 +146,40 @@ void __inline decoded_to_PCM(int32_t* decoded0, int32_t* decoded1,unsigned char 
 
 
 }
-
+static rt_err_t ape_decoder_init(void)
+{
+  PCM_buffer0 = (unsigned char *)rt_malloc(BLOCKS_PER_LOOP*4);
+	rt_memset(PCM_buffer0,0,BLOCKS_PER_LOOP*4);
+	PCM_buffer1 = (unsigned char *)rt_malloc(BLOCKS_PER_LOOP*4);
+	rt_memset(PCM_buffer1,0,BLOCKS_PER_LOOP*4);
+  decoded0 = (int32_t *)rt_malloc(BLOCKS_PER_LOOP*4);
+	rt_memset(decoded0,0,BLOCKS_PER_LOOP*4);
+	decoded1 = (int32_t *)rt_malloc(BLOCKS_PER_LOOP*4);
+	rt_memset(decoded1,0,BLOCKS_PER_LOOP*4);
+  inbuffer = (unsigned char *)rt_malloc(INPUT_CHUNKSIZE);
+	rt_memset(inbuffer,0,INPUT_CHUNKSIZE);
+	
+	filterbuf64   = (filter_int *)rt_malloc_align((64*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int),16);
+	rt_memset(filterbuf64,0,(64*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int));
+	filterbuf256  = (filter_int *)rt_malloc_align((256*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int),16);
+	rt_memset(filterbuf256,0,(256*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int));
+	filterbuf1280 = (filter_int *)rt_malloc_align((1280*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int),16);
+	rt_memset(filterbuf1280,0,(1280*3 + FILTER_HISTORY_SIZE) * 2*sizeof(filter_int));
+	
+	return RT_EOK;
+}
+static rt_err_t ape_decoder_deinit(void)
+{
+  rt_free(PCM_buffer0);
+	rt_free(PCM_buffer1);
+	rt_free(decoded0);
+	rt_free(decoded1);
+	rt_free(inbuffer);
+	rt_free_align(filterbuf64);
+  rt_free_align(filterbuf256);
+	rt_free_align(filterbuf1280);
+	return RT_EOK;
+}
 
 //DMA回调函数,当DMA将PCM buffer的内容发完后,会执行此函数
 static rt_err_t ape_decoder_tx_done(rt_device_t dev, void *buffer)
@@ -169,26 +217,29 @@ int ape(char* path)
 
 	/* open audio device */
 	snd_device = rt_device_find("snd");
-	if (snd_device != RT_NULL)
+	if (snd_device == RT_NULL)
 	{
-		/*  set tx complete call back function 
+   rt_kprintf("init ape_sem semaphore failed\n");
+	}
+ 		/*  set tx complete call back function 
 		 *  设置回调函数,当DMA传输完毕时,会执行ape_decoder_tx_done
 		 */
 		rt_device_set_tx_complete(snd_device, ape_decoder_tx_done);
 		rt_device_open(snd_device, RT_DEVICE_OFLAG_WRONLY);
-	}
-
-
+	
+   ape_decoder_init();
     /* Read the file headers to populate the ape_ctx struct */
     if (ape_parseheader(fd,&ape_ctx) < 0) {
         rt_kprintf("Cannot read header\n");
         close(fd);
+			  ape_decoder_deinit();
         return -1;
     }
 
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         rt_kprintf("Unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         close(fd);
+			ape_decoder_deinit();
         return -2;
     }
 
@@ -245,10 +296,11 @@ int ape(char* path)
             		{
                 		/* Frame decoding error, abort */
                 		close(fd);
+									ape_decoder_deinit();
                 		return res;
             		}
-			  		decoded_to_PCM(decoded0,decoded1,PCM_buffer ,blockstodecode);
-		   			rt_device_write(snd_device, 0, (int16_t *)PCM_buffer, ((BLOCKS_PER_LOOP * 4) ));
+			  		decoded_to_PCM(decoded0,decoded1,PCM_buffer0 ,blockstodecode);
+		   			rt_device_write(snd_device, 0, (int16_t *)PCM_buffer0, ((BLOCKS_PER_LOOP * 4) ));
 		 	 }
 			 else
 		 	 {
@@ -259,6 +311,7 @@ int ape(char* path)
             		{
                 		/* Frame decoding error, abort */
                 		close(fd);
+									ape_decoder_deinit();
                 		return res;
             		}
 
@@ -279,9 +332,9 @@ int ape(char* path)
 
         currentframe++;
     }
-
+    
     close(fd);
-
+   ape_decoder_deinit();
     if (crc_errors > 0)
         return -1;
     else

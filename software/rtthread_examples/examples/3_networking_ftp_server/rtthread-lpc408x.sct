@@ -11,5 +11,10 @@ LR_IROM1 0x00000000 0x00080000  {    ; load region size_region
   RW_IRAM1 0x10000000 0x00010000  {  ; RW data
    .ANY (+RW +ZI)
   }
+  RW_IRAM3 0x20002000 0x00002000 {   ; RW data
+     *(MCI_RAM)
+  }
+  RW_IRAM4 0x20004000 0x00004000  {  ; RW data
+     * (ETH_RAM)
+  }  
 }
-
