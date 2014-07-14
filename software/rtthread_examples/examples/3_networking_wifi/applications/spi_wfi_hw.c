@@ -12,7 +12,7 @@ WIFI INT: P2_25
 
 rt_bool_t spi_wifi_is_busy(void)
 {
-    if(LPC_GPIO2->PIN & (1<< WIFI_INT_PIN))
+    if (LPC_GPIO2->PIN & (1 << WIFI_INT_PIN))
     {
         return RT_FALSE;
     }
@@ -22,17 +22,17 @@ rt_bool_t spi_wifi_is_busy(void)
 
 void spi_wifi_int_cmd(int cmd)
 {
-    if(cmd)
+    if (cmd)
     {
-			 LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
-       LPC_GPIOINT->IO2IntEnF |= (0x01 << WIFI_INT_PIN);
+        LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
+        LPC_GPIOINT->IO2IntEnF |= (0x01 << WIFI_INT_PIN);
     }
     else
     {
 
-       LPC_GPIOINT->IO2IntEnF &= ~(0x01 << WIFI_INT_PIN);
-			 LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
-			 
+        LPC_GPIOINT->IO2IntEnF &= ~(0x01 << WIFI_INT_PIN);
+        LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
+
     }
 }
 
@@ -55,7 +55,7 @@ void wifi_int_init(void)
     }
     /* Configure  EXTI  */
     LPC_GPIOINT->IO2IntEnF |= (0x01 << WIFI_INT_PIN);
-		LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
+    LPC_GPIOINT->IO2IntClr = (1 << WIFI_INT_PIN);
     NVIC_SetPriority(GPIO_IRQn, ((0x01 << 3) | 0x01));
     NVIC_EnableIRQ(GPIO_IRQn);
 }
