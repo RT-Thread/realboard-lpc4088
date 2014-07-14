@@ -96,9 +96,9 @@ Return('group')
 
 当把realboard的固件下载到RB4088开发板后，就可以从RB4088的命令行中运行你的应用程序了。假设你已经把你的hello.mo应用程序放在software/bin目录下，同时主机上已经打开了FreeNFS（可以先把主机的防火墙先行关闭），可以在RB4088的命令行下运行：
 
-    finsh />mountnfs
-    finsh />hello
-    finsh />Hello World!
+    msh />mountnfs
+    msh />hello
+    msh />Hello World!
 
 * 其中mountnfs命令用于把开发主机上的NFS文件系统装载到RB4088本地。
 
