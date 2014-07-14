@@ -25,8 +25,6 @@ void rt_init_thread_entry(void *parameter)
     /* initialize eth interface */
     rt_hw_wifi_init("spi01");
 #endif
-//netio_init();
-    /* do some thing here. */
 }
 
 int rt_application_init()
