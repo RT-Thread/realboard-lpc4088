@@ -118,7 +118,7 @@ static const struct rt_uart_ops lpc_uart_ops =
 
 #if defined(RT_USING_UART0)
 /* UART0 device driver structure */
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
 struct serial_ringbuffer uart0_int_rx;
 #endif
 struct lpc_uart uart0 =
@@ -160,7 +160,7 @@ void UART0_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
         rt_hw_serial_isr(&serial0);
 #else
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
@@ -173,7 +173,7 @@ void UART0_IRQHandler(void)
 #endif
 #if defined(RT_USING_UART2)
 /* UART2 device driver structure */
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
 struct serial_ringbuffer uart2_int_rx;
 #endif
 struct lpc_uart uart2 =
@@ -215,7 +215,7 @@ void UART2_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
         rt_hw_serial_isr(&serial2);
 #else
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
@@ -235,7 +235,7 @@ void rt_hw_uart_init(void)
     uart = &uart0;
 
     serial0.ops    = &lpc_uart_ops;
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
     serial0.int_rx = &uart0_int_rx;
 #endif
     serial0.config = config;
@@ -263,7 +263,7 @@ void rt_hw_uart_init(void)
     uart = &uart2;
 
     serial2.ops    = &lpc_uart_ops;
-#if RTTHREAD_VERSION < 102090
+#if RTTHREAD_VERSION < 10299
     serial2.int_rx = &uart2_int_rx;
 #endif
     serial2.config = config;
