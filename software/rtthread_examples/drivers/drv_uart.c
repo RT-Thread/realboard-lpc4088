@@ -118,7 +118,9 @@ static const struct rt_uart_ops lpc_uart_ops =
 
 #if defined(RT_USING_UART0)
 /* UART0 device driver structure */
+#if RTTHREAD_VERSION < 102090
 struct serial_ringbuffer uart0_int_rx;
+#endif
 struct lpc_uart uart0 =
 {
     UART_0,
@@ -158,7 +160,11 @@ void UART0_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
+#if RTTHREAD_VERSION < 102090
         rt_hw_serial_isr(&serial0);
+#else
+        rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
+#endif
     }
 
     /* leave interrupt */
@@ -167,7 +173,9 @@ void UART0_IRQHandler(void)
 #endif
 #if defined(RT_USING_UART2)
 /* UART2 device driver structure */
+#if RTTHREAD_VERSION < 102090
 struct serial_ringbuffer uart2_int_rx;
+#endif
 struct lpc_uart uart2 =
 {
     UART_2,
@@ -207,7 +215,11 @@ void UART2_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
+#if RTTHREAD_VERSION < 102090
         rt_hw_serial_isr(&serial2);
+#else
+        rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
+#endif
     }
 
     /* leave interrupt */
@@ -217,19 +229,15 @@ void UART2_IRQHandler(void)
 void rt_hw_uart_init(void)
 {
     struct lpc_uart *uart;
-    struct serial_configure config;
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
     uart = &uart0;
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
 
     serial0.ops    = &lpc_uart_ops;
+#if RTTHREAD_VERSION < 102090
     serial0.int_rx = &uart0_int_rx;
+#endif
     serial0.config = config;
 
     /*
@@ -248,20 +256,16 @@ void rt_hw_uart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif
 #ifdef RT_USING_UART2
     uart = &uart2;
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
 
     serial2.ops    = &lpc_uart_ops;
+#if RTTHREAD_VERSION < 102090
     serial2.int_rx = &uart2_int_rx;
+#endif
     serial2.config = config;
 
     /*
@@ -280,7 +284,7 @@ void rt_hw_uart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif
 }
