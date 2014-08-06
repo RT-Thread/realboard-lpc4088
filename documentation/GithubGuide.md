@@ -62,13 +62,13 @@ msygit是windows版的Git，从[msysgit][2]下载，然后按默认的选项安�
  
 
     $ git remote -v
-    origin     git@github.com::lifancn/RealBoard4088.git (fetch)
-    origin     git@github.com::lifancn/RealBoard4088.git (push)
+    origin     git@github.com:lifancn/RealBoard4088.git (fetch)
+    origin     git@github.com:lifancn/RealBoard4088.git (push)
 
 可以看到当前Git里有一个叫'origin'的远程仓库（就是我们刚刚clone的时候加入的），为了能很好的和主仓库保持代码同步，我们需要添加一个主仓库的远程仓库，命令如下
  
 
-    $ git remote add RTT git@github.com::RT-Thread/RealBoard4088.git 
+    $ git remote add RTT git@github.com:RT-Thread/RealBoard4088.git 
 
 ②获取主仓库最新代码
 
