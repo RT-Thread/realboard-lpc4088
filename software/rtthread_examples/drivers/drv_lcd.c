@@ -1,4 +1,5 @@
 #include <board.h>
+#include <rtdevice.h>
 #include "drv_lcd.h"
 
 #include <lpc_clkpwr.h>
@@ -40,6 +41,16 @@ static  rt_uint16_t *_rt_framebuffer = RT_NULL;
 
 static struct rt_device_graphic_info _lcd_info;
 static struct rt_device  lcd;
+
+/* LCD read ID command */
+#define LCD_READ_ID_CMD          0x9f
+
+/* lcd spi device name */
+#define LCD_SPI_NAME     "spi00"
+
+/* LCD version */
+#define LCD_VERSION1     0x01
+#define LCD_VERSION2     0x02
 
 /* LCD Config */
 #define LCD_H_SIZE           480
@@ -97,9 +108,43 @@ const uint32_t cursor[64] =
 
 };
 #endif
+static uint8_t lcd_readid(struct rt_spi_device *spi)
+{
+    uint8_t txbuf[2];
+    uint8_t rxbuf[2];
+    struct rt_spi_configuration cfg;
 
+    /* config spi */
+    cfg.data_width = 8;
+    cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0 and Mode 3 */
+    cfg.max_hz = 18000000; /* 20M for test. */
+    rt_spi_configure(spi, &cfg);
+
+    txbuf[0] = LCD_READ_ID_CMD;
+    txbuf[1] = 0x00;
+
+    rt_spi_send_then_recv(spi, txbuf, 2, rxbuf, 2);
+
+    if (rxbuf[0] != 0xC8 && rxbuf[1] != 0xF1)
+    {
+        return LCD_VERSION2;
+    }
+
+    return LCD_VERSION1;
+}
 static void lcd_gpio_init(void)
 {
+
+    struct rt_spi_device *spi;
+    uint8_t lcd_id = 0;
+
+    spi = (struct rt_spi_device *)rt_device_find(LCD_SPI_NAME);
+
+    RT_ASSERT(spi != RT_NULL);
+
+    lcd_id = lcd_readid(spi);
+    rt_kprintf("LCD ID: 0x%02X\n", lcd_id);
+
     LPC_IOCON->P2_12  = 0x05; // 配置P2_12为VD3,  R0
     LPC_IOCON->P2_6     = 0x07; // 配置P2_6为VD4,       R1
     LPC_IOCON->P0_10    = 0x07; // 配置P0_10为VD5,      R2
@@ -124,12 +169,20 @@ static void lcd_gpio_init(void)
     LPC_IOCON->P2_5 = 0x07;   // 配置P2_5为LCD的HSYNC
     LPC_IOCON->P2_3 = 0x07;   // 配置P2_3为LCD的VSYNC
 
-
-    LPC_IOCON->P2_1 = 0x07;   // 配置P2_1为LCD的背光控制GPIO
-    LPC_IOCON->P2_4 = 0x00;   // 配置P2_4为LCD的DataEn
-
-    LPC_GPIO2->DIR |= 1 << 4; //配置P2_4为输出
-    LPC_GPIO2->SET |= 1 << 4; //打开LCD背光
+    if (LCD_VERSION1 == lcd_id)
+    {
+        LPC_IOCON->P2_4 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
+        LPC_IOCON->P2_1 = 0x07;   // 配置P2_4为LCD的DataEn
+        LPC_GPIO2->DIR |= 1 << 4; //配置P2_4为输出
+        LPC_GPIO2->SET |= 1 << 4; //打开LCD背光
+    }
+    else
+    {
+        LPC_IOCON->P2_1 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
+        LPC_IOCON->P2_4 = 0x07;   // 配置P2_4为LCD的DataEn
+        LPC_GPIO2->DIR |= 1 << 1; //配置P2_1为输出
+        LPC_GPIO2->SET |= 1 << 1; //打开LCD背光
+    }
 }
 
 static rt_uint32_t find_clock_divisor(rt_uint32_t clock)
@@ -184,7 +237,7 @@ void LCD_IRQHandler(void)
         }
         //清除帧同步中断标志位
         LPC_LCD->INTCLR |= 0x04;
-    }
+    } s
     rt_interrupt_leave();
 
 }
@@ -211,7 +264,7 @@ static void cursor_hw_init(void)
 {
     unsigned int i;
     rt_uint32_t *puicursor = (rt_uint32_t *)CRSR_IMGBASE0;
-    cursor_set_position(0, 0);                                           
+    cursor_set_position(0, 0);
     LPC_LCD->CRSR_CTRL = 0x00;                                          /* 不显示光标                   */
     for (i = 0; i < 64; i++)
     {
@@ -223,6 +276,7 @@ static void cursor_hw_init(void)
     LPC_LCD->CRSR_PAL1 = 0x00000000;                                    /* 调色板1为白色                */
 }
 #endif
+
 /* RT-Thread Device Interface */
 static rt_err_t rt_lcd_init(rt_device_t dev)
 {
@@ -295,6 +349,7 @@ static rt_err_t rt_lcd_init(rt_device_t dev)
     LPC_LCD->UPBASE  = (rt_uint32_t)current_buf->framebuffer_addr;
 #else
     lcd_framebuffer = rt_malloc_align(sizeof(rt_uint16_t) * RT_HW_LCD_HEIGHT * RT_HW_LCD_WIDTH, 32);
+    rt_memset(lcd_framebuffer, 0, sizeof(rt_uint16_t) * RT_HW_LCD_HEIGHT * RT_HW_LCD_WIDTH);
     LPC_LCD->UPBASE  = (rt_uint32_t)lcd_framebuffer;
 #endif
     //
