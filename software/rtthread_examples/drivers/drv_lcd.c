@@ -112,17 +112,17 @@ static uint8_t lcd_readid(struct rt_spi_device *spi)
 {
     uint8_t txbuf[2];
     uint8_t rxbuf[2];
-	  struct rt_spi_configuration cfg;
-	
-	    /* config spi */
+    struct rt_spi_configuration cfg;
+
+    /* config spi */
     cfg.data_width = 8;
     cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0 and Mode 3 */
     cfg.max_hz = 18000000; /* 20M for test. */
     rt_spi_configure(spi, &cfg);
-	
+
     txbuf[0] = LCD_READ_ID_CMD;
     txbuf[1] = 0x00;
-	
+
     rt_spi_send_then_recv(spi, txbuf, 2, rxbuf, 2);
 
     if (rxbuf[0] != 0xC8 && rxbuf[1] != 0xF1)
@@ -134,17 +134,17 @@ static uint8_t lcd_readid(struct rt_spi_device *spi)
 }
 static void lcd_gpio_init(void)
 {
-	  
-	  struct rt_spi_device *spi;
-	  uint8_t lcd_id =0;
-	
-	  spi = (struct rt_spi_device *)rt_device_find(LCD_SPI_NAME);
-	
-	  RT_ASSERT(spi != RT_NULL);
-	
-	  lcd_id = lcd_readid(spi);
-	  rt_kprintf("LCD ID: 0x%02X\n", lcd_id);
-	
+
+    struct rt_spi_device *spi;
+    uint8_t lcd_id = 0;
+
+    spi = (struct rt_spi_device *)rt_device_find(LCD_SPI_NAME);
+
+    RT_ASSERT(spi != RT_NULL);
+
+    lcd_id = lcd_readid(spi);
+    rt_kprintf("LCD ID: 0x%02X\n", lcd_id);
+
     LPC_IOCON->P2_12  = 0x05; // 配置P2_12为VD3,  R0
     LPC_IOCON->P2_6     = 0x07; // 配置P2_6为VD4,       R1
     LPC_IOCON->P0_10    = 0x07; // 配置P0_10为VD5,      R2
@@ -169,18 +169,20 @@ static void lcd_gpio_init(void)
     LPC_IOCON->P2_5 = 0x07;   // 配置P2_5为LCD的HSYNC
     LPC_IOCON->P2_3 = 0x07;   // 配置P2_3为LCD的VSYNC
 
-    if(LCD_VERSION1==lcd_id)
+    if (LCD_VERSION1 == lcd_id)
     {
-	  LPC_IOCON->P2_4 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
-    LPC_IOCON->P2_1 = 0x07;   // 配置P2_4为LCD的DataEn
-    LPC_GPIO2->DIR |= 1 << 4; //配置P2_4为输出
-    LPC_GPIO2->SET |= 1 << 4; //打开LCD背光
-	  }else{
-    LPC_IOCON->P2_1 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
-    LPC_IOCON->P2_4 = 0x07;   // 配置P2_4为LCD的DataEn
-    LPC_GPIO2->DIR |= 1 << 1; //配置P2_1为输出
-    LPC_GPIO2->SET |= 1 << 1; //打开LCD背光
-		}
+        LPC_IOCON->P2_4 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
+        LPC_IOCON->P2_1 = 0x07;   // 配置P2_4为LCD的DataEn
+        LPC_GPIO2->DIR |= 1 << 4; //配置P2_4为输出
+        LPC_GPIO2->SET |= 1 << 4; //打开LCD背光
+    }
+    else
+    {
+        LPC_IOCON->P2_1 = 0x00;   // 配置P2_1为LCD的背光控制GPIO
+        LPC_IOCON->P2_4 = 0x07;   // 配置P2_4为LCD的DataEn
+        LPC_GPIO2->DIR |= 1 << 1; //配置P2_1为输出
+        LPC_GPIO2->SET |= 1 << 1; //打开LCD背光
+    }
 }
 
 static rt_uint32_t find_clock_divisor(rt_uint32_t clock)
@@ -235,7 +237,7 @@ void LCD_IRQHandler(void)
         }
         //清除帧同步中断标志位
         LPC_LCD->INTCLR |= 0x04;
-    }s
+    } s
     rt_interrupt_leave();
 
 }
