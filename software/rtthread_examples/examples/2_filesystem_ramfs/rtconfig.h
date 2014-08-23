@@ -117,7 +117,7 @@
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX 8	
+#define DFS_FD_MAX 8
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
@@ -174,8 +174,6 @@
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
-// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM	4
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY	12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
