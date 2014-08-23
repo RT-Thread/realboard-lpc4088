@@ -191,8 +191,6 @@
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
-// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM	8
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY	12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
@@ -244,12 +242,20 @@
 #define RTGUI_USING_HZ_FILE
 // <bool name="RTGUI_USING_MOUSE_CURSOR" description="use mouse cursor" default="false" />
 // #define RTGUI_USING_MOUSE_CURSOR
-/* image support */
+
+// <bool name="RTGUI_IMAGE_XPM" description="support XPM image format" default="true" />
 #define RTGUI_IMAGE_XPM
+// <bool name="RTGUI_IMAGE_BMP" description="support BMP image format" default="true" />
 #define RTGUI_IMAGE_BMP
-/* #define RTGUI_IMAGE_JPEG */
+// <bool name="RTGUI_IMAGE_JPEG" description="support JPEG image format with libjpg" default="false" />
+// #define RTGUI_IMAGE_JPEG
+// <bool name="RTGUI_IMAGE_TJPGD" description="support JPEG image format with TJPGD" default="true" />
 #define RTGUI_IMAGE_TJPGD
-/* #define RTGUI_IMAGE_PNG */
+// <bool name="RTGUI_IMAGE_PNG" description="support PNG image format with libpng" default="false" />
+// #define RTGUI_IMAGE_PNG
+// <bool name="RTGUI_IMAGE_LODEPNG" description="support PNG image format with LodePNG" default="true" />
+#define RTGUI_IMAGE_LODEPNG
+
 #define RTGUI_USING_NOTEBOOK_IMAGE
 // <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
 //#define RTGUI_USING_HW_CURSOR

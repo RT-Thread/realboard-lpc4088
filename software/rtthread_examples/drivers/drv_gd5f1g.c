@@ -189,7 +189,7 @@ static rt_err_t nandflash_readpage(struct rt_mtd_nand_device *device,
     {
         /* Check the ECC bits */
         stat >>= 4;
-        if ((stat & 0x3 == 1) || (stat & 0x3 == 3))
+        if (((stat & 0x3) == 1) || ((stat & 0x3) == 3))
         {
             /* ECC recovered, it's OK */
             result = RT_MTD_EOK;
