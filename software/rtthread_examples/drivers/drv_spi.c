@@ -294,7 +294,7 @@ int rt_hw_spi_init(void)
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi00", "spi0", (void *)&spi_cs1);
     }
-        /* attach cs */
+    /* attach cs */
     {
         static struct rt_spi_device spi_device;
         static struct lpc_spi_cs  spi_cs1;

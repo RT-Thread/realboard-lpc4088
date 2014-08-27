@@ -228,20 +228,14 @@ void UART4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 void rt_hw_uart_init(void)
 {
     struct lpc_uart *uart;
-    struct serial_configure config;
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
     uart = &uart0;
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial0.ops    = &lpc_uart_ops;
     serial0.config = config;
@@ -270,15 +264,9 @@ void rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           uart);
 #endif
+
 #ifdef RT_USING_UART2
     uart = &uart2;
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial2.ops    = &lpc_uart_ops;
     serial2.config = config;
@@ -306,15 +294,9 @@ void rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           uart);
 #endif
+
 #ifdef RT_USING_UART4
     uart = &uart4;
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial4.ops    = &lpc_uart_ops;
     serial4.config = config;

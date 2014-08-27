@@ -25,7 +25,7 @@
 
 #define MAX_ADDR_LEN 6
 #ifdef __CC_ARM
-static rt_uint32_t ETH_RAM_BASE[4*1024] SECTION("ETH_RAM");
+static rt_uint32_t ETH_RAM_BASE[4 * 1024] SECTION("ETH_RAM");
 #endif
 /* EMAC variables located in 16K Ethernet SRAM */
 #define RX_DESC_BASE         (uint32_t)&ETH_RAM_BASE[0]
@@ -493,7 +493,7 @@ int lpc_emac_hw_init(void)
     lpc_emac_device.parent.eth_tx           = lpc_emac_tx;
 
     eth_device_init(&(lpc_emac_device.parent), "e0");
-		return 0;
+    return 0;
 }
 INIT_DEVICE_EXPORT(lpc_emac_hw_init);
 

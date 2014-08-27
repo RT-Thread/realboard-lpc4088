@@ -1926,7 +1926,7 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 
         if (mci_cmd_read(pos + index, num_block) != RT_EOK)
         {
-            MCI_DEBUG("send read cmd error!pos:%d,size:%d\n", pos+index, num_block);
+            MCI_DEBUG("send read cmd error!pos:%d,size:%d\n", pos + index, num_block);
             break;
         }
         rt_event_recv(_mci_device->finish_event,
@@ -1940,7 +1940,7 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         }
         if (_mci_device->data_error == RT_TRUE)
         {
-            MCI_DEBUG("read data error!pos:%d,size:%d\n", pos+index, num_block);
+            MCI_DEBUG("read data error!pos:%d,size:%d\n", pos + index, num_block);
         }
         else
         {
@@ -2016,11 +2016,11 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
         }
         if (_mci_device->data_error == RT_TRUE)
         {
-            MCI_DEBUG("write data error!pos:%d,size:%d\n", pos+index, num_block);
+            MCI_DEBUG("write data error!pos:%d,size:%d\n", pos + index, num_block);
         }
         else
         {
-            MCI_DEBUG("write data success!pos:%d,size:%d\n", pos+index, num_block);
+            MCI_DEBUG("write data success!pos:%d,size:%d\n", pos + index, num_block);
         }
     }
 _exit:

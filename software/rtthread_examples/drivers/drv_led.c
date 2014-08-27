@@ -26,19 +26,19 @@ static rt_err_t rt_led_init(rt_device_t dev)
     /* set P4.14,P4.15,P4.16,P4.17 as GPIO. */
     LPC_IOCON->P4_27 = 0x00;
     LPC_IOCON->P4_15 = 0x00;
-	  LPC_IOCON->P4_16 = 0x00;
-	  LPC_IOCON->P4_17 = 0x00;
+    LPC_IOCON->P4_16 = 0x00;
+    LPC_IOCON->P4_17 = 0x00;
     /* set P4.27,P4.15,P4.16,P4.17  output. */
-    LPC_GPIO4->DIR |= (0x07 << 15)|(0x01<<27);
+    LPC_GPIO4->DIR |= (0x07 << 15) | (0x01 << 27);
     /* turn off all the led */
-    LPC_GPIO4->SET = (0x07 << 15)|(0x01<<27);
+    LPC_GPIO4->SET = (0x07 << 15) | (0x01 << 27);
     led.ctrl[3].num = 27;
     led.ctrl[3].port = LPC_GPIO4;
     led.ctrl[2].num = 15;
     led.ctrl[2].port = LPC_GPIO4;
-	  led.ctrl[1].num = 16;
+    led.ctrl[1].num = 16;
     led.ctrl[1].port = LPC_GPIO4;
-	  led.ctrl[0].num = 17;
+    led.ctrl[0].num = 17;
     led.ctrl[0].port = LPC_GPIO4;
     return RT_EOK;
 }
@@ -131,7 +131,7 @@ int rt_led_hw_init(void)
     rt_device_register(&led.parent, "led", RT_DEVICE_FLAG_RDWR);
     /* init led device */
     rt_led_init(&led.parent);
-	return 0;
+    return 0;
 }
 INIT_DEVICE_EXPORT(rt_led_hw_init);
 #ifdef RT_USING_FINSH
