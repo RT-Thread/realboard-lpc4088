@@ -77,6 +77,7 @@
 // </section>
 // <bool name="RT_USING_SPI" description="Using SPI Device Driver Framework" default="true" />
 #define RT_USING_SPI
+#define RT_USING_SPI_WIFI
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
 //#define RT_USING_I2C
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
