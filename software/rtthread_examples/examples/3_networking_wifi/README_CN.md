@@ -1,4 +1,5 @@
 # WifiÓ²¼þÁ¬½Ó #
+WIFI_RST <---> P2_21
 WIFI_CS  <---> P2_24
 WIFI_IRQ <---> P2_25
 WIFI_MO  <---> P2_27
