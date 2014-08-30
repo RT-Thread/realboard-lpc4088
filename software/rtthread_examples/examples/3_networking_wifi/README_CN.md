@@ -1,10 +1,15 @@
-# WifiÓ²¼þÁ¬½Ó #
+# Wifiç¡¬ä»¶è¿žæŽ¥ #
 WIFI_RST <---> P2_21
+
 WIFI_CS  <---> P2_24
+
 WIFI_IRQ <---> P2_25
+
 WIFI_MO  <---> P2_27
+
 WIFI_SO  <---> P2_26
+
 WIFI_SCK <---> P2_22
 
-# WifiÈí¼þÅäÖÃ #
-´ò¿ªapplications/spi_wifi.c£¬ÐÞ¸ÄSSID_NAMEºÍSSID_PASSWORDºê¶¨ÒåÎªÐèÒªÁ¬½ÓµÄÂ·ÓÉÆ÷Ãû³ÆºÍÃÜÂë¡£
+# Wifiè½¯ä»¶é…ç½® #
+æ‰“å¼€applications/spi_wifi.cï¼Œä¿®æ”¹SSID_NAMEå’ŒSSID_PASSWORDå®å®šä¹‰ä¸ºéœ€è¦è¿žæŽ¥çš„è·¯ç”±å™¨åç§°å’Œå¯†ç ã€‚
