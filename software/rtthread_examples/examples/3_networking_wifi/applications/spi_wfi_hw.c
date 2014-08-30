@@ -64,7 +64,7 @@ void spi_wifi_hw_init(void)
     /* P2.25 wifi INT */
     {
         LPC_IOCON->P2_25 &= ~0x07;
-        LPC_GPIO2->DIR &= ~(0x01 << WIFI_INT_PIN);
+        LPC_GPIO2->DIR |= (0x01 << WIFI_INT_PIN);
     }
 
     /* Configure  EXTI  */
