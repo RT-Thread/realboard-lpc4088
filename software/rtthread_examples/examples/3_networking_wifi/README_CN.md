@@ -8,12 +8,14 @@
 ## Wifi硬件连接 ##
 硬件连接方式请使用如下的连接方式：
 ```
-  WIFI_RST <---> P2_21
-  WIFI_CS  <---> P2_24
-  WIFI_IRQ <---> P2_25
-  WIFI_MO  <---> P2_27
-  WIFI_SO  <---> P2_26
-  WIFI_SCK <---> P2_22
+  WIFI_VCC  <---> 3.3V
+  WIFI_MOSI <---> P2_27
+  WIFI_MISO <---> P2_26
+  WIFI_SCK  <---> P2_22
+  WIFI_CS   <---> P2_24
+  WIFI_RST  <---> P2_21
+  WIFI_IRQ  <---> P2_25
+  WIFI_GND  <---> GND
 ```
 
 ## Wifi软件配置 ##
