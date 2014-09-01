@@ -2162,7 +2162,7 @@ rt_err_t mci_hw_init(const char *device_name)
     _mci_device->parent.tx_complete = RT_NULL;
 
     rt_device_register(&_mci_device->parent, device_name,
-                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
+                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE );
     return RT_EOK;
 }
 
