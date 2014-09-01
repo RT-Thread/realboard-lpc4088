@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src = Split('''
+rti.c
+rti_memlog.c
+rti_server.c
+rti_console.c
+''')
+
+CPPPATH = [GetCurrentDir()]
+group = DefineGroup('RTI', src, depend = ['RT_USING_RTI'], CPPPATH = CPPPATH)
+
+Return('group')

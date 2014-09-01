@@ -52,8 +52,6 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
     /*enable and reset FIFO*/
     uart->UART->FCR = 0x07;
 
-    /* enable rx irq */
-    uart->UART->IER |= 0x01 | (0x01 << 2);
 
     return RT_EOK;
 }
