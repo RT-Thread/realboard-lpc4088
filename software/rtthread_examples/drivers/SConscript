@@ -46,13 +46,14 @@ if GetDepend('RT_USING_RTGUI') == True:
 	src += ['drv_lcd.c']
 	src += ['drv_key.c']
 	src += ['drv_touch.c']
+# add 
+if GetDepend('RT_USING_USBD') == True:
+	src += ['usbhw.c']
+	src += ['usbuser.c']
 
-# add USB Host driver.
-# if GetDepend('RT_USING_USB_HOST') == True:
-
-	
-# add USB Device driver
-# if GetDepend('RT_USING_USB_DEVICE') == True:
+elif GetDepend('RT_USING_USBH') == True:
+	src += ['lpc_usbhost.c']
+	src += ['ohci.c']
 
 
 CPPPATH = [cwd]
