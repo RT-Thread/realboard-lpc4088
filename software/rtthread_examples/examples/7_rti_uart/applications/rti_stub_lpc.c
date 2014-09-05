@@ -3,7 +3,6 @@
 #include "rti_cmd.h"
 #include <board.h>
 
-#include "lpc407x_8x_177x_8x.h"
 #define LPC_SC_PCONP_PCTIM0 0x02UL
 #define LPC_SC_PCONP_PCTIM1 0x04UL
 #define LPC_SC_PCONP_PCTIM2 (0x01UL<<22)
