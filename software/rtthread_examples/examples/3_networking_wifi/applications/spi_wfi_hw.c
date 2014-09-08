@@ -52,8 +52,10 @@ void spi_wifi_hw_init(void)
 {
      /* P2.21 wifi RST */
     {
+        /* select P2.21 is GPIO. */
         LPC_IOCON->P2_21 &= ~0x07;
-        LPC_GPIO2->DIR &= ~(0x01 << WIFI_RST_PIN);
+        /* set P2.21 is ouput. */
+        LPC_GPIO2->DIR |= (0x01 << WIFI_RST_PIN);
 
         LPC_GPIO2->CLR = (0x01 << WIFI_RST_PIN);
         rt_thread_delay(RT_TICK_PER_SECOND/10);
@@ -63,8 +65,10 @@ void spi_wifi_hw_init(void)
 
     /* P2.25 wifi INT */
     {
+        /* select P2.25 is GPIO. */
         LPC_IOCON->P2_25 &= ~0x07;
-        LPC_GPIO2->DIR |= (0x01 << WIFI_INT_PIN);
+        /* set P2.25 is input. */
+        LPC_GPIO2->DIR &= ~(0x01 << WIFI_INT_PIN);
     }
 
     /* Configure  EXTI  */
