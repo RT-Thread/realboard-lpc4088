@@ -11,19 +11,22 @@
 
 #include "components.h"
 
+#include "spi_wifi_rw009.h"
+
 extern void lpc_emac_hw_init(void);
 
 void rt_init_thread_entry(void *parameter)
 {
-
-
 #ifdef RT_USING_COMPONENTS_INIT
     /* initialization RT-Thread Components */
     rt_components_init();
 #endif
+
 #ifdef RT_USING_LWIP
     /* initialize eth interface */
     rt_hw_wifi_init("spi01");
+
+    rw009_join("you_AP", "you_passwd");
 #endif
 }
 

@@ -19,11 +19,10 @@
 ```
 
 ## Wifi软件配置 ##
-使用WiFi时，需要关联到一个AP上，需要在代码中进行少些修改以把SSID和密码填写正确。打开applications/spi_wifi.c，修改SSID_NAME和SSID_PASSWORD宏定义为需要连接的路由器名称和密码。
-因AP加密类型不同，可能还需要修改第392行的加密方式，有各下多种可自由组合。AP的加密方式一般可以进入AP（路由）管理界面查看。
+使用WiFi时，需要关联到一个AP上，需要在代码中进行少些修改以把SSID和密码填写正确。打开applications/application.c，修改rw009_join的参数为需要连接的AP名称和密码。
+
 ```
-  cmd_join->security = WPA_SECURITY | TKIP_ENABLED | TKIP_ENABLED;
-  cmd_join->security = WPA2_SECURITY | TKIP_ENABLED | AES_ENABLED;
+    rw009_join("you_AP", "you_passwd");
 ```
 
 [1]: http://item.taobao.com/item.htm?id=40813298723
