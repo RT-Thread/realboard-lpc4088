@@ -1,13 +1,16 @@
 /*
- * linker script for LPC4088 (512kB Flash, 48kB + 48kB SRAM ) with GNU ld
+ * linker script for LPC4088 (512kB Flash, 96kB + 32kB SRAM ) with GNU ld
  * bernard.xiong 2012-12-18
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00080000
-    DATA (rw) : ORIGIN = 0x10000000, LENGTH = 0x00010000
+    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00080000   /* base code section 512K */
+    DATA1 (rw) : ORIGIN = 0x10000000, LENGTH = 0x00010000  /* base data section 96K */
+	DATA2 (rw) : ORIGIN = 0x20000000, LENGTH = 0x00002000  /* usb ram section 8K */
+	DATA3 (rw) : ORIGIN = 0x20002000, LENGTH = 0x00002000  /* mci ram section 8K */
+	DATA4 (rw) : ORIGIN = 0x20004000, LENGTH = 0x00004000  /* eth ram section 16K */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -80,14 +83,14 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >DATA
+    } > DATA1
 
     .stack : 
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
-    } >DATA
+    } > DATA1
 
     __bss_start = .;
     .bss :
@@ -104,11 +107,29 @@ SECTIONS
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;        
         *(.bss.init)
-    } > DATA
+    } > DATA1
     __bss_end = .;
 
     _end = .;
-
+	
+	 .usb_stack (NOLOAD) :
+	{
+	. = ALIGN(4);
+	 *(USB_RAM)
+	} > DATA2 
+	
+    .mci_buf (NOLOAD) :
+	{
+	. = ALIGN(4);
+	 *(MCI_RAM)
+	} > DATA3 
+	
+	.eth_buf (NOLOAD) :
+	{
+	. = ALIGN(4);
+	 *(ETH_RAM)
+	} > DATA4 
+	
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
     .stabstr       0 : { *(.stabstr) }
