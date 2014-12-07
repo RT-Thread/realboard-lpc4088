@@ -110,6 +110,10 @@ static const struct rt_uart_ops lpc_uart_ops =
 
 #ifdef RT_USING_UART0
 /* UART0 device driver structure */
+#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
+struct serial_ringbuffer uart0_int_rx;
+#endif
+
 struct lpc_uart uart0 =
 {
     LPC_UART0,
@@ -130,13 +134,15 @@ void UART0_IRQHandler(void)
     {
 
     case 0x04:
+    case 0x0C:
+    #if RTTHREAD_VERSION < 20000
+        rt_hw_serial_isr(&serial0);
+    #else
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
+    #endif
         break;
     case 0x06:
         tmp = LPC_UART0->LSR;
-        break;
-    case 0x0c:
-        rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
         break;
     default :
         tmp = LPC_UART0->LSR;
@@ -148,6 +154,10 @@ void UART0_IRQHandler(void)
 #endif
 #ifdef RT_USING_UART2
 /* UART2 device driver structure */
+#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
+struct serial_ringbuffer uart2_int_rx;
+#endif
+
 struct lpc_uart uart2 =
 {
     LPC_UART2,
@@ -159,7 +169,6 @@ void UART2_IRQHandler(void)
 {
     volatile  uint32_t IIR, tmp;
 
-
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -167,15 +176,16 @@ void UART2_IRQHandler(void)
     IIR &= 0x0e;
     switch (IIR)
     {
-
     case 0x04:
+    case 0x0C:
+    #if RTTHREAD_VERSION < 20000
+        rt_hw_serial_isr(&serial2);
+    #else
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
+    #endif
         break;
     case 0x06:
         tmp = LPC_UART2->LSR;
-        break;
-    case 0x0c:
-        rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
         break;
     default :
         tmp = LPC_UART2->LSR;
@@ -186,8 +196,13 @@ void UART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
 #ifdef RT_USING_UART4
 /* UART4 device driver structure */
+#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
+struct serial_ringbuffer uart4_int_rx;
+#endif
+
 struct lpc_uart uart4 =
 {
     LPC_UART4,
@@ -199,7 +214,6 @@ void UART4_IRQHandler(void)
 {
     volatile  uint32_t IIR, tmp;
 
-
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -207,15 +221,16 @@ void UART4_IRQHandler(void)
     IIR &= 0x0e;
     switch (IIR)
     {
-
     case 0x04:
+    case 0x0C:
+    #if RTTHREAD_VERSION < 20000
+        rt_hw_serial_isr(&serial4);
+    #else
         rt_hw_serial_isr(&serial4, RT_SERIAL_EVENT_RX_IND);
+    #endif
         break;
     case 0x06:
         tmp = LPC_UART4->LSR;
-        break;
-    case 0x0c:
-        rt_hw_serial_isr(&serial4, RT_SERIAL_EVENT_RX_IND);
         break;
     default :
         tmp = LPC_UART4->LSR;
@@ -237,7 +252,11 @@ void rt_hw_uart_init(void)
 
     serial0.ops    = &lpc_uart_ops;
     serial0.config = config;
+    #if RTTHREAD_VERSION < 20000
+    serial0.int_rx = &uart0_int_rx;
+    #endif
     serial0.parent.user_data = uart;
+    
     /*
      * Initialize UART0 pin connect
      * P0.2: U0_TXD
@@ -268,7 +287,11 @@ void rt_hw_uart_init(void)
 
     serial2.ops    = &lpc_uart_ops;
     serial2.config = config;
+    #if RTTHREAD_VERSION < 20000
+    serial2.int_rx = &uart2_int_rx;
+    #endif
     serial2.parent.user_data = uart;
+
     /*
      * Initialize UART2 pin connect
      * P2.8: U2_TXD
@@ -298,7 +321,11 @@ void rt_hw_uart_init(void)
 
     serial4.ops    = &lpc_uart_ops;
     serial4.config = config;
-
+    #if RTTHREAD_VERSION < 20000
+    serial4.int_rx = &uart4_int_rx;
+    #endif
+    serial4.parent.user_data = uart;
+    
     /*
      * Initialize UART2 pin connect
      * P5.4: U2_TXD
