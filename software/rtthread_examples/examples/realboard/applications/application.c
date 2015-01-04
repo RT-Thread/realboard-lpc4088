@@ -23,8 +23,8 @@ void rt_init_thread_entry(void *parameter)
 {
 	rt_components_init();
 
-	/* startup rtgui realtouch ui */
-	realtouch_ui_init();
+    internal_app_init();
+    app_mainui_init();
 }
 
 int rt_application_init(void)

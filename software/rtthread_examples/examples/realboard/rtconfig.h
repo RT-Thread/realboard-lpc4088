@@ -261,6 +261,7 @@
 //#define RTGUI_USING_HW_CURSOR
 // <bool name="RTGUI_USING_CALI" description="Using calibration application in rtGUI" default="true" />
 #define RTGUI_USING_CALI
+#define RTGUI_USING_APP_SHELL
 // </section>
 
 // </RDTConfigurator>
