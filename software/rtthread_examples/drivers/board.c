@@ -146,7 +146,7 @@ int touch_calibration_init(void)
     if (CALIBRATION_DATA_MAGIC != magic)
     {
         rt_kprintf("touch is not calibration,now calibration it please.\n");
-        calibration_init();
+        calibration_init(RT_NULL);
     }
     else
     {

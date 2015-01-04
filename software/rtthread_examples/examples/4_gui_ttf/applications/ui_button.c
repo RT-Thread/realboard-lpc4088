@@ -1,0 +1,95 @@
+#include <rtthread.h>
+#include <rtgui/rtgui.h>
+#include <rtgui/rtgui_app.h>
+#include <rtgui/font_freetype.h>
+#include <rtgui/widgets/window.h>
+#include <rtgui/widgets/label.h>
+#include <rtgui/widgets/button.h>
+#include <string.h>
+
+#include "ui_button.h"
+
+static struct rtgui_label *label = RT_NULL;
+
+static void onbutton(struct rtgui_object *object, struct rtgui_event *event)
+{
+	if (label != RT_NULL)
+	{
+        struct rtgui_button *button;
+
+        button = RTGUI_BUTTON(object);
+
+        if (strcmp(rtgui_label_get_text(label), "Hello World") == 0)
+            rtgui_label_set_text(label, "Hello from button");
+        else
+            rtgui_label_set_text(label, "Hello World");
+
+        if (strcmp(rtgui_label_get_text(RTGUI_LABEL(button)), "OK") == 0)
+            rtgui_label_set_text(RTGUI_LABEL(button), "Hello");
+        else
+            rtgui_label_set_text(RTGUI_LABEL(button), "OK");
+
+		rtgui_widget_update(RTGUI_WIDGET(label));
+        rtgui_widget_update(RTGUI_WIDGET(button));
+	}
+
+	return;
+}
+
+static void ui_thread_entry(void* parameter)
+{
+	struct rtgui_app* app;
+	struct rtgui_win *win;
+	struct rtgui_button *button;
+    struct rtgui_box *box;
+    struct rtgui_font *font;
+
+    /* create GUI application */
+	app = rtgui_app_create("UiApp");
+	RT_ASSERT(app != RT_NULL);
+
+	/* create main window */
+    win = rtgui_mainwin_create(RT_NULL, "UiWindow", RTGUI_WIN_STYLE_DEFAULT);
+
+    font = rtgui_freetype_font_create("BOP.ttf", 0, 0, 24);
+
+    /* we use layout engine to place sub-widgets */
+    box = rtgui_box_create(RTGUI_VERTICAL, 10);
+    rtgui_container_set_box(RTGUI_CONTAINER(win), box);
+
+    /* create the 'hello world' label */
+	label = rtgui_label_create("Hello World");
+    RTGUI_WIDGET_FONT(label) = font;
+	rtgui_widget_set_minwidth(RTGUI_WIDGET(label), 150);
+	rtgui_widget_set_minheight(RTGUI_WIDGET(label), 35);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
+
+	/* create the button */
+	button = rtgui_button_create("OK");
+    RTGUI_WIDGET_FONT(button) = font;
+    RTGUI_WIDGET_FOREGROUND(button) = red;
+	rtgui_button_set_onbutton(button, onbutton);
+	rtgui_widget_set_minwidth(RTGUI_WIDGET(button), 80);
+	rtgui_widget_set_minheight(RTGUI_WIDGET(button), 35);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(button));
+
+    rtgui_container_layout(RTGUI_CONTAINER(win));
+
+	rtgui_win_show(win, RT_FALSE);
+	rtgui_app_run(app);
+
+	rtgui_win_destroy(win);
+	rtgui_app_destroy(app);
+}
+
+int ui_button(void)
+{
+	rt_thread_t tid;
+
+    tid = rt_thread_create("UiApp", ui_thread_entry, RT_NULL,
+                           4096, 20, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
+
+	return 0;
+}
