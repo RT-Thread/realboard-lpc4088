@@ -16,12 +16,21 @@ A simple user application can be a main function, for example the `hello` progra
 
 RT-Thread APPs only support GNU GCC toolchain so far. Therefore, please install [ARM GNU GCC toolchain][1] firstly and [scons][2] is used for APPs building. 
 
+## Prepare Env in Firmware ##
+
+Because we need the RT-Thread header files to build APPs, we should tell scons how to find the include pathes. In RT-Thread 2.0, we prepare a new config file, which named as rtua.py. We can use following command in BSP folder to generate this rtua.py file:
+
+    scons --target=ua -s
+
 ## Build APPs ##
 
-Please configure your toolchain in rtconfig.py file:
+Please configure your toolchain in `apps/rtconfig.py` file:
 
     # toolchains
     EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\4.6 2012q2\bin'
+
+    # BSP folder, please realboard (the rtua.py file should be in there)
+    BSP_ROOT = cwd + '/../rtthread_examples/examples/realboard'
 
 Then build APPs by scons, for example the `hello` APP:
 
