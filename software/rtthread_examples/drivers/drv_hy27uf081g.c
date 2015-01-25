@@ -130,7 +130,7 @@ static rt_err_t nand_hy27uf_readpage(struct rt_mtd_nand_device *device,
         {
             rt_kprintf("ECC error, block: %d, page: %d!\n", page / device->pages_per_block,
                        page % device->pages_per_block);
-            result = RT_MTD_EECC;
+            result = -RT_MTD_EECC;
         }
 #endif
 
@@ -310,9 +310,9 @@ static void hy27uf_gpio_config(void)
     LPC_IOCON->P4_31 &= ~0x07;
     LPC_GPIO4->DIR &= ~(0x01UL << 31);
 }
+
 int nand_hy27uf_hw_init(void)
 {
-
     /**************************************************************************
     * Initialize EMC for NAND FLASH
     **************************************************************************/
