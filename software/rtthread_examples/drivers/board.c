@@ -20,7 +20,8 @@
 #include "board.h"
 #include "drv_uart.h"
 #include "drv_lcd.h"
-#ifdef LPC_EXT_SDRAM
+
+#if LPC_EXT_SDRAM
 #include "drv_sdram.h"
 #include "drv_mpu.h"
 #endif
