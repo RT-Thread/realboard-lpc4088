@@ -33,15 +33,18 @@ void *sram_malloc(unsigned long size)
 {
     return rt_memheap_alloc(&system_heap, size);
 }
+RTM_EXPORT(sram_malloc);
 
 void sram_free(void *ptr)
 {
     rt_memheap_free(ptr);
 }
+RTM_EXPORT(sram_free);
 
 void *sram_realloc(void *ptr, unsigned long size)
 {
     return rt_memheap_realloc(&system_heap, ptr, size);
 }
+RTM_EXPORT(sram_realloc);
 
 #endif

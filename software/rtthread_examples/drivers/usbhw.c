@@ -77,12 +77,11 @@ uint32_t UDCA[USB_EP_NUM]__attribute__((section("USB_RAM")));                   
 uint32_t DD_NISO_Mem[4 * DD_NISO_CNT]__attribute__((section("USB_RAM")));          /* Non-Iso DMA Descriptor Memory */
 uint32_t DD_ISO_Mem [5 * DD_ISO_CNT]__attribute__((section("USB_RAM")));           /* Iso DMA Descriptor Memory */
 #endif /*__GNUC__*/
-uint32_t udca[USB_EP_NUM];                     /* UDCA saved values */
 
+uint32_t udca[USB_EP_NUM];                     /* UDCA saved values */
 uint32_t DDMemMap[2];                          /* DMA Descriptor Memory Usage */
 
 #endif
-
 
 /*
  *  Get Endpoint Physical Address
@@ -104,7 +103,6 @@ uint32_t EPAdr(uint32_t EPNum)
     return (val);
 }
 
-
 /*
  *  Write Command
  *    Parameters:      cmd:   Command
@@ -119,14 +117,12 @@ void WrCmd(uint32_t cmd)
     while ((LPC_USB->DevIntSt & CCEMTY_INT) == 0);
 }
 
-
 /*
  *  Write Command Data
  *    Parameters:      cmd:   Command
  *                     val:   Data
  *    Return Value:    None
  */
-
 void WrCmdDat(uint32_t cmd, uint32_t val)
 {
 
@@ -145,7 +141,6 @@ void WrCmdDat(uint32_t cmd, uint32_t val)
  *                     val:   Data
  *    Return Value:    None
  */
-
 void WrCmdEP(uint32_t EPNum, uint32_t cmd)
 {
 
@@ -157,13 +152,11 @@ void WrCmdEP(uint32_t EPNum, uint32_t cmd)
     while ((LPC_USB->DevIntSt & CCEMTY_INT) == 0);
 }
 
-
 /*
  *  Read Command Data
  *    Parameters:      cmd:   Command
  *    Return Value:    Data Value
  */
-
 uint32_t RdCmdDat(uint32_t cmd)
 {
 
@@ -173,13 +166,11 @@ uint32_t RdCmdDat(uint32_t cmd)
     return (LPC_USB->CmdData);
 }
 
-
 /*
  *  USB Initialize Function
  *   Called by the User to initialize USB
  *    Return Value:    None
  */
-
 void USB_Init(void)
 {
     /* if 1, use port 1 as device, if 0, use port2 as device. */
@@ -241,7 +232,6 @@ void USB_Init(void)
     USB_SetAddress(0);
 }
 
-
 /*
  *  USB Connect Function
  *   Called by the User to Connect/Disconnect USB
@@ -261,13 +251,11 @@ void USB_Connect(uint32_t con)
 #endif
 }
 
-
 /*
  *  USB Reset Function
  *   Called automatically on USB Reset
  *    Return Value:    None
  */
-
 void USB_Reset(void)
 {
 #if USB_DMA
@@ -306,42 +294,35 @@ void USB_Reset(void)
 #endif
 }
 
-
 /*
  *  USB Suspend Function
  *   Called automatically on USB Suspend
  *    Return Value:    None
  */
-
 void USB_Suspend(void)
 {
     /* Performed by Hardware */
 }
-
 
 /*
  *  USB Resume Function
  *   Called automatically on USB Resume
  *    Return Value:    None
  */
-
 void USB_Resume(void)
 {
     /* Performed by Hardware */
 }
-
 
 /*
  *  USB Remote Wakeup Function
  *   Called automatically on USB Remote Wakeup
  *    Return Value:    None
  */
-
 void USB_WakeUp(void)
 {
     WrCmdDat(CMD_SET_DEV_STAT, DAT_WR_BYTE(DEV_CON));
 }
-
 
 /*
  *  USB Remote Wakeup Configuration Function
@@ -354,29 +335,24 @@ void USB_WakeUpCfg(uint32_t cfg)
     /* Not needed */
 }
 
-
 /*
  *  USB Set Address Function
  *    Parameters:      adr:   USB Address
  *    Return Value:    None
  */
-
 void USB_SetAddress(uint32_t adr)
 {
     WrCmdDat(CMD_SET_ADDR, DAT_WR_BYTE(DEV_EN | adr)); /* Don't wait for next */
     WrCmdDat(CMD_SET_ADDR, DAT_WR_BYTE(DEV_EN | adr)); /*  Setup Status Phase */
 }
 
-
 /*
  *  USB Configure Function
  *    Parameters:      cfg:   Configure/Deconfigure
  *    Return Value:    None
  */
-
 void USB_Configure(uint32_t cfg)
 {
-
     WrCmdDat(CMD_CFG_DEV, DAT_WR_BYTE(cfg ? CONF_DVICE : 0));
 
     LPC_USB->ReEp = 0x00000003;
@@ -384,13 +360,11 @@ void USB_Configure(uint32_t cfg)
     LPC_USB->DevIntClr = EP_RLZED_INT;
 }
 
-
 /*
  *  Configure USB Endpoint according to Descriptor
  *    Parameters:      pEPD:  Pointer to Endpoint Descriptor
  *    Return Value:    None
  */
-
 void USB_ConfigEP(uep_desc_t pEPD)
 {
     uint32_t num;
@@ -403,18 +377,15 @@ void USB_ConfigEP(uep_desc_t pEPD)
     LPC_USB->DevIntClr = EP_RLZED_INT;
 }
 
-
 /*
  *  Set Direction for USB Control Endpoint
  *    Parameters:      dir:   Out (dir == 0), In (dir <> 0)
  *    Return Value:    None
  */
-
 void USB_DirCtrlEP(uint32_t dir)
 {
     /* Not needed */
 }
-
 
 /*
  *  Enable USB Endpoint
@@ -423,12 +394,10 @@ void USB_DirCtrlEP(uint32_t dir)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_EnableEP(uint32_t EPNum)
 {
     WrCmdDat(CMD_SET_EP_STAT(EPAdr(EPNum)), DAT_WR_BYTE(0));
 }
-
 
 /*
  *  Disable USB Endpoint
@@ -437,12 +406,10 @@ void USB_EnableEP(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_DisableEP(uint32_t EPNum)
 {
     WrCmdDat(CMD_SET_EP_STAT(EPAdr(EPNum)), DAT_WR_BYTE(EP_STAT_DA));
 }
-
 
 /*
  *  Reset USB Endpoint
@@ -451,12 +418,10 @@ void USB_DisableEP(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_ResetEP(uint32_t EPNum)
 {
     WrCmdDat(CMD_SET_EP_STAT(EPAdr(EPNum)), DAT_WR_BYTE(0));
 }
-
 
 /*
  *  Set Stall for USB Endpoint
@@ -465,12 +430,10 @@ void USB_ResetEP(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_SetStallEP(uint32_t EPNum)
 {
     WrCmdDat(CMD_SET_EP_STAT(EPAdr(EPNum)), DAT_WR_BYTE(EP_STAT_ST));
 }
-
 
 /*
  *  Clear Stall for USB Endpoint
@@ -479,12 +442,10 @@ void USB_SetStallEP(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_ClrStallEP(uint32_t EPNum)
 {
     WrCmdDat(CMD_SET_EP_STAT(EPAdr(EPNum)), DAT_WR_BYTE(0));
 }
-
 
 /*
  *  Clear USB Endpoint Buffer
@@ -493,12 +454,10 @@ void USB_ClrStallEP(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_ClearEPBuf(uint32_t EPNum)
 {
     WrCmdEP(EPNum, CMD_CLR_BUF);
 }
-
 
 /*
  *  Read USB Endpoint Data
@@ -508,7 +467,6 @@ void USB_ClearEPBuf(uint32_t EPNum)
  *                     pData: Pointer to Data Buffer
  *    Return Value:    Number of bytes read
  */
-
 uint32_t USB_ReadEP(uint32_t EPNum, uint8_t *pData)
 {
     uint32_t cnt, n;
@@ -537,7 +495,6 @@ uint32_t USB_ReadEP(uint32_t EPNum, uint8_t *pData)
     return (cnt);
 }
 
-
 /*
  *  Write USB Endpoint Data
  *    Parameters:      EPNum: Endpoint Number
@@ -547,7 +504,6 @@ uint32_t USB_ReadEP(uint32_t EPNum, uint8_t *pData)
  *                     cnt:   Number of bytes to write
  *    Return Value:    Number of bytes written
  */
-
 uint32_t USB_WriteEP(uint32_t EPNum, uint8_t *pData, uint32_t cnt)
 {
     uint32_t n;
@@ -567,11 +523,9 @@ uint32_t USB_WriteEP(uint32_t EPNum, uint8_t *pData, uint32_t cnt)
 }
 
 #if USB_DMA
-
 /* DMA Descriptor Memory Layout */
 const uint32_t DDAdr[2] = { DD_NISO_ADR, DD_ISO_ADR };
 const uint32_t DDSz [2] = { 16,          20         };
-
 
 /*
  *  Setup USB DMA Transfer for selected Endpoint
@@ -579,7 +533,6 @@ const uint32_t DDSz [2] = { 16,          20         };
  *                     pDD: Pointer to DMA Descriptor
  *    Return Value:    TRUE - Success, FALSE - Error
  */
-
 uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD)
 {
     uint32_t num, ptr, nxt, iso, n;
@@ -649,7 +602,6 @@ uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD)
     return (TRUE); /* Success */
 }
 
-
 /*
  *  Enable USB DMA Endpoint
  *    Parameters:      EPNum: Endpoint Number
@@ -657,12 +609,10 @@ uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_DMA_Enable(uint32_t EPNum)
 {
     LPC_USB->EpDMAEn = 1 << EPAdr(EPNum);
 }
-
 
 /*
  *  Disable USB DMA Endpoint
@@ -671,12 +621,10 @@ void USB_DMA_Enable(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    None
  */
-
 void USB_DMA_Disable(uint32_t EPNum)
 {
     LPC_USB->EpDMADis = 1 << EPAdr(EPNum);
 }
-
 
 /*
  *  Get USB DMA Endpoint Status
@@ -685,7 +633,6 @@ void USB_DMA_Disable(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    DMA Status
  */
-
 uint32_t USB_DMA_Status(uint32_t EPNum)
 {
     uint32_t ptr, val;
@@ -714,7 +661,6 @@ uint32_t USB_DMA_Status(uint32_t EPNum)
     return (USB_DMA_UNKNOWN);
 }
 
-
 /*
  *  Get USB DMA Endpoint Current Buffer Address
  *    Parameters:      EPNum: Endpoint Number
@@ -737,7 +683,6 @@ uint32_t USB_DMA_BufAdr(uint32_t EPNum)
     return (val);                             /* Current Address */
 }
 
-
 /*
  *  Get USB DMA Endpoint Current Buffer Count
  *   Number of transfered Bytes or Iso Packets
@@ -746,7 +691,6 @@ uint32_t USB_DMA_BufAdr(uint32_t EPNum)
  *                       EPNum.7:    Dir
  *    Return Value:    DMA Count (or -1 when DMA is Invalid)
  */
-
 uint32_t USB_DMA_BufCnt(uint32_t EPNum)
 {
     uint32_t ptr, val;
@@ -759,17 +703,13 @@ uint32_t USB_DMA_BufCnt(uint32_t EPNum)
     val = *((uint32_t *)(ptr + 3 * 4));       /* Status Information */
     return (val >> 16);                       /* Current Count */
 }
-
-
 #endif /* USB_DMA */
-
 
 /*
  *  Get USB Last Frame Number
  *    Parameters:      None
  *    Return Value:    Frame Number
  */
-
 uint32_t USB_GetFrame(void)
 {
     uint32_t val;
@@ -781,11 +721,9 @@ uint32_t USB_GetFrame(void)
     return (val);
 }
 
-
 /*
  *  USB Interrupt Service Routine
  */
-
 void USB_IRQHandler(void)
 {
     uint32_t disr, val, n, m;

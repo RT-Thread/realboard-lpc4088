@@ -20,6 +20,14 @@
 #include "LPC407x_8x_177x_8x.h"
 #include <rtthread.h>
 
+/* SRAM allocation for Peripherals */
+#define USB_RAM_BASE        0x20000000
+#define MCI_RAM_BASE        0x20002000
+#define ETH_RAM_BASE        0x20004000
+
+/* use SDRAM in default */
+#define LPC_EXT_SDRAM   1
+
 /* disable SDRAM in default */
 #ifndef LPC_EXT_SDRAM
 #define LPC_EXT_SDRAM       0

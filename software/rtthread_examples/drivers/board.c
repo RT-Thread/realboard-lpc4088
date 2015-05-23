@@ -177,10 +177,8 @@ int rt_hw_board_heap_init(void)
     return 0;
 }
 
-void MemManage_Handler(void)
+int SysGetCoreClock()
 {
-    extern void HardFault_Handler(void);
-
-    rt_kprintf("Memory Fault!\n");
-    HardFault_Handler();
+    return SystemCoreClock;
 }
+RTM_EXPORT(SysGetCoreClock);

@@ -14,6 +14,8 @@
  */
 
 #include <string.h>
+#include <board.h>
+
 #include "drv_sd.h"
 
 //#define MCI_TRACE
@@ -24,24 +26,24 @@
 #define MCI_DEBUG(...)
 #endif /* #ifdef MCI_TRACE */
 
-#define MCI_DMA_WRITE_CHANNEL            (0)
-#define MCI_DMA_READ_CHANNEL             (1)
-#define MAX_DMA_BLOCKS                   16
-#define DMA_MCI_SIZE                     MAX_DMA_BLOCKS*BLOCK_LENGTH
-#define MCI_ACMD41_HCS_POS                     (30)
+#define MCI_DMA_WRITE_CHANNEL               (0)
+#define MCI_DMA_READ_CHANNEL                (1)
+#define MAX_DMA_BLOCKS                      16
+#define DMA_MCI_SIZE                        MAX_DMA_BLOCKS*BLOCK_LENGTH
+#define MCI_ACMD41_HCS_POS                  (30)
 
-#define MCI_PWRCTRL_BMASK                      (0xC3)
+#define MCI_PWRCTRL_BMASK                   (0xC3)
 
-#define MCI_PWRCTRL_OPENDRAIN_POS              (6)
-#define MCI_PWRCTRL_OPENDRAIN_NUMBIT           (1)
-#define MCI_PWRCTRL_OPENDRAIN_BMASK            (0x01)
+#define MCI_PWRCTRL_OPENDRAIN_POS           (6)
+#define MCI_PWRCTRL_OPENDRAIN_NUMBIT        (1)
+#define MCI_PWRCTRL_OPENDRAIN_BMASK         (0x01)
 
 #define SDCARD_DET_VALUE ((LPC_GPIO2->PIN>>19)&0x01)
 
-volatile rt_uint8_t MCI_RAM_BASE[DMA_MCI_SIZE] SECTION("MCI_RAM");
+/* NOTE: MCI_RAM_BASE is defined in board.h */ 
 
 /* This is the area original data is stored or data to be written to the SD/MMC card. */
-#define MCI_DMA_SRC_ADDR        &MCI_RAM_BASE[0]
+#define MCI_DMA_SRC_ADDR        MCI_RAM_BASE
 /* This is the area, after reading from the SD/MMC*/
 #define MCI_DMA_DST_ADDR        (MCI_RAM_BASE + DMA_MCI_SIZE)
 
@@ -50,7 +52,6 @@ rt_uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 
 static struct mci_device *_mci_device;
 volatile rt_uint32_t CardRCA;
-
 
 volatile rt_uint8_t CCS;
 rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t DMAMode);
@@ -73,6 +74,7 @@ static void mci_tx_enable(rt_bool_t enable)
         LPC_MCI->MASK0 &= ~((DATA_END_INT_MASK) | (ERR_TX_INT_MASK));  /* disable TX interrupt*/
     }
 }
+
 static void mci_rx_enable(rt_bool_t enable)
 {
     if (RT_TRUE == enable)
@@ -84,6 +86,7 @@ static void mci_rx_enable(rt_bool_t enable)
         LPC_MCI->MASK0 &= ~((DATA_END_INT_MASK) | (ERR_RX_INT_MASK));  /* disable RX interrupt*/
     }
 }
+
 /*********************************************************************//**
  * @brief      Check if the card is in the given state.
  *@param       expect_status    expected status
@@ -137,9 +140,8 @@ static rt_err_t mci_check_status(uint8_t expect_status)
 
     return retval;
 }
+
 #if MCI_DMA_ENABLED
-
-
 rt_bool_t MCI_SettingDma(rt_uint8_t *memBuf, rt_uint32_t ChannelNum, rt_uint32_t DMAMode)
 {
     GPDMA_Channel_CFG_Type GPDMACfg;
@@ -245,6 +247,7 @@ void MCI_DMA_IRQHandler(void)
         }
     }
 }
+
 /**************************************************************************/
 /*!
     @brief DMA Handler
@@ -256,7 +259,6 @@ void DMA_IRQHandler(void)
     MCI_DMA_IRQHandler();
     rt_interrupt_leave();
 }
-
 #endif
 
 static void mci_set_clock(rt_uint32_t clk)
@@ -302,6 +304,7 @@ rt_err_t mci_set_buswidth(rt_uint32_t width)
     }
     return RT_EOK;
 }
+
 /************************************************************************//**
  * @brief         Set output in open drain mode or pushpull mode
  *
@@ -323,6 +326,7 @@ static void mci_set_outputMode(rt_uint32_t mode)
     }
     // rt_thread_delay(1);    /* delay 3MCLK + 2PCLK  */
 }
+
 void mci_process_ISR()
 {
     rt_uint32_t mci_status;
@@ -437,12 +441,14 @@ void mci_process_ISR()
     }
 
 }
+
 void MCI_IRQHandler(void)
 {
     rt_interrupt_enter();
     mci_process_ISR();
     rt_interrupt_leave();
 }
+
 rt_err_t mci_send_cmd(mci_cmd_t *cmd)
 {
     rt_uint32_t cmd_data = 0;
@@ -461,7 +467,6 @@ rt_err_t mci_send_cmd(mci_cmd_t *cmd)
         for (i = 0; i < 0x10; i++);      /* delay 3MCLK + 2PCLK  */
         LPC_MCI->CLEAR = cmd_status | MCI_CMD_ACTIVE;
     }
-
 
     /*set the command details, the CmdIndex should 0 through 0x3F only */
     cmd_data |= (command & 0x3F);    /* bit 0 through 5 only */
@@ -509,6 +514,7 @@ rt_err_t mci_send_cmd(mci_cmd_t *cmd)
     return RT_EOK;
 
 }
+
 rt_err_t mci_get_cmdresp(rt_uint32_t ExpectCmdData, rt_uint32_t ExpectResp, rt_uint32_t *CmdResp)
 {
     rt_uint32_t CmdRespStatus = 0;
@@ -597,14 +603,12 @@ rt_err_t mci_get_cmdresp(rt_uint32_t ExpectCmdData, rt_uint32_t ExpectResp, rt_u
     return RT_EOK;
 }
 
-
 rt_err_t mci_cmd_resp(mci_cmd_t *pCmdIf)
 {
     int32_t respStatus;
     rt_uint32_t CmdIndex = pCmdIf->command;
     rt_uint32_t ExpectResp = pCmdIf->expect_resp;
     rt_uint32_t *CmdResp = pCmdIf->cmd_resp;
-
 
     mci_send_cmd(pCmdIf);
 
@@ -620,7 +624,6 @@ rt_err_t mci_cmd_resp(mci_cmd_t *pCmdIf)
     return respStatus;
 }
 
-
 rt_err_t mci_card_reset(void)
 {
     mci_cmd_t cmdIf;
@@ -635,7 +638,6 @@ rt_err_t mci_card_reset(void)
 
     return RT_EOK;
 }
-
 
 /************************************************************************//**
  * @brief        Send CMD1 (SEND_OP_COND) to card.
@@ -686,7 +688,6 @@ rt_err_t mci_cmd_sendOpCond(void)
 
     return(retval);
 }
-
 
 /************************************************************************//**
  * @brief        Send CMD8 (SEND_IF_COND) for interface condition to card.
@@ -747,7 +748,6 @@ rt_err_t mci_cmd_sendIfCond(void)
 
     return retval;
 }
-
 
 /************************************************************************//**
  * @brief        Send CMD55 (APP_CMD) to indicate to the card that the next
@@ -810,7 +810,6 @@ rt_err_t mci_cmd_sendACMD(void)
 
     return retval;
 }
-
 
 /************************************************************************//**
  * @brief        Send ACMD41 (SEND_APP_OP_COND) to Host Capacity Support (HCS)
@@ -885,7 +884,6 @@ rt_err_t mci_acmd_sendOpCond(uint8_t hcsVal)
     return retval;
 }
 
-
 /************************************************************************//**
  * @brief         Get the all the Identifier (CID) of the card by sending the
  *                CMD2 (ALL_SEND_CID) command. Then parse 4-byte data obtained
@@ -955,7 +953,6 @@ rt_err_t mci_get_CID(mci_cid_t *cidValue)
 
     return RT_ETIMEOUT;
 }
-
 
 /************************************************************************//**
  * @brief        Set the address for the card in the slot by sending CMD3
@@ -1030,7 +1027,6 @@ rt_err_t mci_set_cardAddress(void)
 
     return retval;
 }
-
 
 /************************************************************************//**
  * @brief        Get the address for the card in the slot
@@ -1112,7 +1108,6 @@ rt_err_t mci_get_CSD(rt_uint32_t *csdVal)
     return RT_ERROR;
 }
 
-
 /************************************************************************//**
  * @brief       Select the card by the specified address. This is done by sending
  *              out the CMD7 with the address argument to needed card
@@ -1188,7 +1183,6 @@ rt_err_t mci_cmd_selectCard(void)
 
     return retval;
 }
-
 
 /************************************************************************//**
  * @brief         Get the status of the card. The return is from the card.
@@ -1308,7 +1302,6 @@ rt_err_t mci_set_blockLen(rt_uint32_t blockLength)
 
     return retval;
 }
-
 
 /************************************************************************//**
  * @brief         Set bus-width (1 bit or 4 bit) to work with the card by command
@@ -1513,9 +1506,6 @@ rt_err_t mci_cmd_write(rt_uint32_t blockNum, rt_uint32_t numOfBlock)
     return retval;                /* Fatal error */
 }
 
-
-
-
 /************************************************************************//**
  * @brief        Read blocks to card by sending CMD17 (READ_SINGLE_BLOCK) or
  *                CMD18 (READ_MULTIPLE_BLOCK) commands followed by the blocks of
@@ -1587,6 +1577,7 @@ rt_err_t mci_cmd_read(rt_uint32_t blockNum, rt_uint32_t numOfBlock)
 
     return retval;
 }
+
 /*-----------------------------------------------------------------------*/
 /* Get bits from an array
 /----------------------------------------------------------------------*/
@@ -1627,6 +1618,7 @@ static rt_uint32_t unstuff_bits(uint8_t *resp, rt_uint32_t start, rt_uint32_t si
 
     return ret;
 }
+
 /*-----------------------------------------------------------------------*/
 /* Swap buffer
 /----------------------------------------------------------------------*/
@@ -1642,6 +1634,7 @@ static void swap_buff(rt_uint8_t *buff, rt_uint32_t count)
         buff[count - i - 1] = tmp;
     }
 }
+
 static rt_err_t mci_read_config(void)
 {
     rt_uint32_t c_size, c_size_mult, read_bl_len;
@@ -1794,6 +1787,7 @@ static rt_err_t mci_read_config(void)
 
     return RT_EOK;
 }
+
 static rt_err_t rt_mci_init(rt_device_t dev)
 {
     rt_err_t result = RT_EOK;
@@ -1872,6 +1866,7 @@ _exit:
     rt_mutex_release(&_mci_device->lock);
     return result;
 }
+
 static rt_err_t rt_mci_open(rt_device_t dev, rt_uint16_t oflag)
 {
     return RT_EOK;
@@ -1881,7 +1876,6 @@ static rt_err_t rt_mci_close(rt_device_t dev)
 {
     return RT_EOK;
 }
-
 
 static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
@@ -2050,6 +2044,7 @@ static rt_err_t rt_mci_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
     return RT_EOK;
 }
+
 rt_err_t mci_hw_init(const char *device_name)
 {
     volatile rt_uint32_t i;
@@ -2165,4 +2160,3 @@ rt_err_t mci_hw_init(const char *device_name)
                        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE );
     return RT_EOK;
 }
-
