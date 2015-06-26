@@ -13,6 +13,11 @@
 
 #include "spi_wifi_rw009.h"
 
+#define WIFI_AP_SSID			"RW009 AP"
+#define WIFI_AP_CHANNEL			6
+#define WIFI_AP_SEC 			SECURITY_WPA2_MIXED_PSK // SECURITY_WEP_PSK SECURITY_WPA2_MIXED_PSK
+#define WIFI_AP_PASS			"12345678" // "12345678"
+
 extern void lpc_emac_hw_init(void);
 
 void rt_init_thread_entry(void *parameter)
@@ -24,10 +29,14 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_LWIP
     /* initialize eth interface */
-    rt_hw_wifi_init("spi01");
-
+    rt_hw_wifi_init("spi01", MODE_STATION); // MODE_STATION MODE_SOFTAP
     rw009_join("you_AP", "you_passwd");
-#endif
+	set_if("w0", "192.168.1.30", "192.168.1.1", "255.255.255.0");
+	
+    //rt_hw_wifi_init("spi01", MODE_SOFTAP); // MODE_STATION MODE_SOFTAP
+	//rw009_softap(WIFI_AP_SSID, WIFI_AP_PASS, WIFI_AP_SEC, WIFI_AP_CHANNEL);
+	//dhcpd_start();
+#endif /* RT_USING_LWIP */
 }
 
 int rt_application_init()
