@@ -12,7 +12,7 @@
   WIFI_MOSI <---> P2_27
   WIFI_MISO <---> P2_26
   WIFI_SCK  <---> P2_22
-  WIFI_CS   <---> P2_24
+  WIFI_CS   <---> P0_26
   WIFI_RST  <---> P2_21
   WIFI_IRQ  <---> P2_25
   WIFI_GND  <---> GND
