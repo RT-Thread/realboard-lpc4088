@@ -142,7 +142,7 @@ static rt_size_t lpc_i2c_recv_bytes(LPC_I2C_TypeDef *I2Cx, struct rt_i2c_msg *ms
             i2c_dbg("i2c recv error on the byte of %d,send ack error!\n", bytes);
             return bytes;
         }
-        else if (I2C_I2STAT_M_RX_DAT_NACK != stat)
+        else if ( (len == 0) && (I2C_I2STAT_M_RX_DAT_NACK != stat) )
         {
             i2c_dbg("i2c recv error on the byte of %d,send nack error!\n", bytes);
             return bytes;
