@@ -108,7 +108,7 @@
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
 // #define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-#define RT_USING_PTHREADS
+//#define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -251,6 +251,9 @@
 //#define RTGUI_USING_HW_CURSOR
 
 // </section>
+
+#define LWIP_IP_ACCEPT_UDP_PORT(port) ((port) == PP_NTOHS(67) \
+                                       || (port) == PP_NTOHS(1900) )
 
 // </RDTConfigurator>
 

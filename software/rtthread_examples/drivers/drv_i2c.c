@@ -19,6 +19,70 @@
 
 #ifdef RT_USING_I2C
 
+#ifdef RT_USING_I2C_BITOPS
+
+struct stm32_i2c_bit_data
+{
+    struct {
+        LPC_GPIO_TypeDef *port;
+        uint8_t     pin;
+    } scl, sda;
+};
+
+static void gpio_set_sda(void *data, rt_int32_t state)
+{
+    struct stm32_i2c_bit_data *bd = data;
+
+    if (state)
+    {
+        bd->sda.port->SET = (1<<bd->sda.pin);
+    }
+    else
+    {
+        bd->sda.port->CLR = (1<<bd->sda.pin);
+    }
+}
+
+static void gpio_set_scl(void *data, rt_int32_t state)
+{
+    struct stm32_i2c_bit_data *bd = data;
+
+    if (state)
+    {
+        bd->scl.port->SET = (1<<bd->scl.pin);
+    }
+    else
+    {
+        bd->scl.port->CLR = (1<<bd->scl.pin);
+    }
+}
+
+static rt_int32_t gpio_get_sda(void *data)
+{
+    struct stm32_i2c_bit_data *bd = data;
+
+    return (bd->sda.port->PIN >> bd->sda.pin) & 0x01;
+}
+
+static rt_int32_t gpio_get_scl(void *data)
+{
+    struct stm32_i2c_bit_data *bd = data;
+
+    return (bd->scl.port->PIN >> bd->scl.pin) & 0x01;
+}
+
+static void gpio_udelay(rt_uint32_t us)
+{
+    volatile rt_int32_t i;
+    for (; us > 0; us--)
+    {
+        i = 10;
+        while (i--);
+    }
+}
+
+#else /* RT_USING_I2C_BITOPS */
+
 struct lpc_i2c_bus
 {
     struct rt_i2c_bus_device parent;
@@ -78,7 +142,7 @@ static rt_size_t lpc_i2c_recv_bytes(LPC_I2C_TypeDef *I2Cx, struct rt_i2c_msg *ms
             i2c_dbg("i2c recv error on the byte of %d,send ack error!\n", bytes);
             return bytes;
         }
-        else if (I2C_I2STAT_M_RX_DAT_NACK != stat)
+        else if ( (len == 0) && (I2C_I2STAT_M_RX_DAT_NACK != stat) )
         {
             i2c_dbg("i2c recv error on the byte of %d,send nack error!\n", bytes);
             return bytes;
@@ -273,23 +337,68 @@ rt_err_t lpc_i2c_register(LPC_I2C_TypeDef *I2Cx,
 
     return  rt_i2c_bus_device_register(&lpc_i2c->parent, spi_bus_name);
 }
+#endif /* RT_USING_I2C_BITOPS */
 
-void rt_hw_i2c_init(void)
+int rt_hw_i2c_init(void)
 {
+#ifdef RT_USING_I2C_BITOPS
+    /* register I2C1: SCL/P0_20 SDA/P0_19 */
+    {
+        static struct rt_i2c_bus_device i2c_device;
+
+        static const struct stm32_i2c_bit_data _i2c_bdata =
+        {
+            /* SCL */ {LPC_GPIO0, 20},
+            /* SDA */ {LPC_GPIO0, 19},
+        };
+
+        static const struct rt_i2c_bit_ops _i2c_bit_ops =
+        {
+            (void*)&_i2c_bdata,
+            gpio_set_sda,
+            gpio_set_scl,
+            gpio_get_sda,
+            gpio_get_scl,
+
+            gpio_udelay,
+
+            5,
+            100
+        };
+
+        LPC_IOCON->P0_19 = (1<<10) | (1<<5) | 0; // OD,HYS,GPIO
+        LPC_IOCON->P0_20 = (1<<10) | (1<<5) | 0; // OD,HYS,GPIO
+
+        _i2c_bdata.scl.port->SET = (1<<_i2c_bdata.scl.pin);
+        _i2c_bdata.sda.port->SET = (1<<_i2c_bdata.sda.pin);
+        _i2c_bdata.scl.port->DIR |= (1<<_i2c_bdata.scl.pin);
+        _i2c_bdata.sda.port->DIR |= (1<<_i2c_bdata.sda.pin);
+
+        i2c_device.priv = (void *)&_i2c_bit_ops;
+        rt_i2c_bit_add_bus(&i2c_device, "i2c1");
+    } /* register I2C */
+
+
+#else /* RT_USING_I2C_BITOPS */
     static struct lpc_i2c_bus lpc_i2c1;
     LPC_IOCON->P0_19 &= ~0x1F;    /*  I2C I/O config */
     LPC_IOCON->P0_19 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SDA */
     LPC_IOCON->P0_20 &= ~0x1F;
     LPC_IOCON->P0_20 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SCL */
-    i2c_set_clock(LPC_I2C1, 400000);
+    i2c_set_clock(LPC_I2C1, 100000);
     /* set I2C1 operation to default */
     LPC_I2C1->CONCLR = (I2C_I2CONCLR_AAC | I2C_I2CONCLR_STAC | I2C_I2CONCLR_I2ENC);
     /* enable I2C0 and work in MASTER MODE */
     LPC_I2C1->CONSET = I2C_I2CONSET_I2EN;
-
-
+    rt_i2c_core_init();
     rt_memset((void *)&lpc_i2c1, 0, sizeof(struct lpc_i2c_bus));
     lpc_i2c1.parent.ops = &i2c_ops;
     lpc_i2c_register(LPC_I2C1, &lpc_i2c1, "i2c1");
+
+#endif /* RT_USING_I2C_BITOPS */
+
+    return 0;
 }
-#endif
+INIT_DEVICE_EXPORT(rt_hw_i2c_init);
+
+#endif /* RT_USING_I2C */

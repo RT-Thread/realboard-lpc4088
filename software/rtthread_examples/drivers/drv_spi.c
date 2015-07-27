@@ -294,14 +294,16 @@ int rt_hw_spi_init(void)
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi00", "spi0", (void *)&spi_cs1);
     }
+
     /* attach cs */
     {
         static struct rt_spi_device spi_device;
         static struct lpc_spi_cs  spi_cs1;
-        /* spi20: P2.24 */
-        LPC_IOCON->P2_24 &= ~0x07;
-        spi_cs1.port = LPC_GPIO2;
-        spi_cs1.pin = 24;
+
+        /* spi01: P0.26, RW009 WIFI. */
+        LPC_IOCON->P0_26 &= ~0x07;
+        spi_cs1.port = LPC_GPIO0;
+        spi_cs1.pin = 26;
         spi_cs1.port->DIR |= (0x01 << spi_cs1.pin);
         spi_cs1.port->SET |= (0x01 << spi_cs1.pin);
         rt_spi_bus_attach_device(&spi_device, "spi01", "spi0", (void *)&spi_cs1);
