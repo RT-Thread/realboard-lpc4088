@@ -385,12 +385,12 @@ int rt_hw_i2c_init(void)
     LPC_IOCON->P0_19 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SDA */
     LPC_IOCON->P0_20 &= ~0x1F;
     LPC_IOCON->P0_20 |= (0x03 | (0x1 << 10)); /* make it open-drain, I2C SCL */
-    i2c_set_clock(LPC_I2C1, 100000);
+    i2c_set_clock(LPC_I2C1, 400000);
     /* set I2C1 operation to default */
     LPC_I2C1->CONCLR = (I2C_I2CONCLR_AAC | I2C_I2CONCLR_STAC | I2C_I2CONCLR_I2ENC);
     /* enable I2C0 and work in MASTER MODE */
     LPC_I2C1->CONSET = I2C_I2CONSET_I2EN;
-    rt_i2c_core_init();
+
     rt_memset((void *)&lpc_i2c1, 0, sizeof(struct lpc_i2c_bus));
     lpc_i2c1.parent.ops = &i2c_ops;
     lpc_i2c_register(LPC_I2C1, &lpc_i2c1, "i2c1");

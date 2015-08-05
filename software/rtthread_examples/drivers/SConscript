@@ -45,7 +45,7 @@ if GetDepend('RT_USING_I2C') == True:
 if GetDepend('RT_USING_RTGUI') == True:
 	src += ['drv_lcd.c']
 	src += ['drv_key.c']
-	src += ['drv_touch.c']
+	src += ['drv_touch.c', 'drv_ft6206.c', 'drv_tsc2046.c']
 # add 
 if GetDepend('RT_USING_USBD') == True:
 	src += ['usbhw.c']
