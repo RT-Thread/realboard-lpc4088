@@ -11,7 +11,7 @@ static rt_bool_t filesystem_checking(void)
 {
     DIR *r;
 
-    startup_log("checking file system...");
+    startup_log("checking file system...\n");
     r = opendir("/");
     if (r == RT_NULL)
         return RT_FALSE;

@@ -1,9 +1,10 @@
+#include <rtthread.h>
 #include <components.h>
 
 int mountnfs(const char * path, const char* export_dir)
 {
     const char * mountpath = "/";
-    if (path != NULL) mountpath = path;
+    if (path != RT_NULL) mountpath = path;
 
     rt_kprintf("mount nfs:%s to %s...", export_dir, mountpath);
     if (dfs_mount(RT_NULL, mountpath, "nfs", 0, export_dir) == 0)

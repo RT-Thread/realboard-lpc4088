@@ -33,13 +33,11 @@
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
 #define RT_USING_HOOK
 // <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
-// #define RT_USING_TIMER_SOFT
+#define RT_USING_TIMER_SOFT
 // <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
 #define RT_TIMER_THREAD_PRIO	4
 // <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
 #define RT_TIMER_THREAD_STACK_SIZE	512
-// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND	100
 // </section>
 
 // <section name="IPC" description="Inter-Thread communication" default="always" >
@@ -86,6 +84,7 @@
 #define RT_USING_SPI
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
 #define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
 #define RT_USING_RTC
 // <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
@@ -110,11 +109,13 @@
 #define FINSH_THREAD_STACK_SIZE	4096
 // <bool name="FINSH_USING_MSH" description="Using module shell in finsh" default="true" />
 #define FINSH_USING_MSH
+// <bool name="FINSH_USING_MSH_DEFAULT" description="Using module shell as default shell" default="true" />
+#define FINSH_USING_MSH_DEFAULT
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
@@ -128,7 +129,7 @@
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	4
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX	         16
+#define DFS_FD_MAX	         32
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
@@ -180,13 +181,13 @@
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
 // <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
-#define RT_LWIP_PBUF_NUM	4
+#define RT_LWIP_PBUF_NUM	8
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
-#define RT_LWIP_TCP_PCB_NUM	3
+#define RT_LWIP_TCP_PCB_NUM	8
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF	4086
+#define RT_LWIP_TCP_SND_BUF	8192
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
-#define RT_LWIP_TCP_WND	2048
+#define RT_LWIP_TCP_WND	4096
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
@@ -229,7 +230,7 @@
 // <bool name="RTGUI_USING_FONT16" description="support 16 weight font" default="true" />
 #define RTGUI_USING_FONT16
 // <bool name="RTGUI_USING_FONT12" description="support 12 weight font" default="true" />
-// #define RTGUI_USING_FONT12
+#define RTGUI_USING_FONT12
 // <bool name="RTGUI_USING_FONTHZ" description="support Chinese font" default="true" />
 #define RTGUI_USING_FONTHZ
 // <integer name="RTGUI_DEFAULT_FONT_SIZE" description="default font size in RT-Thread/GUI" default="16" />
@@ -257,6 +258,7 @@
 #define RTGUI_IMAGE_LODEPNG
 
 #define RTGUI_USING_NOTEBOOK_IMAGE
+#define RTGUI_SVR_THREAD_STACK_SIZE  4096
 // <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
 //#define RTGUI_USING_HW_CURSOR
 // <bool name="RTGUI_USING_CALI" description="Using calibration application in rtGUI" default="true" />
@@ -268,5 +270,8 @@
 
 /* enable SDRAM */
 #define LPC_EXT_SDRAM	1
+#define RT_USING_SPIFI
+
+#define RT_USING_LOGTRACE
 
 #endif
