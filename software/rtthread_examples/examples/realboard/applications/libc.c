@@ -15,6 +15,7 @@ RTM_EXPORT(strtol);
 
 RTM_EXPORT(memcpy);
 RTM_EXPORT(memcmp);
+RTM_EXPORT(memmove);
 RTM_EXPORT(memset);
 
 RTM_EXPORT(toupper);
