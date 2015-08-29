@@ -295,6 +295,10 @@ static void _touch_session()
         emouse.button = RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN;
         emouse.x = tpd.pts[0].x;
         emouse.y = tpd.pts[0].y;
+        emouse.ts = rt_tick_get();
+        emouse.id = emouse.ts;
+        if (emouse.id == 0)
+            emouse.id = 1;
         rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 
         do {
@@ -306,6 +310,7 @@ static void _touch_session()
             emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
             emouse.x = tpd.pts[0].x;
             emouse.y = tpd.pts[0].y;
+            emouse.ts = rt_tick_get();
             rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 
         } while (_ft6206_touched());
@@ -316,6 +321,7 @@ static void _touch_session()
         emouse.button = RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP;
         emouse.x = tpd.pts[0].x;
         emouse.y = tpd.pts[0].y;
+        emouse.ts = rt_tick_get();
         rtgui_server_post_event(&emouse.parent, sizeof(emouse));
     } while (rt_sem_take(&_tp_sem, TOUCH_SLP_TIME) == RT_EOK);
 }
