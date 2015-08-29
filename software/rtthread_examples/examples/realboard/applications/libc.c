@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include <rtm.h>
 
@@ -20,3 +21,6 @@ RTM_EXPORT(memset);
 
 RTM_EXPORT(toupper);
 RTM_EXPORT(atoi);
+
+RTM_EXPORT(localtime);
+RTM_EXPORT(time);
