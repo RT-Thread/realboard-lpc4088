@@ -69,6 +69,13 @@ void rt_hw_board_init()
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
+#ifdef USE_SPIFI_LIB
+    {
+        extern void SPIFI_Init(void);
+        SPIFI_Init();
+    }
+#endif
+
 #if LPC_EXT_SDRAM == 1
     lpc_sdram_hw_init();
     mpu_init();

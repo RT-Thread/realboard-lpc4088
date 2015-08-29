@@ -38,3 +38,7 @@
 JLinkLog.txt
 JLinkSettings.ini
 build
+
+*.uvopt
+*.uvproj
+examples

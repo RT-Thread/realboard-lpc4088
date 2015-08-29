@@ -1,0 +1,15 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+SPIFI.c
+''')
+CPPPATH = [cwd]
+CPPDEFINES = ['USE_SPIFI_LIB']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS=['spifi_drv_M4'], LIBPATH=[cwd])
+
+Return('group')
