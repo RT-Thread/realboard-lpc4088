@@ -1,0 +1,28 @@
+# for module compiling
+import os
+Import('RTT_ROOT')
+
+cwd = str(Dir('#'))
+objs = []
+list = os.listdir(cwd)
+
+# Add CMSIS and NXP chip level drivers
+objs += SConscript(cwd + "/../../libraries/SConscript")
+# Add RT-Thread lowlevel drivers
+objs += SConscript(cwd + "/../../drivers/SConscript", variant_dir='drivers',
+                       duplicate=0)
+# Add RTGUI
+if os.getenv('RTT_RTGUI'):
+    RTT_RTGUI = os.getenv('RTT_RTGUI')
+else:
+    print 'Please set RTT_RTGUI directory.'
+    exit (0)
+
+objs += SConscript(RTT_RTGUI + '/SConscript', variant_dir='rtgui', duplicate = 0)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')

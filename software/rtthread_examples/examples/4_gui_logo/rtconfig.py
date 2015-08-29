@@ -1,0 +1,138 @@
+import os
+
+# toolchains options
+ARCH='arm'
+CPU='cortex-m4'
+CROSS_TOOL='keil'
+RTT_ROOT=os.getenv('RTT_ROOT')
+
+# get setting from environment.
+if os.getenv('RTT_CC'):
+        CROSS_TOOL = os.getenv('RTT_CC')
+
+# cross_tool provides the cross compiler
+# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
+if  CROSS_TOOL == 'gcc':
+	PLATFORM 	= 'gcc'
+	EXEC_PATH 	= r'C:/Program Files/CodeSourcery/arm-none-eabi/bin'
+	EXEC_PATH 	= r'E:\bernard\tools\gcc-arm-none-eabi-4_9-2015q1-20150306-win32\bin'
+elif CROSS_TOOL == 'keil':
+	PLATFORM 	= 'armcc'
+	EXEC_PATH 	= r'E:/Keil'
+	EXEC_PATH 	= r'C:/Keil_MDK_471'
+elif CROSS_TOOL == 'iar':
+	PLATFORM 	= 'iar'
+	IAR_PATH 	= r'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
+#
+BUILD = 'release'
+
+if PLATFORM == 'gcc':
+    # toolchains
+    PREFIX = 'arm-none-eabi-'
+    CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    TARGET_EXT = 'elf'
+    SIZE = PREFIX + 'size'
+    OBJDUMP = PREFIX + 'objdump'
+    OBJCPY = PREFIX + 'objcopy'
+    STRIP = PREFIX + 'strip'
+
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE 
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc40x.map,-cref,-u,Reset_Handler -T lpc40xx_rom.ld'
+
+    CPATH = ''
+    LPATH = ''
+
+    if BUILD == 'debug':
+        CFLAGS += ' -O0 -gdwarf-2'
+        AFLAGS += ' -gdwarf-2'
+    else:
+        CFLAGS += ' -O2'
+
+    # module setting 
+    CXX_FLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
+    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
+    M_CXXFLAGS = CXX_FLAGS + ' -mlong-calls -fPIC'
+    M_LFLAGS = DEVICE + CXX_FLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+                                    ' -shared -fPIC -nostartfiles -static-libgcc'
+    M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
+
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
+elif PLATFORM == 'armcc':
+    # toolchains
+    CC = 'armcc'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --device DARMSTM'
+    CFLAGS = DEVICE + ' --apcs=interwork'
+    AFLAGS = DEVICE
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc40xx.map --scatter rtthread-lpc408x.sct'
+
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+
+    EXEC_PATH += '/arm/bin40/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O0'
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'iar':
+    # toolchains
+    CC = 'iccarm'
+    AS = 'iasmarm'
+    AR = 'iarchive'
+    LINK = 'ilinkarm'
+    TARGET_EXT = 'out'
+
+    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
+
+    CFLAGS = DEVICE
+    CFLAGS += ' --diag_suppress Pa050'
+    CFLAGS += ' --no_cse' 
+    CFLAGS += ' --no_unroll' 
+    CFLAGS += ' --no_inline' 
+    CFLAGS += ' --no_code_motion' 
+    CFLAGS += ' --no_tbaa' 
+    CFLAGS += ' --no_clustering' 
+    CFLAGS += ' --no_scheduling' 
+    CFLAGS += ' --debug' 
+    CFLAGS += ' --endian=little' 
+    CFLAGS += ' --cpu=Cortex-M4' 
+    CFLAGS += ' -e' 
+    CFLAGS += ' --fpu=None'
+    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' -Ol'    
+    CFLAGS += ' --use_c++_inline'
+        
+    AFLAGS = ''
+    AFLAGS += ' -s+' 
+    AFLAGS += ' -w+' 
+    AFLAGS += ' -r' 
+    AFLAGS += ' --cpu Cortex-M4' 
+    AFLAGS += ' --fpu None' 
+
+    LFLAGS = ' --config lpc40xx_flash.icf'
+    LFLAGS += ' --redirect _Printf=_PrintfTiny' 
+    LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
+    LFLAGS += ' --entry __iar_program_start'    
+
+    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    POST_ACTION = ''
