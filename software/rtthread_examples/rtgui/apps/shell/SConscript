@@ -1,0 +1,8 @@
+Import('RTT_ROOT')
+from building import *
+
+src = Glob('*.c')
+
+group = DefineGroup('RTGUI', src, depend = ['RTGUI_USING_APP_SHELL'], CPPPATH=[GetCurrentDir()])
+
+Return('group')
