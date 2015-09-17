@@ -15,10 +15,10 @@ objs += SConscript(cwd + "/../../drivers/SConscript", variant_dir='drivers',
 if os.getenv('RTT_RTGUI'):
     RTT_RTGUI = os.getenv('RTT_RTGUI')
 else:
-    print 'Please set RTT_RTGUI directory.'
-    exit (0)
+    RTT_RTGUI = os.path.abspath(os.path.join(cwd, '..', '..', 'rtgui'))
 
-objs += SConscript(RTT_RTGUI + '/SConscript', variant_dir='rtgui', duplicate = 0)
+print 'RTT_RTGUI=', RTT_RTGUI
+objs += SConscript(RTT_RTGUI + '/SConscript', duplicate = 0)
 
 for d in list:
     path = os.path.join(cwd, d)
