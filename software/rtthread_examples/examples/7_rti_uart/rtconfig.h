@@ -16,14 +16,8 @@
 #define RT_THREAD_PRIORITY_MAX	32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
 #define RT_TICK_PER_SECOND	100
-// <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
-#define IDLE_THREAD_STACK_SIZE	512
-// <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
-#define RT_USING_MODULE
-// <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
+// <section name="RT_DEBUG" description="Kernel Debug Configuration, enable it to open assertions for run-time checking" default="true" >
 #define RT_DEBUG
-// <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
-#define RT_DEBUG_INIT   0
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -74,22 +68,8 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
-// <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
-#define RT_UART_RX_BUFFER_SIZE    2048
-// <bool name="RT_USING_MTD_NAND" description="Using MTD NAND Framework" default="true" />
-#define RT_USING_MTD_NAND
-// <bool name="RT_MTD_NAND_DEBUG" description="Enable MTD NAND Framework Debug" default="true" />
-#define RT_MTD_NAND_DEBUG
-// <bool name="RT_USING_NFTL" description="Using NFTL layer" default="true" />
-#define RT_USING_NFTL
-// <bool name="RT_USING_SPI" description="Using SPI Device Driver Framework" default="true" />
-#define RT_USING_SPI
-// <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
-#define RT_USING_I2C
-// <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
-#define RT_USING_RTC
-// <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
-#define RT_MMCSD_THREAD_PREORITY	15
+// </section>
+
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
@@ -108,33 +88,25 @@
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
 #define FINSH_THREAD_STACK_SIZE	4096
-// <bool name="FINSH_USING_MSH" description="Using module shell in finsh" default="true" />
-#define FINSH_USING_MSH
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-#define RT_USING_DFS
+// #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-#define DFS_USING_WORKDIR
-// <integer name="DFS_FILESYSTEM_TYPES_MAX" description="The maximal number of the supported file system type" default="4" />
-#define DFS_FILESYSTEM_TYPES_MAX  4
+// #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
-#define DFS_FILESYSTEMS_MAX	4
+#define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX	         16
+#define DFS_FD_MAX	4
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
-// <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
-#define RT_DFS_ELM_DRIVES    4
-// <bool name="RT_DFS_ELM_REENTRANT" description="Support reentrant" default="true" />
-#define RT_DFS_ELM_REENTRANT
 // <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
 // <item description="LFN with static LFN working buffer">1</item>
 // <item description="LFN with dynamic LFN working buffer on the stack">2</item>
@@ -156,19 +128,15 @@
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
 // #define RT_USING_DFS_UFFS
 // <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-#define RT_USING_DFS_DEVFS
-// <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
-//#define RT_USING_DFS_ROMFS
-// <bool name="RT_USING_DFS_NFS" description="Using NFS" default="false" />
-#define RT_USING_DFS_NFS
-// <string name="RT_NFS_HOST_EXPORT" description="The exported NFS host path" default="192.168.1.10:/" />
-#define RT_NFS_HOST_EXPORT  "192.168.1.20:/"
+// #define RT_USING_DFS_DEVFS
+// <bool name="RT_USING_DFS_NFS" description="Using NFS v3 client file system" default="false" />
+// #define RT_USING_DFS_NFS
+// <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />
+#define RT_NFS_HOST_EXPORT	"192.168.1.5:/"
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-#define RT_USING_LWIP
-// <bool name="RT_USING_LWIP141" description="Using lwIP 1.4.1 version" default="true" />
-#define RT_USING_LWIP141
+// #define RT_USING_LWIP
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
@@ -221,7 +189,7 @@
 // </section>
 
 // <section name="RT_USING_RTGUI" description="RT-Thread/GUI" default="true" >
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
 // <integer name="RTGUI_NAME_MAX" description="the name size of RT-Thread/GUI widget/objects" default="12" />
 #define RTGUI_NAME_MAX	12
 // <bool name="RTGUI_USING_SMALL_SIZE" description="use small size in RT-Thread/GUI" default="true" />
@@ -235,32 +203,13 @@
 // <integer name="RTGUI_DEFAULT_FONT_SIZE" description="default font size in RT-Thread/GUI" default="16" />
 #define RTGUI_DEFAULT_FONT_SIZE	16
 // <bool name="RTGUI_USING_DFS_FILERW" description="use RT-Thread/DFS as file interface" default="true" />
-#define RTGUI_USING_DFS_FILERW
+// #define RTGUI_USING_DFS_FILERW
 // <bool name="RTGUI_USING_HZ_BMP" description="use Chinese font bitmap engine" default="true" />
-//#define RTGUI_USING_HZ_BMP
+#define RTGUI_USING_HZ_BMP
 // <bool name="RTGUI_USING_HZ_FILE" description="use font file as Chinese font" default="false" />
-#define RTGUI_USING_HZ_FILE
+// #define RTGUI_USING_HZ_FILE
 // <bool name="RTGUI_USING_MOUSE_CURSOR" description="use mouse cursor" default="false" />
 // #define RTGUI_USING_MOUSE_CURSOR
-
-// <bool name="RTGUI_IMAGE_XPM" description="support XPM image format" default="true" />
-#define RTGUI_IMAGE_XPM
-// <bool name="RTGUI_IMAGE_BMP" description="support BMP image format" default="true" />
-#define RTGUI_IMAGE_BMP
-// <bool name="RTGUI_IMAGE_JPEG" description="support JPEG image format with libjpg" default="false" />
-// #define RTGUI_IMAGE_JPEG
-// <bool name="RTGUI_IMAGE_TJPGD" description="support JPEG image format with TJPGD" default="true" />
-#define RTGUI_IMAGE_TJPGD
-// <bool name="RTGUI_IMAGE_PNG" description="support PNG image format with libpng" default="false" />
-// #define RTGUI_IMAGE_PNG
-// <bool name="RTGUI_IMAGE_LODEPNG" description="support PNG image format with LodePNG" default="true" />
-#define RTGUI_IMAGE_LODEPNG
-
-#define RTGUI_USING_NOTEBOOK_IMAGE
-// <bool name="RTGUI_USING_HW_CURSOR" description="Using hardware cursor in RTGUI" default="true" />
-//#define RTGUI_USING_HW_CURSOR
-// <bool name="RTGUI_USING_CALI" description="Using calibration application in rtGUI" default="true" />
-#define RTGUI_USING_CALI
 // </section>
 #define RT_USING_RTI
 // </RDTConfigurator>

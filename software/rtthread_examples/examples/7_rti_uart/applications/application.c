@@ -17,15 +17,13 @@
 #include <board.h>
 #include <components.h>
 
-extern void realtouch_ui_init(void);
 extern void rti_stub_init(void);
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
 	rt_components_init();
-  rti_stub_init();
-	/* startup rtgui realtouch ui */
-	realtouch_ui_init();
+
+	rti_stub_init();
 }
 
 int rt_application_init(void)

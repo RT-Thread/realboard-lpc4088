@@ -40,6 +40,8 @@ void rti_put_chunk(rt_uint8_t *chunk);
 void rti_no_buffer(void);
 void rti_has_buffer(void);
 
+void rti_get_sysinfo(void);
+
 /* rti command */
 void rti_tx(rt_uint8_t* ptr, rt_uint32_t size);
 
