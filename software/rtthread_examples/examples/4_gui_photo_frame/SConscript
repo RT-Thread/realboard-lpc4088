@@ -11,6 +11,14 @@ objs += SConscript(cwd + "/../../libraries/SConscript")
 # Add RT-Thread lowlevel drivers
 objs += SConscript(cwd + "/../../drivers/SConscript", variant_dir='drivers',
                        duplicate=0)
+# Add RTGUI
+if os.getenv('RTT_RTGUI'):
+    RTT_RTGUI = os.getenv('RTT_RTGUI')
+else:
+    RTT_RTGUI = os.path.abspath(os.path.join(cwd, '..', '..', 'rtgui'))
+
+print 'RTT_RTGUI=', RTT_RTGUI
+objs += SConscript(RTT_RTGUI + '/SConscript', duplicate = 0)
 
 for d in list:
     path = os.path.join(cwd, d)
