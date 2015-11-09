@@ -30,6 +30,10 @@
 #include <components.h>
 #endif
 
+#ifdef RT_USING_SPI
+#include <drv_spi.h>
+#endif
+
 /**
  * This is the timer interrupt service routine.
  *
@@ -83,9 +87,13 @@ void rt_hw_board_init()
 #ifdef RT_USING_USBH
     lpc_usbh_register();
 #endif
+#ifdef RT_USING_SPI
+    rt_hw_spi_init();
+#endif
 #ifdef RT_USING_COMPONENTS_INIT
     /* initialization board with RT-Thread Components */
-    rt_components_board_init();
+    // BUG: the rti feature is wrong under armcc
+    // rt_components_board_init();
 #endif
 }
 
