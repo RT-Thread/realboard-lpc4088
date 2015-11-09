@@ -6,10 +6,6 @@
 *.crf
 *.lst
 
-# Libraries
-*.lib
-*.a
-
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
@@ -41,4 +37,4 @@ build
 
 *.uvopt
 *.uvproj
-examples
+software/rtthread_examples/examples/9_*

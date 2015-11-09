@@ -1,5 +1,5 @@
 /*
-  次demo用于演示elmfs，程序将tf卡挂载到系统根目录
+ * FAT filesystem on SDCard
  */
 #include <board.h>
 #include <rtthread.h>
@@ -14,20 +14,17 @@
 
 #include "components.h"
 
-
-
 void rt_init_thread_entry(void* parameter)
 {
-	
 #ifdef RT_USING_COMPONENTS_INIT
     /* initialization RT-Thread Components */
     rt_components_init();
 #endif
-	
-	{
-		extern rt_err_t mci_hw_init(const char *device_name);
-		mci_hw_init("sd0");
-	}	
+
+    {
+        extern rt_err_t mci_hw_init(const char *device_name);
+        mci_hw_init("sd0");
+    }
 
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
@@ -43,8 +40,6 @@ void rt_init_thread_entry(void* parameter)
 #endif
     }
 #endif
-
-    /* do some thing here. */
 }
 
 int rt_application_init()
@@ -54,9 +49,9 @@ int rt_application_init()
     tid = rt_thread_create("init",
         rt_init_thread_entry, RT_NULL,
         2048, RT_THREAD_PRIORITY_MAX/3, 20);//
-	
+
     if (tid != RT_NULL)
         rt_thread_startup(tid);
-	
+
     return 0;
 }

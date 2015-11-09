@@ -46,17 +46,25 @@ static enum rym_code _rym_tof(
         rt_size_t len)
 {
     struct custom_ctx *cctx = (struct custom_ctx*)ctx;
+    rt_uint8_t *_buf;
+
     RT_ASSERT(cctx->fd >= 0);
+
+    _buf = rt_malloc(2048);
     if (cctx->flen == -1)
     {
-        write(cctx->fd, buf, len);
+        memcpy(_buf, buf, len);
+        write(cctx->fd, _buf, len);
     }
     else
     {
         int wlen = len > cctx->flen ? cctx->flen : len;
-        write(cctx->fd, buf, wlen);
+        memcpy(_buf, buf, wlen);
+        write(cctx->fd, _buf, wlen);
         cctx->flen -= wlen;
     }
+    rt_free(_buf);
+
     return RYM_CODE_ACK;
 }
 
