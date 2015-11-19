@@ -10,10 +10,10 @@ HY27UF081G的驱动放在drivers\drv_hy27uf081g.h drivers\drv_hy27uf081g.c文件中。
 
 `rtconfig.h` 文件中包括这个例子的配置信息，主要是定义了：
 
-// <bool name="RT_USING_MTD_NAND" description="Using MTD nand driver framework" default="true" />
-#define RT_USING_MTD_NAND
-// <bool name="RT_MTD_NAND_DEBUG" description="Enable MTD nand debug" default="false" />
-#define RT_MTD_NAND_DEBUG
+    // <bool name="RT_USING_MTD_NAND" description="Using MTD nand driver framework" default="true" />
+    #define RT_USING_MTD_NAND
+    // <bool name="RT_MTD_NAND_DEBUG" description="Enable MTD nand debug" default="false" />
+    #define RT_MTD_NAND_DEBUG
 
 其中 `RT_USING_MTD_NAND` 定义了系统需要支持MTD_NAND类型的设备；而 `RT_MTD_NAND_DEBUG` 则打开了MTD_NAND设备中的调试功能。 当系统打开MTD_NAND功能时，scons构建系统会加入drv_hy27uf081g驱动程序。
 
