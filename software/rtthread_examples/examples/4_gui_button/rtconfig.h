@@ -22,6 +22,8 @@
 // #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+// <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
+#define RT_DEBUG_INIT   0
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -78,7 +80,8 @@
 // <bool name="RT_USING_SPI" description="Using SPI Device Driver Framework" default="true" />
 #define RT_USING_SPI
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
-//#define RT_USING_I2C
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
 //#define RT_USING_RTC
 // <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
@@ -104,8 +107,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="false" />
 // #define RT_USING_PTHREADS
 // </section>
