@@ -37,8 +37,6 @@
 #define RT_TIMER_THREAD_PRIO	4
 // <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
 #define RT_TIMER_THREAD_STACK_SIZE	512
-// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND	100
 // </section>
 
 // <section name="IPC" description="Inter-Thread communication" default="always" >
@@ -79,7 +77,7 @@
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
 //#define RT_USING_I2C
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
-//#define RT_USING_RTC
+#define RT_USING_RTC
 // <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
 #define RT_MMCSD_THREAD_PREORITY	15
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
@@ -107,8 +105,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>

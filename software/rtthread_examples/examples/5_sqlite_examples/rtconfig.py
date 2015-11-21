@@ -16,7 +16,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= r'C:/Program Files/CodeSourcery/arm-none-eabi/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= r'C:/Keil'
+	EXEC_PATH 	= r'E:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= r'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
@@ -25,7 +25,7 @@ if os.getenv('RTT_EXEC_PATH'):
         EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #
-BUILD = 'release'
+BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -63,7 +63,7 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
+    DEVICE = ' --cpu Cortex-M4.fp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc40xx.map --scatter lpc40xx_rom.sct'

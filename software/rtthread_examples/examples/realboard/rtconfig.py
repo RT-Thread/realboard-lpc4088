@@ -3,8 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
-CROSS_TOOL='gcc'
-RTT_ROOT=os.getenv('RTT_ROOT')
+CROSS_TOOL='keil'
 
 # get setting from environment.
 if os.getenv('RTT_CC'):
@@ -15,26 +14,23 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= r'C:/Program Files/CodeSourcery/arm-none-eabi/bin'
-	EXEC_PATH 	= r'E:\bernard\tools\gcc-arm-none-eabi-4_9-2015q1-20150306-win32\bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= r'E:/Keil'
-	EXEC_PATH 	= r'C:/Keil_MDK_471'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= r'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #
-BUILD = 'release'
+BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
-    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -42,7 +38,6 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-    STRIP = PREFIX + 'strip'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE 
@@ -58,15 +53,6 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    # module setting 
-    CXX_FLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
-    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
-    M_CXXFLAGS = CXX_FLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXX_FLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
-                                    ' -shared -fPIC -nostartfiles -static-libgcc'
-    M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
-    M_BIN_PATH = r'Z:\github\persimmon\tools'
-
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
@@ -77,7 +63,7 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
+    DEVICE = ' --cpu Cortex-M4.fp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc40xx.map --scatter rtthread-lpc408x.sct'

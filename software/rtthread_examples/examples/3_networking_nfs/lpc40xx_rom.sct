@@ -13,18 +13,3 @@ LR_IROM1 0x00000000 0x00080000  {    ; load region size_region
   }
 }
 
-LR_ROM1 0x28000000 0x00400000  {
-  ER_ROM1 0x28000000 0x00400000  {  ; load address = execution address
-     finsh_*.o (+RO)
-     asc*.o (+RO)
-     image*.o (+RO)
-     font*.o (+RO)
-
-     *(.rti_fn.*)
-     *(RTMSymTab)
-     *(FSymTab)
-     *(.rodata.name)
-
-     rootfs.o (+RO)
-  }
-}

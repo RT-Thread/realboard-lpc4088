@@ -18,7 +18,7 @@ else:
     RTT_RTGUI = os.path.abspath(os.path.join(cwd, '..', '..', 'rtgui'))
 
 print 'RTT_RTGUI=', RTT_RTGUI
-objs += SConscript(RTT_RTGUI + '/SConscript', duplicate = 0)
+objs += SConscript(RTT_RTGUI + '/SConscript', variant_dir='rtgui', duplicate = 0)
 
 for d in list:
     path = os.path.join(cwd, d)

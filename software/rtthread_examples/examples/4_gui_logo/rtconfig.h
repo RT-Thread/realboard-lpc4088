@@ -235,7 +235,7 @@
 #define RTGUI_USING_FONT16
 // <bool name="RTGUI_USING_FONT12" description="support 12 weight font" default="true" />
 #define RTGUI_USING_FONT12
-#define RTGUI_USING_TTF
+// #define RTGUI_USING_TTF
 // <bool name="RTGUI_USING_FONTHZ" description="support Chinese font" default="true" />
 #define RTGUI_USING_FONTHZ
 // <integer name="RTGUI_DEFAULT_FONT_SIZE" description="default font size in RT-Thread/GUI" default="16" />

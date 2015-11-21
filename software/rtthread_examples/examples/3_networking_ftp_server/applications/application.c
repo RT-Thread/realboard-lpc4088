@@ -26,8 +26,8 @@ void rt_init_thread_entry(void* parameter)
 #endif
 
 	{
-		extern rt_err_t mci_hw_init(const char *device_name);
-		mci_hw_init("sd0");
+        extern rt_err_t mci_hw_init(const char *device_name);
+        mci_hw_init("sd0");
 	}	
 
     /* Filesystem Initialization */
@@ -63,7 +63,6 @@ void rt_init_thread_entry(void* parameter)
 		rt_kprintf("ftp server started!!\n");
 		}
 #endif
-    
 }
 
 int rt_application_init()

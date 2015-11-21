@@ -19,7 +19,7 @@
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE	512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
-#define RT_USING_MODULE
+// #define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
@@ -104,8 +104,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using C runtime library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
